@@ -569,13 +569,43 @@ details summary::-webkit-details-marker {
   padding: 2rem;
   border: 1px solid var(--border);
   display: grid;
-  gap: 0.6rem;
+  gap: 1rem;
   max-width: 520px;
   min-width: 0;
 }
 
 .contact-card .btn {
   width: fit-content;
+}
+
+.contact-cta {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.contact-links {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.contact-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.contact-link {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(98, 210, 255, 0.35);
+  padding-bottom: 2px;
+}
+
+.contact-link:hover {
+  color: var(--accent-2);
 }
 
 .footer {
