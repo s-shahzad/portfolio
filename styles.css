@@ -1541,6 +1541,7 @@ table,
 
 .flip-back strong {
   font-size: var(--flip-label-size);
+  margin-right: 0.45rem;
 }
 
 #skills .flip-back p {

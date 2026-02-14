@@ -429,7 +429,6 @@
       }
     } else if (section === "certifications") {
       addLine("Validates", source.querySelector("p")?.textContent?.trim());
-      addLine("Issued / Validity", source.querySelector(".meta-row")?.textContent?.trim());
       const verify = source.querySelector(".text-link")?.cloneNode(true);
       if (verify) {
         const row = document.createElement("div");
@@ -452,8 +451,6 @@
     } else if (card.classList.contains("exp-item")) {
       addLine("Action", source.querySelector(".exp-points li")?.textContent?.trim());
       addLine("Impact", source.querySelector(".exp-impact")?.textContent?.replace(/^Impact:\s*/i, "").trim());
-      const durationLoc = [source.querySelector(".exp-date")?.textContent?.trim(), source.querySelector(".exp-loc")?.textContent?.trim()].filter(Boolean).join(" · ");
-      addLine("Duration + Location", durationLoc);
     } else {
       Array.from(source.querySelectorAll("p")).slice(0, 3).forEach((p) => addLine("Detail", p.textContent?.trim()));
       const link = source.querySelector(".text-link")?.cloneNode(true);
