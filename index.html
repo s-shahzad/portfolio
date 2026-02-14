@@ -4,14 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Azhad Shahzad Shaik | Portfolio</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY"></script>
+    <meta name="description" content="Azhad Shahzad Shaik portfolio showcasing cybersecurity and ML engineering work, publications, certifications, education, and experience." />
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-3CN94DG5LY');
+      (function () {
+        var host = window.location.hostname;
+        if (host === "localhost" || host === "127.0.0.1") return;
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function(){ window.dataLayer.push(arguments); };
+        var ga = document.createElement("script");
+        ga.async = true;
+        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY";
+        document.head.appendChild(ga);
+        window.gtag("js", new Date());
+        window.gtag("config", "G-3CN94DG5LY");
+      })();
     </script>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo-alt-c-icon.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="styles.css?v=20260213-43" />
   </head>
   <body>
     <div class="grain"></div>
@@ -19,35 +29,60 @@
     <header class="hero">
       <div class="container">
         <nav class="nav" aria-label="Primary">
-          <div class="brand">AS</div>
+          <button class="brand brand-btn" id="brandLogoBtn" type="button" aria-label="Open logo preview" aria-haspopup="dialog" aria-controls="logoModal" aria-expanded="false">
+            <img class="brand-logo-image" src="assets/logo-alt-c-icon.png" alt="Azhad Shahzad Shaik logo" width="32" height="32" />
+          </button>
           <div class="nav-links">
             <a href="#featured">Featured Work</a>
             <a href="#publications">Publications</a>
             <a href="#certifications">Certifications</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+          </div>
+          <div class="premium-search nav-search" role="search" aria-label="Site search" aria-expanded="false">
+            <div class="search-expand">
+              <input id="site-search" type="search" placeholder=" " aria-label="Search site" autocomplete="off" />
+              <label class="search-floating-label" for="site-search">Search here</label>
+              <button id="site-search-clear" class="search-clear" type="button" aria-label="Clear search">×</button>
+              <button class="search-submit" type="button" aria-label="Open search" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M10.5 3a7.5 7.5 0 0 1 5.96 12.05l4.75 4.75a1 1 0 1 1-1.42 1.41l-4.74-4.74A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"/>
+                </svg>
+              </button>
+              <div class="search-suggestions" id="site-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+            </div>
+          </div>
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+          </button>
+        </nav>
+        <div id="mobile-menu" class="mobile-menu" hidden>
+          <a href="#featured">Featured Work</a>
+          <a href="#publications">Publications</a>
+          <a href="#certifications">Certifications</a>
           <a href="#experience">Experience</a>
           <a href="#skills">Skills</a>
           <a href="#contact">Contact</a>
         </div>
-      </nav>
 
         <div class="hero-content">
           <div class="hero-text">
-            <p class="eyebrow">Portfolio 2026</p>
             <h1>Azhad Shahzad Shaik</h1>
             <p class="subtitle">Cybersecurity &amp; ML Engineer</p>
-            <p class="subtitle">IEEE‑published · SOC &amp; threat analysis experience · Healthcare + IoT security</p>
-            <p class="availability">Open to full‑time roles • US • Hybrid/Remote</p>
+            <p class="subtitle">IEEE-published · SOC &amp; threat analysis experience · Healthcare + IoT security</p>
+            <p class="availability">Open to full-time roles • US • Hybrid/Remote</p>
             <div class="cta-row">
               <a class="btn primary" href="#featured">View Security &amp; ML Work</a>
               <a class="btn ghost" href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Download Resume</a>
             </div>
           </div>
           <div class="hero-photo">
-            <img class="profile-photo" src="assets/profile.png" alt="Azhad Shahzad Shaik" loading="eager" />
+            <img class="profile-photo" src="assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" loading="eager" decoding="async" fetchpriority="high" />
           </div>
           <div class="hero-card">
             <p class="card-title">Currently</p>
-            <p class="card-body">Focused on ML‑driven threat detection and secure data pipelines.</p>
+            <p class="card-body">Focused on ML-driven threat detection and secure data pipelines.</p>
             <div class="card-meta">
               <span>Based in</span>
               <strong>United States</strong>
@@ -58,628 +93,373 @@
     </header>
 
     <main>
-      <section id="featured" class="section">
+      <div id="search-status" class="search-status" aria-live="polite" hidden></div>
+      <section id="featured" class="section reveal">
         <div class="container">
           <div class="section-head">
             <h2>Featured Work</h2>
             <p>Security and ML work prioritized for hiring impact.</p>
           </div>
-          <div class="cards">
-            <article class="project-card">
-              <div class="chip">IEEE</div>
-              <h3>ML‑based DoS Detection for EV Charging Infrastructure</h3>
-              <p><strong>Problem:</strong> DoS risk in EV charging networks.</p>
-              <p><strong>Action:</strong> Built an ML‑based intrusion detection approach for EVCS traffic.</p>
-              <p><strong>Impact:</strong> Strengthened detection readiness for connected infrastructure.</p>
-              <div class="chip-row">
-                <span class="chip">ML</span>
-                <span class="chip">IDS</span>
-                <span class="chip">IoT</span>
-                <span class="chip">EVCS</span>
+          <div class="featured-carousel">
+            <div class="swiper featured-swiper">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <article class="project-card featured-case">
+                    <div class="flip-card">
+                      <div class="flip-inner">
+                        <div class="flip-front">
+                          <div class="chip">IEEE</div>
+                          <h3>ML-based DoS Detection for EV Charging Infrastructure</h3>
+                          <div class="chip-row">
+                            <span class="chip">ML</span>
+                            <span class="chip">IDS</span>
+                            <span class="chip">IoT</span>
+                            <span class="chip">EVCS</span>
+                          </div>
+                        </div>
+                        <div class="flip-back">
+                          <p><strong>Problem:</strong> DoS risk in EV charging networks.</p>
+                          <p><strong>Action:</strong> Built an ML-based intrusion detection approach for EVCS traffic.</p>
+                          <p><strong>Impact:</strong> Strengthened detection readiness for connected infrastructure.</p>
+                          <a class="text-link" href="https://ieeexplore.ieee.org/document/11275540" target="_blank" rel="noopener noreferrer">View case study</a>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="project-card featured-case">
+                    <div class="flip-card">
+                      <div class="flip-inner">
+                        <div class="flip-front">
+                          <div class="chip">SOC / Threat Analysis</div>
+                          <h3>Enterprise Risk &amp; Threat Analysis (Internship)</h3>
+                          <div class="chip-row">
+                            <span class="chip">NIST</span>
+                            <span class="chip">Risk</span>
+                            <span class="chip">IR</span>
+                            <span class="chip">SOC</span>
+                          </div>
+                        </div>
+                        <div class="flip-back">
+                          <p><strong>Problem:</strong> Limited visibility into security maturity and risk exposure.</p>
+                          <p><strong>Action:</strong> Mapped findings to NIST risk categories and incident patterns.</p>
+                          <p><strong>Impact:</strong> Delivered prioritized remediation guidance tied to business impact.</p>
+                          <a class="text-link" href="#contact">View case study</a>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="project-card featured-case">
+                    <div class="flip-card">
+                      <div class="flip-inner">
+                        <div class="flip-front">
+                          <div class="chip">Healthcare Data</div>
+                          <h3>HL7 -> FHIR Data Integration for Clinical Systems</h3>
+                          <div class="chip-row">
+                            <span class="chip">HL7</span>
+                            <span class="chip">FHIR</span>
+                            <span class="chip">Data QA</span>
+                            <span class="chip">Healthcare</span>
+                          </div>
+                        </div>
+                        <div class="flip-back">
+                          <p><strong>Problem:</strong> Interoperability gaps across clinical data systems.</p>
+                          <p><strong>Action:</strong> Validated and mapped HL7 messages into FHIR resources.</p>
+                          <p><strong>Impact:</strong> Improved deployment-ready data exchange and compliance.</p>
+                          <a class="text-link" href="#contact">View case study</a>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
               </div>
-              <a class="text-link" href="https://ieeexplore.ieee.org/document/11275540" target="_blank" rel="noopener noreferrer">View case study</a>
-            </article>
-            <article class="project-card">
-              <div class="chip">SOC / Threat Analysis</div>
-              <h3>Enterprise Risk &amp; Threat Analysis (Internship)</h3>
-              <p><strong>Problem:</strong> Limited visibility into security maturity and risk exposure.</p>
-              <p><strong>Action:</strong> Mapped findings to NIST risk categories and incident patterns.</p>
-              <p><strong>Impact:</strong> Delivered prioritized remediation guidance tied to business impact.</p>
-              <div class="chip-row">
-                <span class="chip">NIST</span>
-                <span class="chip">Risk</span>
-                <span class="chip">IR</span>
-                <span class="chip">SOC</span>
-              </div>
-              <a class="text-link" href="#contact">View case study</a>
-            </article>
-            <article class="project-card">
-              <div class="chip">Healthcare Data</div>
-              <h3>HL7 → FHIR Data Integration for Clinical Systems</h3>
-              <p><strong>Problem:</strong> Interoperability gaps across clinical data systems.</p>
-              <p><strong>Action:</strong> Validated and mapped HL7 messages into FHIR resources.</p>
-              <p><strong>Impact:</strong> Improved deployment‑ready data exchange and compliance.</p>
-              <div class="chip-row">
-                <span class="chip">HL7</span>
-                <span class="chip">FHIR</span>
-                <span class="chip">Data QA</span>
-                <span class="chip">Healthcare</span>
-              </div>
-              <a class="text-link" href="#contact">View case study</a>
-            </article>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="publications" class="section">
+      <section id="publications" class="section reveal">
         <div class="container">
           <div class="section-head">
             <h2>Publications</h2>
-            <p>Impact‑focused summaries with details available on demand.</p>
-            <p class="trust-line">Peer‑reviewed • IEEE</p>
+            <p>Impact-focused summaries with details available on demand.</p>
+            <p class="trust-line">Peer-reviewed • IEEE</p>
           </div>
           <div class="cards">
-          <article class="project-card">
-            <div class="chip">Journal</div>
-            <h3>Remote monitoring system of heart conditions for elderly persons with ECG machine using IoT platform</h3>
-            <p>Built an IoT‑based ECG monitoring framework to enable remote, continuous screening for elderly patients.</p>
-            <details>
-              <summary>View details</summary>
-              <p class="meta-row">
-                <span class="meta-badge">JIST</span>
-                <span class="meta-badge">Vol 10 · Issue 1</span>
-                <span class="meta-badge">Pages 11–19</span>
-                <span class="meta-badge">2022‑01‑01</span>
-              </p>
-              <p class="meta-row">
-                <span class="meta-badge">ISSN 2322‑1437</span>
-                <span class="meta-badge">EISSN 2345‑2773</span>
-                <span class="meta-badge">jist.acecr.org</span>
-              </p>
-              <p><strong>Authors:</strong> Singh Ngangbam Phalguni, Aditya Kanakamalla, Shahzad Shaik Azhad, Sai Guntupalli Divya, Shruti Suman</p>
-            </details>
-            <div class="pub-actions">
-              <a class="btn ghost small" href="https://doi.org/10.52547/jist.15692.10.37.11" target="_blank" rel="noopener noreferrer">Open DOI</a>
-              <button class="btn ghost small copy-citation" type="button" data-citation="Singh Ngangbam Phalguni, Aditya Kanakamalla, Shahzad Shaik Azhad, Sai Guntupalli Divya, Shruti Suman. Remote monitoring system of heart conditions for elderly persons with ECG machine using IoT platform. Journal of Information Systems and Telecommunication (JIST), 2022. DOI: 10.52547/jist.15692.10.37.11">Copy citation</button>
-            </div>
-            <a class="text-link" href="https://jist.ir/en/article/15692" target="_blank" rel="noopener noreferrer">Read</a>
-          </article>
-          <article class="project-card">
-            <div class="chip">Research</div>
-            <h3>Plugged‑in and Protected: Leveraging Machine Learning to Secure IoT‑Based Electric Vehicle Charging Stations from Denial‑of‑Service Threats</h3>
-            <p>Applied ML‑based intrusion detection to reduce DoS risk in EV charging networks.</p>
-            <details>
-              <summary>View details</summary>
-              <p><strong>Authors:</strong> Azhad Shahzad Shaik, Meghana Gutla, Athma Phanindhra Raju Kagitala, Sajal Bhatia</p>
-              <p class="meta-row">
-                <span class="meta-badge">GCAIoT 2025</span>
-                <span class="meta-badge">IEEE</span>
-                <span class="meta-badge">Ben Guerir, Morocco</span>
-              </p>
-              <p class="meta-row">
-                <span class="meta-badge">Nov 23–25, 2025</span>
-                <span class="meta-badge">DOI 10.1109/GCAIoT68269.2025.11275540</span>
-                <span class="meta-badge">ISBN 979‑8‑3315‑6879‑5</span>
-              </p>
-            </details>
-            <div class="pub-actions">
-              <a class="btn ghost small" href="https://doi.org/10.1109/GCAIoT68269.2025.11275540" target="_blank" rel="noopener noreferrer">Open DOI</a>
-              <button class="btn ghost small copy-citation" type="button" data-citation="Azhad Shahzad Shaik, Meghana Gutla, Athma Phanindhra Raju Kagitala, Sajal Bhatia. Plugged‑in and Protected: Leveraging Machine Learning to Secure IoT‑Based Electric Vehicle Charging Stations from Denial‑of‑Service Threats. 2025 IEEE Global Conference on Artificial Intelligence and Internet of Things (GCAIoT). DOI: 10.1109/GCAIoT68269.2025.11275540">Copy citation</button>
-            </div>
-            <a class="text-link" href="https://ieeexplore.ieee.org/document/11275540" target="_blank" rel="noopener noreferrer">Read</a>
-          </article>
+            <article class="project-card">
+              <div class="chip">Journal</div>
+              <h3>Remote monitoring system of heart conditions for elderly persons with ECG machine using IoT platform</h3>
+              <p>Built an IoT-based ECG monitoring framework to enable remote, continuous screening for elderly patients.</p>
+              <details>
+                <summary>View details</summary>
+                <p class="meta-row">
+                  <span class="meta-badge">JIST</span>
+                  <span class="meta-badge">Vol 10 · Issue 1</span>
+                  <span class="meta-badge">Pages 11-19</span>
+                  <span class="meta-badge">2022-01-01</span>
+                </p>
+                <p class="meta-row">
+                  <span class="meta-badge">ISSN 2322-1437</span>
+                  <span class="meta-badge">EISSN 2345-2773</span>
+                  <span class="meta-badge">jist.acecr.org</span>
+                </p>
+                <p><strong>Authors:</strong> Singh Ngangbam Phalguni, Aditya Kanakamalla, Shahzad Shaik Azhad, Sai Guntupalli Divya, Shruti Suman</p>
+              </details>
+              <div class="pub-actions">
+                <a class="btn ghost small" href="https://doi.org/10.52547/jist.15692.10.37.11" target="_blank" rel="noopener noreferrer">Open DOI</a>
+                <button class="btn ghost small copy-citation" type="button" data-citation="Singh Ngangbam Phalguni, Aditya Kanakamalla, Shahzad Shaik Azhad, Sai Guntupalli Divya, Shruti Suman. Remote monitoring system of heart conditions for elderly persons with ECG machine using IoT platform. Journal of Information Systems and Telecommunication (JIST), 2022. DOI: 10.52547/jist.15692.10.37.11">Copy citation</button>
+              </div>
+              <a class="text-link" href="https://jist.ir/en/article/15692" target="_blank" rel="noopener noreferrer">Read</a>
+            </article>
+            <article class="project-card">
+              <div class="chip">Research</div>
+              <h3>Plugged-in and Protected: Leveraging Machine Learning to Secure IoT-Based Electric Vehicle Charging Stations from Denial-of-Service Threats</h3>
+              <p>Applied ML-based intrusion detection to reduce DoS risk in EV charging networks.</p>
+              <details>
+                <summary>View details</summary>
+                <p><strong>Authors:</strong> Azhad Shahzad Shaik, Meghana Gutla, Athma Phanindhra Raju Kagitala, Sajal Bhatia</p>
+                <p class="meta-row">
+                  <span class="meta-badge">GCAIoT 2025</span>
+                  <span class="meta-badge">IEEE</span>
+                  <span class="meta-badge">Ben Guerir, Morocco</span>
+                </p>
+                <p class="meta-row">
+                  <span class="meta-badge">Nov 23-25, 2025</span>
+                  <span class="meta-badge">DOI 10.1109/GCAIoT68269.2025.11275540</span>
+                  <span class="meta-badge">ISBN 979-8-3315-6879-5</span>
+                </p>
+              </details>
+              <div class="pub-actions">
+                <a class="btn ghost small" href="https://doi.org/10.1109/GCAIoT68269.2025.11275540" target="_blank" rel="noopener noreferrer">Open DOI</a>
+                <button class="btn ghost small copy-citation" type="button" data-citation="Azhad Shahzad Shaik, Meghana Gutla, Athma Phanindhra Raju Kagitala, Sajal Bhatia. Plugged-in and Protected: Leveraging Machine Learning to Secure IoT-Based Electric Vehicle Charging Stations from Denial-of-Service Threats. 2025 IEEE Global Conference on Artificial Intelligence and Internet of Things (GCAIoT). DOI: 10.1109/GCAIoT68269.2025.11275540">Copy citation</button>
+              </div>
+              <a class="text-link" href="https://ieeexplore.ieee.org/document/11275540" target="_blank" rel="noopener noreferrer">Read</a>
+            </article>
           </div>
         </div>
       </section>
 
-      <section id="certifications" class="section">
+      <section id="certifications" class="section reveal">
         <div class="container">
           <div class="section-head">
             <h2>Certifications</h2>
-            <p>Industry‑recognized credentials. Filter by category.</p>
+            <p>Industry-recognized credentials. Filter by category.</p>
           </div>
           <div class="cert-filters" role="group" aria-label="Certification filters">
-          <button class="btn ghost small is-active" type="button" data-filter="all">All</button>
-          <button class="btn ghost small" type="button" data-filter="security">Security</button>
-          <button class="btn ghost small" type="button" data-filter="cloud">Cloud</button>
-          <button class="btn ghost small" type="button" data-filter="data">Data</button>
-          <button class="btn ghost small" type="button" data-filter="ml">ML</button>
-        </div>
+            <button class="btn ghost small is-active" type="button" data-filter="all">All</button>
+            <button class="btn ghost small" type="button" data-filter="security">Security</button>
+            <button class="btn ghost small" type="button" data-filter="cloud">Cloud</button>
+            <button class="btn ghost small" type="button" data-filter="data">Data</button>
+            <button class="btn ghost small" type="button" data-filter="ml">ML</button>
+          </div>
           <div class="cards">
-          <article class="project-card" data-category="security">
-            <div class="chip">CompTIA</div>
-            <h3>Security+</h3>
-            <p>Validates foundational cybersecurity knowledge across threats, risk, and mitigation.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Certified Oct 2, 2025</span>
-              <span class="meta-badge">Valid through Oct 2, 2028</span>
-            </p>
-          </article>
-          <article class="project-card" data-category="ml data">
-            <div class="chip">HackerRank</div>
-            <h3>Python (Basic)</h3>
-            <p>Certification of skill in Python fundamentals and core programming concepts.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned May 15, 2025</span>
-              <span class="meta-badge">ID E3EF8F866323</span>
-            </p>
-            <a class="text-link" href="https://www.hackerrank.com/certificates/ee3fef866323" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card" data-category="ml data">
-            <div class="chip">HackerRank</div>
-            <h3>Problem Solving (Basic)</h3>
-            <p>Certification of foundational problem‑solving and algorithmic reasoning skills.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Sep 15, 2020</span>
-              <span class="meta-badge">ID A99E37EE6E6C</span>
-            </p>
-            <a class="text-link" href="https://www.hackerrank.com/certificates/a99e37eeee6c" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card" data-category="ml data">
-            <div class="chip">HackerRank</div>
-            <h3>Problem Solving (Intermediate)</h3>
-            <p>Certification validating intermediate‑level problem solving and algorithmic skills.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Sep 12, 2020</span>
-              <span class="meta-badge">ID F137B6531CCC</span>
-            </p>
-            <a class="text-link" href="https://www.hackerrank.com/certificates/f137b6531ccc" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card" data-category="security">
-            <div class="chip">Fortinet</div>
-            <h3>NSE 2 Network Security Associate</h3>
-            <p>Certification covering network security fundamentals and Fortinet security concepts.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Verified</span>
-            </p>
-            <a class="text-link" href="https://training.fortinet.com/mod/customcert/verify_certificate.php?contextid=251440&amp;code=MBGdIukeds&amp;qrcode=1" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card" data-category="security">
-            <div class="chip">Fortinet</div>
-            <h3>NSE 1 Network Security Associate</h3>
-            <p>Certification covering foundational security concepts and Fortinet network security basics.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Verified</span>
-            </p>
-            <a class="text-link" href="https://training.fortinet.com/mod/customcert/verify_certificate.php?contextid=251439&amp;code=NudBeGrVP0&amp;qrcode=1" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="cloud data">
-            <div class="chip">AWS · Coursera</div>
-            <h3>Getting Started with Data Analytics on AWS</h3>
-            <p>Course certificate for foundational data analytics concepts on AWS.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned May 17, 2022</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/NARRGAG2N9WG" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">DTU · Coursera</div>
-            <h3>Introduction to Solar Cells</h3>
-            <p>Course certificate on solar cell fundamentals and energy conversion basics.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Mar 11, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/45X86FUHKSZE" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">École Polytechnique · Coursera</div>
-            <h3>Silicon Thin Film Solar Cells</h3>
-            <p>Course certificate covering thin‑film photovoltaic technologies and materials.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Jun 13, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/G9WQDLPQBK8G" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="cloud">
-            <div class="chip">LearnQuest · Coursera</div>
-            <h3>Cloud Computing Basics (Cloud 101)</h3>
-            <p>Course certificate covering cloud fundamentals and core service models.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Oct 12, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/GE79H26Q4TQ7" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">University of Maryland · Coursera</div>
-            <h3>Entrepreneurship: Launching an Innovative Business (Specialization)</h3>
-            <p>Specialization covering idea development, validation, and launching an innovative business.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Oct 11, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/specialization/certificate/YVBE9QVWJB8Q" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data ml">
-            <div class="chip">Coursera Guided Project</div>
-            <h3>Python World Map Geovisualization Dashboard using COVID Data</h3>
-            <p>Project certificate for building a geovisualization dashboard with Python.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Nov 26, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/YVBE9QVWJB8Q" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">UC Davis · Coursera</div>
-            <h3>Learn Spanish: Basic Spanish Vocabulary (Specialization)</h3>
-            <p>Specialization in basic Spanish vocabulary and practical usage.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Oct 15, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/specialization/certificate/5AZHP4FTKS8S" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">CalArts · Coursera</div>
-            <h3>Graphic Design (Specialization)</h3>
-            <p>Specialization covering fundamentals of graphic design and visual communication.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Nov 2, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/specialization/certificate/LT4ZE33SSP3V" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data">
-            <div class="chip">University of Colorado Boulder · Coursera</div>
-            <h3>Graphic Design</h3>
-            <p>Course certificate in graphic design fundamentals.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Oct 12, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/LJXX2WYLDBNA" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data ml">
-            <div class="chip">Wesleyan University · Coursera</div>
-            <h3>Python Programming: A Concise Introduction</h3>
-            <p>Course certificate covering Python programming fundamentals.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Oct 13, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/NT8UCT43VBV4" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data ml">
-            <div class="chip">University of Michigan · Coursera</div>
-            <h3>Python for Everybody (Specialization)</h3>
-            <p>Specialization covering Python fundamentals through data and web access.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Aug 7, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/specialization/certificate/5BSHG5YP2NHW" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
-          <article class="project-card cert-extra" data-category="data ml">
-            <div class="chip">University of Michigan · Coursera</div>
-            <h3>Python Classes and Inheritance</h3>
-            <p>Course certificate covering object‑oriented programming concepts in Python.</p>
-            <p class="meta-row">
-              <span class="meta-badge">Earned Nov 10, 2020</span>
-            </p>
-            <a class="text-link" href="https://www.coursera.org/account/accomplishments/certificate/BU8XMLBUEPU4" target="_blank" rel="noopener noreferrer">Verify</a>
-          </article>
+            <article class="project-card" data-category="security">
+              <div class="chip">CompTIA</div>
+              <h3>Security+</h3>
+              <p>Validates foundational cybersecurity knowledge across threats, risk, and mitigation.</p>
+              <p class="meta-row">
+                <span class="meta-badge">Certified Oct 2, 2025</span>
+                <span class="meta-badge">Valid through Oct 2, 2028</span>
+              </p>
+            </article>
+            <article class="project-card" data-category="ml data">
+              <div class="chip">HackerRank</div>
+              <h3>Python (Basic)</h3>
+              <p>Certification of skill in Python fundamentals and core programming concepts.</p>
+              <p class="meta-row">
+                <span class="meta-badge">Earned May 15, 2025</span>
+                <span class="meta-badge">ID E3EF8F866323</span>
+              </p>
+              <a class="text-link" href="https://www.hackerrank.com/certificates/ee3fef866323" target="_blank" rel="noopener noreferrer">Verify</a>
+            </article>
+            <article class="project-card" data-category="ml data">
+              <div class="chip">HackerRank</div>
+              <h3>Problem Solving (Basic)</h3>
+              <p>Certification of foundational problem-solving and algorithmic reasoning skills.</p>
+              <p class="meta-row">
+                <span class="meta-badge">Earned Sep 15, 2020</span>
+                <span class="meta-badge">ID A99E37EE6E6C</span>
+              </p>
+              <a class="text-link" href="https://www.hackerrank.com/certificates/a99e37eeee6c" target="_blank" rel="noopener noreferrer">Verify</a>
+            </article>
+            <article class="project-card" data-category="ml data">
+              <div class="chip">HackerRank</div>
+              <h3>Problem Solving (Intermediate)</h3>
+              <p>Certification validating intermediate-level problem solving and algorithmic skills.</p>
+              <p class="meta-row">
+                <span class="meta-badge">Earned Sep 12, 2020</span>
+                <span class="meta-badge">ID F137B6531CCC</span>
+              </p>
+              <a class="text-link" href="https://www.hackerrank.com/certificates/f137b6531ccc" target="_blank" rel="noopener noreferrer">Verify</a>
+            </article>
+            <article class="project-card" data-category="security">
+              <div class="chip">Fortinet</div>
+              <h3>NSE 2 Network Security Associate</h3>
+              <p>Certification covering network security fundamentals and Fortinet security concepts.</p>
+              <p class="meta-row"><span class="meta-badge">Verified</span></p>
+              <a class="text-link" href="https://training.fortinet.com/mod/customcert/verify_certificate.php?contextid=251440&amp;code=MBGdIukeds&amp;qrcode=1" target="_blank" rel="noopener noreferrer">Verify</a>
+            </article>
+            <article class="project-card" data-category="security">
+              <div class="chip">Fortinet</div>
+              <h3>NSE 1 Network Security Associate</h3>
+              <p>Certification covering foundational security concepts and Fortinet network security basics.</p>
+              <p class="meta-row"><span class="meta-badge">Verified</span></p>
+              <a class="text-link" href="https://training.fortinet.com/mod/customcert/verify_certificate.php?contextid=251439&amp;code=NudBeGrVP0&amp;qrcode=1" target="_blank" rel="noopener noreferrer">Verify</a>
+            </article>
+          </div>
         </div>
-        <button class="btn ghost small show-more" type="button">Show more certifications</button>
-      </div>
-    </section>
+      </section>
 
-      <section id="skills" class="section alt">
+      <section id="skills" class="section alt reveal">
         <div class="container">
           <div class="section-head">
             <h2>Skills</h2>
-            <p>Focused, high‑signal skills for cybersecurity and ML security roles.</p>
+            <p>Focused, high-signal skills for cybersecurity and ML security roles.</p>
           </div>
           <div class="skill-groups">
             <div class="skill-group">
               <h3>Core Security</h3>
               <div class="skills">
-                <div class="skill">Threat Modeling</div>
-                <div class="skill">Risk Assessment</div>
-                <div class="skill">Vulnerability Analysis</div>
-                <div class="skill">Incident Response</div>
+                <div class="skill">Threat Modeling</div><div class="skill">Risk Assessment</div><div class="skill">Vulnerability Analysis</div><div class="skill">Incident Response</div>
               </div>
             </div>
             <div class="skill-group">
               <h3>Data &amp; ML</h3>
-              <div class="skills">
-                <div class="skill">Python</div>
-                <div class="skill">Data Validation</div>
-                <div class="skill">ML‑based Detection</div>
-              </div>
+              <div class="skills"><div class="skill">Python</div><div class="skill">Data Validation</div><div class="skill">ML-based Detection</div></div>
             </div>
             <div class="skill-group">
               <h3>Cloud</h3>
-              <div class="skills">
-                <div class="skill">AWS</div>
-              </div>
+              <div class="skills"><div class="skill">AWS</div></div>
             </div>
             <div class="skill-group">
               <h3>Tools</h3>
-              <div class="skills">
-                <div class="skill">Wireshark</div>
-                <div class="skill">Nmap</div>
-                <div class="skill">Linux</div>
-                <div class="skill">PowerShell</div>
-                <div class="skill">TCP/IP</div>
-              </div>
+              <div class="skills"><div class="skill">Wireshark</div><div class="skill">Nmap</div><div class="skill">Linux</div><div class="skill">PowerShell</div><div class="skill">TCP/IP</div></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="education" class="section">
+      <section id="education" class="section reveal">
         <div class="container">
           <div class="section-head">
             <h2>Education</h2>
             <p>Academic foundation and specializations.</p>
-        </div>
+          </div>
           <div class="edu-list">
             <div class="edu-item">
-            <div>
-              <h3>Sacred Heart University</h3>
-              <p>M.S. in Cyber/Computer Forensics and Counterterrorism</p>
-              <p>Fairfield, Connecticut, USA</p>
+              <div class="edu-logo-wrap" aria-hidden="true">
+                <img class="edu-logo" src="assets/logos/shu.png" alt="Sacred Heart University logo" loading="lazy" />
+                <span class="edu-logo-fallback">SHU</span>
+              </div>
+              <div class="edu-content">
+                <h3>Sacred Heart University</h3>
+                <p>M.S. in Cyber/Computer Forensics and Counterterrorism</p>
+                <p>Fairfield, Connecticut, USA</p>
+              </div>
+              <div class="edu-date">Mar 2025</div>
             </div>
-            <div class="edu-date">Mar 2025</div>
-          </div>
             <div class="edu-item">
-            <div>
-              <h3>Koneru Lakshmaiah College of Engineering</h3>
-              <p>B.Tech in Electronics and Communications Engineering</p>
-              <p>Guntur, Andhra Pradesh, India</p>
+              <div class="edu-logo-wrap" aria-hidden="true">
+                <img class="edu-logo" src="assets/logos/klu.png" alt="Koneru Lakshmaiah College of Engineering logo" loading="lazy" />
+                <span class="edu-logo-fallback">KLU</span>
+              </div>
+              <div class="edu-content">
+                <h3>Koneru Lakshmaiah College of Engineering</h3>
+                <p>B.Tech in Electronics and Communications Engineering</p>
+                <p>Guntur, Andhra Pradesh, India</p>
+              </div>
+              <div class="edu-date">May 2021</div>
             </div>
-            <div class="edu-date">May 2021</div>
-          </div>
           </div>
         </div>
       </section>
 
-      <section id="experience" class="section alt">
+      <section id="experience" class="section alt reveal">
         <div class="container">
           <div class="section-head">
-          <h2>Experience</h2>
-          <p>Selected roles across cybersecurity, data, and engineering.</p>
-          <p class="resume-line">Full work history available in my resume · <a href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Download Resume</a></p>
-        </div>
+            <h2>Experience</h2>
+            <p>Selected roles across cybersecurity, data, and engineering.</p>
+            <p class="resume-line">Full work history available in my resume · <a href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Download Resume</a></p>
+          </div>
           <div class="exp-list">
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>Solstice Solutions, Inc.</h3>
-                <p class="exp-role">Jr. Data Analyst</p>
-                <p class="exp-loc">Hartford, CT</p>
-              </div>
-              <div class="exp-date">Oct 2025 — Present</div>
-            </div>
-            <p class="exp-impact">Impact: Improved interoperability readiness for healthcare deployments.</p>
-            <ul class="exp-points">
-              <li>Mapped HL7 → FHIR to resolve interoperability gaps and accelerate deployment‑ready exchange.</li>
-              <li>Validated and transformed clinical datasets to prevent schema errors and improve data quality.</li>
-              <li>Standardized mappings and workflows to reduce rework cycles for stakeholders.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>Infosysnow Inc.</h3>
-                <p class="exp-role">Cyber Security Engineer</p>
-                <p class="exp-loc">Remote</p>
-              </div>
-              <div class="exp-date">Aug 2025 — Oct 2025</div>
-            </div>
-            <p class="exp-impact">Impact: Strengthened detection and remediation readiness across environments.</p>
-            <ul class="exp-points">
-              <li>Hardened security protocols to reduce unauthorized access risk across systems.</li>
-              <li>Triaged anomalous traffic to surface incidents faster and support corrective action.</li>
-              <li>Delivered vulnerability findings and remediation guidance to close high‑risk exposure points.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>iQ4</h3>
-                <p class="exp-role">IT Risk Analyst Intern</p>
-                <p class="exp-loc">Remote</p>
-              </div>
-              <div class="exp-date">May 2024 — Aug 2024</div>
-            </div>
-            <p class="exp-impact">Impact: Delivered prioritized risk insights tied to business impact.</p>
-            <ul class="exp-points">
-              <li>Assessed enterprise controls to expose governance and operational gaps.</li>
-              <li>Mapped findings to NIST risk categories to prioritize remediation.</li>
-              <li>Translated incident patterns into risk statements tied to business impact.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>Sprinto Technology Private Limited</h3>
-                <p class="exp-role">Associate Software Engineer</p>
-                <p class="exp-loc">India</p>
-              </div>
-              <div class="exp-date">Apr 2023 — Dec 2023</div>
-            </div>
-            <p class="exp-impact">Impact: Improved compliance workflow reliability and release stability.</p>
-            <ul class="exp-points">
-              <li>Built backend features to reduce compliance workflow friction and improve reliability.</li>
-              <li>Debugged and validated releases to prevent regressions and maintain secure functionality.</li>
-              <li>Integrated security controls to keep workflows aligned with compliance requirements.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>Vodafone Idea Ltd.</h3>
-                <p class="exp-role">Graduate Engineering Trainee → Network Engineer (Operations)</p>
-                <p class="exp-loc">Hyderabad, India</p>
-              </div>
-              <div class="exp-date">Nov 2021 — Apr 2023</div>
-            </div>
-            <p class="exp-impact">Impact: Reduced rollout errors and stabilized large‑scale network operations.</p>
-            <ul class="exp-points">
-              <li>Automated 2G/3G/4G site configuration to reduce rollout errors and speed deployments.</li>
-              <li>Resolved BSC faults to restore service availability in high‑availability environments.</li>
-              <li>Led OSS‑to‑SRAN migrations for 3500+ sites with minimal disruption.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>SanRidge Pvt. Ltd.</h3>
-                <p class="exp-role">Intern, Android Development</p>
-                <p class="exp-loc">Hyderabad, India</p>
-              </div>
-              <div class="exp-date">Dec 2020 — May 2021</div>
-            </div>
-            <p class="exp-impact">Impact: Improved mobile UI stability and usability across devices.</p>
-            <ul class="exp-points">
-              <li>Delivered Kotlin features to improve usability and reduce UI inconsistencies.</li>
-              <li>Built responsive XML layouts to support multiple screen sizes.</li>
-              <li>Tested across devices to catch performance and stability issues.</li>
-            </ul>
-          </article>
-
-          <article class="exp-item">
-            <div class="exp-top">
-              <div>
-                <h3>Swaraj India Agro Ltd.</h3>
-                <p class="exp-role">Intern, Control Systems Engineering</p>
-                <p class="exp-loc">Maharashtra, India</p>
-              </div>
-              <div class="exp-date">May 2019 — Jul 2019</div>
-            </div>
-            <p class="exp-impact">Impact: Supported safe operations through validated control workflows.</p>
-            <ul class="exp-points">
-              <li>Monitored process parameters to detect deviations and support safe operation.</li>
-              <li>Recorded and validated PLC workflows to confirm control logic stability.</li>
-              <li>Coordinated with engineers to document observations for optimization.</li>
-            </ul>
-          </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Solstice Solutions, Inc.</h3><p class="exp-role">Jr. Data Analyst</p><p class="exp-loc">Hartford, CT</p></div><div class="exp-date">Oct 2025 - Present</div></div>
+              <p class="exp-impact">Impact: Improved interoperability readiness for healthcare deployments.</p>
+              <ul class="exp-points"><li>Mapped HL7 -> FHIR to resolve interoperability gaps and accelerate deployment-ready exchange.</li><li>Validated and transformed clinical datasets to prevent schema errors and improve data quality.</li><li>Standardized mappings and workflows to reduce rework cycles for stakeholders.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Infosysnow Inc.</h3><p class="exp-role">Cyber Security Engineer</p><p class="exp-loc">Remote</p></div><div class="exp-date">Aug 2025 - Oct 2025</div></div>
+              <p class="exp-impact">Impact: Strengthened detection and remediation readiness across environments.</p>
+              <ul class="exp-points"><li>Hardened security protocols to reduce unauthorized access risk across systems.</li><li>Triaged anomalous traffic to surface incidents faster and support corrective action.</li><li>Delivered vulnerability findings and remediation guidance to close high-risk exposure points.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>iQ4</h3><p class="exp-role">IT Risk Analyst Intern</p><p class="exp-loc">Remote</p></div><div class="exp-date">May 2024 - Aug 2024</div></div>
+              <p class="exp-impact">Impact: Delivered prioritized risk insights tied to business impact.</p>
+              <ul class="exp-points"><li>Assessed enterprise controls to expose governance and operational gaps.</li><li>Mapped findings to NIST risk categories to prioritize remediation.</li><li>Translated incident patterns into risk statements tied to business impact.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Sprinto Technology Private Limited</h3><p class="exp-role">Associate Software Engineer</p><p class="exp-loc">India</p></div><div class="exp-date">Apr 2023 - Dec 2023</div></div>
+              <p class="exp-impact">Impact: Improved reliability and secure functionality across compliance-focused SaaS workflows.</p>
+              <ul class="exp-points"><li>Supported backend feature development, issue resolution, and platform enhancements.</li><li>Assisted debugging, testing, and validation to ensure stable and secure releases.</li><li>Collaborated with product and engineering teams to implement requirements and improve performance.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Vodafone Idea Ltd.</h3><p class="exp-role">Graduate Engineering Trainee -> Network Engineer (Operations)</p><p class="exp-loc">Hyderabad, India</p></div><div class="exp-date">Nov 2021 - Apr 2023</div></div>
+              <p class="exp-impact">Impact: Supported large-scale telecom operations and 4G modernization in live production environments.</p>
+              <ul class="exp-points"><li>Configured, migrated, and validated 2G/3G/4G sites using OSS scripting and XML automation.</li><li>Troubleshot BSC-level faults and restored services in high-availability network environments.</li><li>Supported OSS to SRAN migration for 3500+ sites and nationwide 4G upgrade activities.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>SanRidge Pvt. Ltd.</h3><p class="exp-role">Intern, Android Development</p><p class="exp-loc">Hyderabad, India</p></div><div class="exp-date">Dec 2020 - May 2021</div></div>
+              <p class="exp-impact">Impact: Delivered functional Android prototypes with consistent UI and tested stability.</p>
+              <ul class="exp-points"><li>Built Android app logic and UI components using Kotlin and Android Studio.</li><li>Implemented XML-based responsive layouts and Material Design workflows.</li><li>Tested apps across devices to validate functionality and performance.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Swaraj India Agro Ltd.</h3><p class="exp-role">Intern, Control Systems Engineering</p><p class="exp-loc">Maharashtra, India</p></div><div class="exp-date">May 2019 - Jul 2019</div></div>
+              <p class="exp-impact">Impact: Strengthened industrial control-system monitoring and operational safety support.</p>
+              <ul class="exp-points"><li>Assisted monitoring of temperature, pressure, and operational parameters in production cycles.</li><li>Observed PLC control workflows to understand control logic and signal response.</li><li>Supported system-stability validation and engineering documentation tasks.</li></ul>
+            </article>
           </div>
         </div>
       </section>
 
-      <section id="contact" class="section contact">
+      <section id="contact" class="section contact reveal">
         <div class="container">
           <div class="section-head">
-            <h2>Let’s Build</h2>
-            <p>Let’s talk about security &amp; ML roles.</p>
+            <h2>Let's Build</h2>
+            <p>Let's talk about security &amp; ML roles.</p>
           </div>
           <div class="contact-card">
             <div class="contact-links">
-              <div>
-                <span class="contact-label">Email</span>
-                <a class="contact-link" href="mailto:shaikazhadshahzad@gmail.com">shaikazhadshahzad@gmail.com</a>
-              </div>
-              <div>
-                <span class="contact-label">GitHub</span>
-                <a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a>
-              </div>
+              <div><span class="contact-label">Email</span><a class="contact-link" href="mailto:shaikazhadshahzad@gmail.com">shaikazhadshahzad@gmail.com</a></div>
+              <div><span class="contact-label">GitHub</span><a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a></div>
             </div>
-            <p class="response-time">Responding within 24–48 hours.</p>
+            <p class="response-time">Responding within 24-48 hours.</p>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="container">
-        <p>© 2026 Azhad Shahzad Shaik. All rights reserved.</p>
+    <div id="logoModal" class="logo-modal" hidden aria-hidden="true">
+      <div class="logo-modal__overlay" data-close="true"></div>
+      <div class="logo-modal__card" role="dialog" aria-modal="true" aria-label="Logo preview">
+        <div class="logo-flip" id="logoFlip">
+          <div class="logo-face logo-face--front">
+            <img src="assets/logo-alt-c-icon.png" alt="Azhad Logo" class="logo-big" />
+          </div>
+          <div class="logo-face logo-face--back">
+            <div class="logo-back-bottom">Portfolio 2026</div>
+          </div>
+        </div>
       </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container"><p>© 2026 Azhad Shahzad Shaik. All rights reserved.</p></div>
     </footer>
 
-    <script>
-      const copyButtons = document.querySelectorAll(".copy-citation");
-      copyButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
-          const text = button.getAttribute("data-citation") || "";
-          try {
-            await navigator.clipboard.writeText(text);
-            button.textContent = "Copied";
-            setTimeout(() => {
-              button.textContent = "Copy citation";
-            }, 1500);
-          } catch (err) {
-            button.textContent = "Copy failed";
-          }
-        });
-      });
-
-      const filterButtons = document.querySelectorAll(".cert-filters [data-filter]");
-      const certCards = document.querySelectorAll("#certifications .project-card");
-      const showMoreButton = document.querySelector(".show-more");
-      let showAllCerts = false;
-
-      const applyFilters = () => {
-        const active = document.querySelector(".cert-filters .is-active");
-        const filter = active ? active.getAttribute("data-filter") : "all";
-        certCards.forEach((card) => {
-          const categories = (card.getAttribute("data-category") || "").split(" ");
-          const isExtra = card.classList.contains("cert-extra");
-          const matches = filter === "all" || categories.includes(filter);
-          if (!showAllCerts && isExtra) {
-            card.style.display = "none";
-            return;
-          }
-          card.style.display = matches ? "flex" : "none";
-        });
-      };
-
-      filterButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          filterButtons.forEach((b) => b.classList.remove("is-active"));
-          btn.classList.add("is-active");
-          applyFilters();
-        });
-      });
-
-      if (showMoreButton) {
-        showMoreButton.addEventListener("click", () => {
-          showAllCerts = !showAllCerts;
-          showMoreButton.textContent = showAllCerts ? "Show fewer certifications" : "Show more certifications";
-          applyFilters();
-        });
-      }
-
-      applyFilters();
-
-      const expItems = document.querySelectorAll(".exp-item");
-      const mobileQuery = window.matchMedia("(max-width: 700px)");
-
-      const setupExperienceAccordion = () => {
-        expItems.forEach((item) => {
-          const top = item.querySelector(".exp-top");
-          if (!top) {
-            return;
-          }
-          let toggle = item.querySelector(".exp-toggle");
-          if (!toggle) {
-            toggle = document.createElement("button");
-            toggle.className = "exp-toggle";
-            toggle.type = "button";
-            toggle.textContent = "Expand";
-            toggle.setAttribute("aria-expanded", "false");
-            top.appendChild(toggle);
-
-            toggle.addEventListener("click", () => {
-              const isCollapsed = item.classList.toggle("is-collapsed");
-              toggle.setAttribute("aria-expanded", String(!isCollapsed));
-              toggle.textContent = isCollapsed ? "Expand" : "Collapse";
-            });
-          }
-
-          if (mobileQuery.matches) {
-            item.classList.add("is-collapsed");
-            toggle.setAttribute("aria-expanded", "false");
-            toggle.textContent = "Expand";
-          } else {
-            item.classList.remove("is-collapsed");
-            toggle.setAttribute("aria-expanded", "true");
-            toggle.textContent = "Collapse";
-          }
-        });
-      };
-
-      setupExperienceAccordion();
-      mobileQuery.addEventListener("change", setupExperienceAccordion);
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="script.js?v=20260213-32" defer></script>
   </body>
 </html>
