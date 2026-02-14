@@ -26,6 +26,13 @@
   const searchSuggestions = document.getElementById("site-search-suggestions");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
+  const chatbot = document.getElementById("chatbot");
+  const chatbotToggle = document.getElementById("chatbotToggle");
+  const chatbotPanel = document.getElementById("chatbotPanel");
+  const chatbotClose = document.getElementById("chatbotClose");
+  const chatbotBody = document.getElementById("chatbotBody");
+  const chatbotForm = document.getElementById("chatbotForm");
+  const chatbotInput = document.getElementById("chatbotInput");
 
   let lastFocusedElement = null;
   let currentOpenFlip = null;
@@ -38,6 +45,11 @@
   const cardRegistry = [];
   const swiperRegistry = [];
   const autoFlipState = new WeakMap();
+  const mobileSwiperQuery = window.matchMedia("(max-width: 520px)");
+  const tabletSwiperQuery = window.matchMedia("(max-width: 900px)");
+  let currentSwiperMode = null;
+  let swiperResizeWatcherAttached = false;
+  let swiperVisibilityHandlerAttached = false;
 
   const bindWheelNavigation = (container, swiper) => {
     if (!container || !swiper) return;
@@ -817,50 +829,46 @@
     return swiper;
   };
 
-  const buildSwiper = (sectionSelector, rowSelector, label, key) => {
+  const buildSwiper = (sectionSelector, rowSelector, label, key, mode) => {
     const section = document.querySelector(sectionSelector);
     const row = section?.querySelector(rowSelector);
     if (!section || !row || typeof window.Swiper === "undefined") return null;
 
-    const shell = document.createElement("div");
-    shell.className = "swiper-shell";
-    row.parentNode.insertBefore(shell, row);
-    shell.appendChild(row);
+    let shell = row.parentElement;
+    if (!shell || !shell.classList.contains("swiper-shell")) {
+      shell = document.createElement("div");
+      shell.className = "swiper-shell";
+      row.parentNode.insertBefore(shell, row);
+      shell.appendChild(row);
+    }
 
     row.classList.add("swiper", "auto-swiper");
     row.setAttribute("aria-label", `${label} cards`);
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "swiper-wrapper";
+    let wrapper = Array.from(row.children).find((child) => child.classList?.contains("swiper-wrapper")) || null;
+    if (!wrapper) {
+      wrapper = document.createElement("div");
+      wrapper.className = "swiper-wrapper";
 
-    const children = Array.from(row.children);
-    children.forEach((child) => {
-      const slide = document.createElement("div");
-      slide.className = "swiper-slide";
-      slide.appendChild(child);
-      wrapper.appendChild(slide);
-    });
+      const children = Array.from(row.children);
+      children.forEach((child) => {
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+        slide.appendChild(child);
+        wrapper.appendChild(slide);
+      });
 
-    row.textContent = "";
-    row.appendChild(wrapper);
+      row.textContent = "";
+      row.appendChild(wrapper);
+    }
 
-    const swiper = new window.Swiper(row, {
-      effect: "coverflow",
-      loop: true,
+    const isMobile = mode === "mobile";
+    const isTablet = mode === "tablet";
+
+    const swiperConfig = {
       slideToClickedSlide: true,
       speed: 550,
-      spaceBetween: 20,
-      slidesPerView: "auto",
-      centeredSlides: true,
       grabCursor: true,
-      watchSlidesProgress: true,
-      coverflowEffect: {
-        rotate: 0,
-        stretch: 70,
-        depth: 200,
-        modifier: 1,
-        slideShadows: false,
-      },
       keyboard: { enabled: true, onlyInViewport: true },
       autoplay: prefersReducedMotion
         ? false
@@ -869,16 +877,43 @@
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
           },
-      breakpoints: {
-        0: { spaceBetween: 12, coverflowEffect: { rotate: 0, stretch: 30, depth: 120, modifier: 1, slideShadows: false } },
-        768: { spaceBetween: 16, coverflowEffect: { rotate: 0, stretch: 56, depth: 170, modifier: 1, slideShadows: false } },
-        1100: { spaceBetween: 20, coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
-      },
-    });
+      watchSlidesProgress: true,
+    };
+
+    if (isMobile || isTablet) {
+      Object.assign(swiperConfig, {
+        effect: "slide",
+        loop: false,
+        centeredSlides: false,
+        spaceBetween: isMobile ? 12 : 16,
+        slidesPerView: isMobile ? 1 : 2,
+      });
+    } else {
+      Object.assign(swiperConfig, {
+        effect: "coverflow",
+        loop: true,
+        spaceBetween: 20,
+        slidesPerView: "auto",
+        centeredSlides: true,
+        coverflowEffect: {
+          rotate: 0,
+          stretch: 70,
+          depth: 200,
+          modifier: 1,
+          slideShadows: false,
+        },
+        breakpoints: {
+          901: { spaceBetween: 20, coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
+          1100: { spaceBetween: 20, coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
+        },
+      });
+    }
+
+    const swiper = new window.Swiper(row, swiperConfig);
 
     bindWheelNavigation(row, swiper);
 
-    swiperRegistry.push({ swiper });
+    swiperRegistry.push({ swiper, key, mode });
 
     const pause = () => swiper.autoplay && swiper.autoplay.stop();
     const resume = () => swiper.autoplay && !document.hidden && swiper.autoplay.start();
@@ -1003,7 +1038,29 @@
     scheduleAutoFlip(swiper, spotlight);
   };
 
+  const getSwiperMode = () => {
+    if (mobileSwiperQuery.matches) return "mobile";
+    if (tabletSwiperQuery.matches) return "tablet";
+    return "desktop";
+  };
+
+  const destroySwipers = () => {
+    swiperRegistry.forEach(({ swiper }) => {
+      try {
+        clearAutoFlipTimers(swiper);
+        swiper.destroy(true, true);
+      } catch {
+        // no-op
+      }
+    });
+    swiperRegistry.length = 0;
+  };
+
   const setupSwipers = () => {
+    const mode = getSwiperMode();
+    currentSwiperMode = mode;
+    destroySwipers();
+
     const configs = [
       ["#publications", ".cards", "Publications", "publications"],
       ["#certifications", ".cards", "Certifications", "certifications"],
@@ -1013,7 +1070,7 @@
     ];
 
     const instances = configs
-      .map(([section, row, label, key]) => buildSwiper(section, row, label, key))
+      .map(([section, row, label, key]) => buildSwiper(section, row, label, key, mode))
       .filter(Boolean);
 
     instances.forEach((swiper) => {
@@ -1025,13 +1082,31 @@
       updateSpotlight(swiper);
     });
 
-    document.addEventListener("visibilitychange", () => {
-      instances.forEach((swiper) => {
-        if (!swiper.autoplay) return;
-        if (document.hidden) swiper.autoplay.stop();
-        else if (!prefersReducedMotion) swiper.autoplay.start();
+    if (!swiperVisibilityHandlerAttached) {
+      swiperVisibilityHandlerAttached = true;
+      document.addEventListener("visibilitychange", () => {
+        swiperRegistry.forEach(({ swiper }) => {
+          if (!swiper.autoplay) return;
+          if (document.hidden) swiper.autoplay.stop();
+          else if (!prefersReducedMotion) swiper.autoplay.start();
+        });
       });
-    });
+    }
+
+    if (!swiperResizeWatcherAttached) {
+      swiperResizeWatcherAttached = true;
+      let resizeTimer = 0;
+      window.addEventListener("resize", () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          const nextMode = getSwiperMode();
+          if (nextMode !== currentSwiperMode) {
+            setupSwipers();
+            applySearchAndFilters();
+          }
+        }, 180);
+      });
+    }
 
     return instances;
   };
@@ -1498,6 +1573,89 @@
     }
   };
 
+  const setupChatbot = () => {
+    if (!chatbot || !chatbotToggle || !chatbotPanel || !chatbotClose || !chatbotBody || !chatbotForm || !chatbotInput) return;
+
+    const appendMessage = (role, text) => {
+      const row = document.createElement("div");
+      row.className = `chatbot-row ${role}`;
+      const bubble = document.createElement("div");
+      bubble.className = "chatbot-msg";
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      chatbotBody.appendChild(row);
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    };
+
+    const openChatbot = () => {
+      chatbotPanel.hidden = false;
+      chatbotToggle.setAttribute("aria-expanded", "true");
+      chatbotInput.focus();
+    };
+
+    const closeChatbot = () => {
+      chatbotPanel.hidden = true;
+      chatbotToggle.setAttribute("aria-expanded", "false");
+    };
+
+    const getReply = (message) => {
+      const q = normalizeText(message);
+
+      if (q.includes("contact") || q.includes("email") || q.includes("hire")) {
+        return "You can reach me at shaikazhadshahzad@gmail.com or scroll to the Contact section.";
+      }
+      if (q.includes("resume") || q.includes("cv")) {
+        return "Use the Download Resume button in the hero section.";
+      }
+      if (q.includes("project") || q.includes("featured")) {
+        return "Start with Featured Work for top security and ML projects.";
+      }
+      if (q.includes("skill") || q.includes("technology") || q.includes("tool")) {
+        return "Skills include cybersecurity, threat analysis, Python, AWS, and data/ML workflows.";
+      }
+      if (q.includes("education") || q.includes("degree")) {
+        return "Education includes M.S. in Cyber/Computer Forensics and Counterterrorism plus B.Tech in ECE.";
+      }
+      if (q.includes("experience") || q.includes("work")) {
+        return "Experience spans cybersecurity engineering, risk analysis, data analytics, and telecom operations.";
+      }
+      if (q.includes("certification") || q.includes("comptia") || q.includes("hackerrank")) {
+        return "Certifications include Security+, Fortinet NSE, and HackerRank credentials.";
+      }
+      if (q.includes("github") || q.includes("code")) {
+        return "GitHub: github.com/s-shahzad";
+      }
+      return "I can help with projects, skills, certifications, education, experience, contact, and resume.";
+    };
+
+    chatbotToggle.addEventListener("click", () => {
+      if (chatbotPanel.hidden) openChatbot();
+      else closeChatbot();
+    });
+
+    chatbotClose.addEventListener("click", closeChatbot);
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (chatbot.contains(target)) return;
+      if (!chatbotPanel.hidden) closeChatbot();
+    });
+
+    chatbotForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = chatbotInput.value.trim();
+      if (!text) return;
+      appendMessage("user", text);
+      chatbotInput.value = "";
+      window.setTimeout(() => {
+        appendMessage("bot", getReply(text));
+      }, 180);
+    });
+
+    appendMessage("bot", "Hi, I am your portfolio assistant. Ask about projects, skills, resume, or contact.");
+  };
+
   setupNavigation();
   setupSlideClickToCenter();
   setupBrandBadge();
@@ -1507,6 +1665,7 @@
   setupCopyCitation();
   setupPremiumSearch();
   setupSearch();
+  setupChatbot();
   setupCertFilters();
   setupFeaturedCarousel();
   applySearchAndFilters();

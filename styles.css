@@ -1597,6 +1597,369 @@ table,
   max-width: 100%;
 }
 
+/* Mobile polish pass */
+@media (max-width: 900px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .container,
+  main {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    row-gap: 0.55rem;
+    min-height: 64px;
+  }
+
+  .premium-search,
+  .nav-search {
+    min-height: 42px;
+  }
+
+  .search-expand {
+    min-height: 42px;
+  }
+
+  .search-submit {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hero-content {
+    gap: 1rem;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(1.5rem, 5.4vw, 2.05rem);
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .hero-photo {
+    max-width: min(320px, 88vw);
+    margin-inline: auto;
+  }
+
+  .hero-card {
+    max-width: 100%;
+    padding: 0.9rem;
+  }
+
+  .cta-row {
+    width: 100%;
+    gap: 0.6rem;
+  }
+
+  .project-card,
+  .skill-group,
+  .edu-item,
+  .exp-item,
+  .contact-card,
+  .flip-front,
+  .flip-back {
+    padding: 15px !important;
+    border-radius: 14px;
+  }
+
+  .project-card h3,
+  .skill-group h3,
+  .edu-item h3,
+  .exp-item h3,
+  .summary-front h3 {
+    font-size: 1.05rem !important;
+    line-height: 1.3;
+  }
+
+  .project-card p,
+  .skill-group p,
+  .edu-item p,
+  .exp-item p,
+  .flip-back p,
+  .exp-points li {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .auto-swiper,
+  .swiper-shell,
+  .swiper,
+  .swiper-wrapper,
+  .swiper-slide {
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .auto-swiper .swiper-slide .card-dim,
+  .auto-swiper .swiper-slide .card-spotlight {
+    transform: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+  }
+
+  .auto-swiper .swiper-slide {
+    height: auto;
+  }
+
+  .project-card,
+  .project-card.flip-card,
+  .skill-group,
+  .edu-item.flip-card,
+  .exp-item {
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .container,
+  main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .premium-search,
+  .nav-search {
+    width: 100%;
+    flex-basis: 100%;
+    margin-left: 0;
+    order: 3;
+  }
+
+  .search-expand {
+    width: 100%;
+  }
+
+  #site-search {
+    height: 40px;
+    font-size: 0.95rem;
+  }
+
+  .search-clear {
+    display: none !important;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(1.38rem, 6vw, 1.9rem);
+  }
+
+  .cta-row {
+    flex-direction: column;
+  }
+
+  .cta-row .btn,
+  .cta-row a.btn {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+
+  .swiper-slide {
+    width: 100% !important;
+  }
+
+  .auto-swiper .swiper-slide .flip-card,
+  .auto-swiper .swiper-slide .project-card,
+  .auto-swiper .swiper-slide .skill-group,
+  .auto-swiper .swiper-slide .edu-item,
+  .auto-swiper .swiper-slide .exp-item {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Chatbot */
+.chatbot {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 80;
+}
+
+.chatbot-toggle {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(161, 194, 240, 0.34);
+  background: linear-gradient(170deg, rgba(19, 31, 50, 0.92), rgba(11, 18, 30, 0.92));
+  color: #eff6ff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 28px rgba(0, 0, 0, 0.34);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.chatbot-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(178, 213, 255, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(132, 193, 255, 0.26),
+    0 14px 30px rgba(0, 0, 0, 0.4);
+}
+
+.chatbot-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.chatbot-toggle__dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #9ff4d2;
+  box-shadow: 0 0 10px rgba(159, 244, 210, 0.85);
+}
+
+.chatbot-panel {
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+  width: min(360px, calc(100vw - 1.25rem));
+  border-radius: 18px;
+  border: 1px solid rgba(155, 186, 233, 0.24);
+  background: linear-gradient(160deg, rgba(15, 23, 37, 0.96), rgba(9, 16, 27, 0.96));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+  overflow: hidden;
+}
+
+.chatbot-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.72rem 0.85rem;
+  border-bottom: 1px solid rgba(155, 186, 233, 0.18);
+}
+
+.chatbot-head h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #e8f2ff;
+}
+
+.chatbot-close {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(124, 159, 214, 0.18);
+  color: #d8e6fb;
+  cursor: pointer;
+}
+
+.chatbot-body {
+  max-height: min(52vh, 420px);
+  overflow: auto;
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+  scrollbar-width: thin;
+}
+
+.chatbot-row {
+  display: flex;
+}
+
+.chatbot-row.user {
+  justify-content: flex-end;
+}
+
+.chatbot-msg {
+  max-width: 86%;
+  padding: 0.52rem 0.68rem;
+  border-radius: 12px;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.chatbot-row.bot .chatbot-msg {
+  background: rgba(128, 163, 224, 0.16);
+  color: #dfecff;
+  border: 1px solid rgba(145, 180, 236, 0.2);
+}
+
+.chatbot-row.user .chatbot-msg {
+  background: rgba(151, 211, 255, 0.2);
+  color: #f1f8ff;
+  border: 1px solid rgba(154, 210, 255, 0.24);
+}
+
+.chatbot-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  padding: 0.72rem;
+  border-top: 1px solid rgba(155, 186, 233, 0.18);
+  background: rgba(8, 14, 24, 0.72);
+}
+
+.chatbot-form input {
+  min-width: 0;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(155, 186, 233, 0.26);
+  background: rgba(17, 29, 45, 0.82);
+  color: #eaf2ff;
+  padding: 0 0.72rem;
+}
+
+.chatbot-form input::placeholder {
+  color: #99abc7;
+}
+
+.chatbot-form button {
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(155, 186, 233, 0.3);
+  background: linear-gradient(180deg, rgba(116, 156, 221, 0.3), rgba(91, 131, 196, 0.24));
+  color: #edf5ff;
+  padding: 0 0.85rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .chatbot {
+    right: 0.6rem;
+    bottom: 0.6rem;
+  }
+
+  .chatbot-panel {
+    width: min(92vw, 360px);
+  }
+}
+
 #education .swiper-shell {
   overflow-x: hidden;
 }
