@@ -1,0 +1,11 @@
+<svg width="760" height="220" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(40,50)">
+    <circle cx="80" cy="60" r="58" stroke="#f5f2ea" stroke-width="8" fill="none"/>
+    <path d="M60 100 L80 40 L100 100" stroke="#62d2ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M95 75 C115 80 118 95 100 105 C82 115 70 102 75 92" stroke="#f5f2ea" stroke-width="8" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(200,90)">
+    <text x="0" y="0" font-family="DM Serif Display, Georgia, serif" font-size="32" font-weight="600" fill="#f5f2ea">Azhad Shahzad Shaik</text>
+    <text x="0" y="36" font-family="Manrope, Segoe UI, sans-serif" font-size="16" font-weight="600" letter-spacing="3" fill="#62d2ff">PORTFOLIO</text>
+  </g>
+</svg>
