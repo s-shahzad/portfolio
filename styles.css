@@ -35,6 +35,12 @@
   --flip-label-size: clamp(0.75rem, 0.8vw, 0.8125rem);  /* 12-13px */
   --flip-body-size: clamp(0.875rem, 0.95vw, 0.9375rem); /* 14-15px */
   --flip-card-padding: clamp(0.82rem, 1.4vw, 1rem);
+
+  --nav-glass-bg: linear-gradient(180deg, rgba(10, 15, 24, 0.76), rgba(10, 15, 24, 0.62));
+  --nav-glass-border: rgba(151, 182, 229, 0.22);
+  --nav-glow-edge: rgba(153, 194, 255, 0.18);
+  --nav-link: #dce7f7;
+  --nav-link-muted: #b8c8df;
 }
 
 *,
@@ -97,21 +103,46 @@ a {
   top: 0;
   z-index: 40;
   margin-inline: calc(50% - 50vw);
-  padding: 1rem max(1rem, calc((100vw - var(--max-width)) / 2 + 1rem));
+  padding: 0.8rem max(1rem, calc((100vw - var(--max-width)) / 2 + 1rem));
   min-height: 74px;
-  background: rgba(8, 12, 19, 0.93);
-  backdrop-filter: blur(9px);
-  border-bottom: 1px solid var(--border);
+  background: var(--nav-glass-bg);
+  backdrop-filter: blur(13px) saturate(110%);
+  -webkit-backdrop-filter: blur(13px) saturate(110%);
+  border-bottom: 1px solid var(--nav-glass-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  transition: box-shadow 220ms ease, border-color 220ms ease;
+  transition: box-shadow 220ms ease, border-color 220ms ease, backdrop-filter 220ms ease;
+}
+
+.nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(246, 250, 255, 0.34), transparent);
+  pointer-events: none;
+}
+
+.nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 2%, var(--nav-glow-edge) 20%, var(--nav-glow-edge) 80%, transparent 98%);
+  pointer-events: none;
 }
 
 .nav.is-scrolled {
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
-  border-bottom-color: var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+  border-bottom-color: rgba(157, 193, 244, 0.3);
+  backdrop-filter: blur(10px) saturate(105%);
+  -webkit-backdrop-filter: blur(10px) saturate(105%);
 }
 
 .brand {
@@ -124,14 +155,17 @@ a {
 .brand-btn {
   width: 40px;
   height: 40px;
-  border: 0;
-  background: transparent;
+  border: 1px solid rgba(153, 186, 232, 0.28);
+  background: radial-gradient(circle at 28% 22%, rgba(144, 176, 225, 0.2), rgba(23, 34, 52, 0.48));
   padding: 0;
   display: inline-grid;
   place-items: center;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 180ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 18px rgba(0, 0, 0, 0.24);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .brand-logo {
@@ -152,6 +186,21 @@ a {
 .brand-btn:hover .brand-logo-image {
   transform: scale(1.05);
   box-shadow: 0 0 16px rgba(162, 197, 241, 0.42);
+}
+
+.brand-btn:hover {
+  border-color: rgba(172, 206, 255, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(121, 183, 255, 0.2),
+    0 10px 22px rgba(0, 0, 0, 0.3);
+}
+
+.brand-btn:focus-visible {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 0 2px rgba(142, 199, 255, 0.38),
+    0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
 body.logo-modal-open {
@@ -251,29 +300,64 @@ body.logo-modal-open {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: clamp(0.9rem, 1.8vw, 1.6rem);
+  gap: clamp(0.75rem, 1.35vw, 1.2rem);
 }
 
 .nav-links a,
 .mobile-menu a {
-  font-size: 0.92rem;
-  color: #d9e4f5;
-  border-radius: 10px;
-  transition: color 180ms ease, background-color 180ms ease;
+  font-size: 0.91rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--nav-link-muted);
+  border-radius: 999px;
+  transition: color 170ms ease, background-color 170ms ease, transform 170ms ease;
 }
 
 .nav-links a {
-  padding: 0.35rem 0.55rem;
+  position: relative;
+  padding: 0.34rem 0.6rem;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0.62rem;
+  right: 0.62rem;
+  bottom: 0.05rem;
+  height: 1px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, rgba(205, 228, 255, 0.9), transparent);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity 170ms ease, transform 170ms ease;
 }
 
 .nav-links a:hover,
 .mobile-menu a:hover {
-  color: var(--accent-strong);
+  color: var(--nav-link);
+}
+
+.nav-links a:hover::after {
+  opacity: 0.95;
+  transform: scaleX(1);
 }
 
 .nav-links a.is-active {
-  color: var(--accent-strong);
-  background: rgba(130, 163, 229, 0.18);
+  color: #f2f7ff;
+  background: linear-gradient(180deg, rgba(139, 176, 232, 0.24), rgba(112, 149, 210, 0.16));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.nav-links a.is-active::after {
+  opacity: 0.55;
+  transform: scaleX(1);
+}
+
+.nav-links a:focus-visible {
+  color: #f0f7ff;
+  box-shadow: 0 0 0 2px rgba(145, 197, 255, 0.34);
 }
 
 .nav-toggle {
@@ -999,30 +1083,46 @@ summary {
 .search-submit {
   width: 42px;
   height: 42px;
-  border: 0;
+  border: 1px solid rgba(153, 186, 232, 0.28);
   border-radius: 999px;
   display: grid;
   place-items: center;
-  color: #ebf2ff;
-  background: radial-gradient(circle at 30% 25%, rgba(157, 192, 255, 0.52), rgba(103, 138, 204, 0.25));
+  color: #eef5ff;
+  background: radial-gradient(circle at 28% 22%, rgba(144, 176, 225, 0.22), rgba(23, 34, 52, 0.52));
   cursor: pointer;
   flex: 0 0 42px;
   z-index: 2;
   position: absolute;
   right: 4px;
   top: 4px;
-  transition: transform 150ms ease, filter 150ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 18px rgba(0, 0, 0, 0.22);
+  transition: transform 150ms ease, filter 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .search-submit:hover {
-  transform: scale(1.04);
-  filter: brightness(1.06);
+  transform: translateY(-1px);
+  border-color: rgba(172, 206, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 0 1px rgba(121, 183, 255, 0.2),
+    0 10px 20px rgba(0, 0, 0, 0.28);
+  filter: brightness(1.05);
 }
 
 .search-submit svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   fill: currentColor;
+  transform: translateZ(0);
+}
+
+.search-submit:focus-visible {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 0 2px rgba(142, 199, 255, 0.38),
+    0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
 .search-clear {
