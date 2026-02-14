@@ -341,6 +341,20 @@
       `details card ${card.dataset.cardId || ""}`;
     const title = document.createElement("h3");
     title.textContent = titleText;
+    if (section === "education") {
+      front.appendChild(title);
+
+      const programText = source.querySelector(".edu-content p")?.textContent?.trim();
+      if (programText) {
+        const focus = document.createElement("p");
+        focus.className = "front-focus-area";
+        focus.textContent = programText;
+        front.appendChild(focus);
+      }
+
+      return front;
+    }
+
     front.appendChild(title);
 
     const chipRow = document.createElement("div");
@@ -433,10 +447,8 @@
       const programEl = ps.length > 0 ? ps[0] : null;
       const locationEl = ps.length > 1 ? ps[1] : null;
 
-      if (universityEl) addLine("University", universityEl.textContent);
       if (locationEl) addLine("Location", locationEl.textContent);
       if (dateEl) addLine("Graduation", dateEl.textContent);
-      if (programEl) addLine("Focus Areas", programEl.textContent);
     } else if (card.classList.contains("exp-item")) {
       addLine("Action", source.querySelector(".exp-points li")?.textContent?.trim());
       addLine("Impact", source.querySelector(".exp-impact")?.textContent?.replace(/^Impact:\s*/i, "").trim());
