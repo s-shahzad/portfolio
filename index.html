@@ -5,23 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Azhad Shahzad Shaik | Portfolio</title>
     <meta name="description" content="Azhad Shahzad Shaik portfolio showcasing cybersecurity and ML engineering work, publications, certifications, education, and experience." />
-    <script>
-      (function () {
-        var host = window.location.hostname;
-        if (host === "localhost" || host === "127.0.0.1") return;
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function(){ window.dataLayer.push(arguments); };
-        var ga = document.createElement("script");
-        ga.async = true;
-        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY";
-        document.head.appendChild(ga);
-        window.gtag("js", new Date());
-        window.gtag("config", "G-3CN94DG5LY");
-      })();
-    </script>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net; img-src 'self' data: https:; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
+    />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY"></script>
     <link rel="icon" href="assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="styles.css?v=20260213-43" />
+    <link rel="stylesheet" href="styles.css?v=20260218-70" />
   </head>
   <body>
     <div class="grain"></div>
@@ -58,6 +49,7 @@
           </button>
         </nav>
         <div id="mobile-menu" class="mobile-menu" hidden>
+          <button id="mobileSearchTrigger" class="mobile-menu-search" type="button">Search</button>
           <a href="#featured">Featured Work</a>
           <a href="#publications">Publications</a>
           <a href="#certifications">Certifications</a>
@@ -71,7 +63,7 @@
             <h1>Azhad Shahzad Shaik</h1>
             <p class="subtitle">Cybersecurity &amp; ML Engineer</p>
             <p class="subtitle">IEEE-published · SOC &amp; threat analysis experience · Healthcare + IoT security</p>
-            <p class="availability">Open to full-time roles • US • Hybrid/Remote</p>
+            <p class="availability">Available worldwide for my services.</p>
             <div class="cta-row">
               <a class="btn primary" href="#featured">View Security &amp; ML Work</a>
               <a class="btn ghost" href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Download Resume</a>
@@ -480,6 +472,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
-    <script src="script.js?v=20260213-32" defer></script>
+    <script src="script.js?v=20260218-41" defer></script>
   </body>
 </html>

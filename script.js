@@ -23,6 +23,7 @@
   const searchExpand = searchRoot?.querySelector(".search-expand") || null;
   const searchInput = document.getElementById("site-search");
   const searchSubmitButton = document.querySelector(".search-submit");
+  const mobileSearchTrigger = document.getElementById("mobileSearchTrigger");
   const searchSuggestions = document.getElementById("site-search-suggestions");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
@@ -47,9 +48,23 @@
   const autoFlipState = new WeakMap();
   const mobileSwiperQuery = window.matchMedia("(max-width: 520px)");
   const tabletSwiperQuery = window.matchMedia("(max-width: 900px)");
+  const mobileNavQuery = window.matchMedia("(max-width: 768px)");
   let currentSwiperMode = null;
   let swiperResizeWatcherAttached = false;
   let swiperVisibilityHandlerAttached = false;
+
+  const initAnalytics = () => {
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1") return;
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    window.gtag = window.gtag || gtag;
+    window.gtag("js", new Date());
+    window.gtag("config", "G-3CN94DG5LY");
+  };
 
   const bindWheelNavigation = (container, swiper) => {
     if (!container || !swiper) return;
@@ -104,12 +119,22 @@
     if (!navToggle || !mobileMenu) return;
     navToggle.setAttribute("aria-expanded", "false");
     mobileMenu.hidden = true;
+    mobileMenu.classList.remove("show-search");
     document.body.classList.remove("menu-open");
+  };
+
+  const syncMobileMenuOverlayMetrics = () => {
+    if (!nav || !mobileMenu) return;
+    const navRect = nav.getBoundingClientRect();
+    const topOffset = Math.max(0, Math.round(navRect.bottom));
+    mobileMenu.style.setProperty("--mobile-menu-top", `${topOffset}px`);
+    mobileMenu.style.setProperty("--mobile-menu-height", `calc(100dvh - ${topOffset}px)`);
   };
 
   const openMobileMenu = () => {
     if (!navToggle || !mobileMenu) return;
     lastFocusedElement = document.activeElement;
+    syncMobileMenuOverlayMetrics();
     navToggle.setAttribute("aria-expanded", "true");
     mobileMenu.hidden = false;
     document.body.classList.add("menu-open");
@@ -118,6 +143,43 @@
   };
 
   const setupNavigation = () => {
+    const syncMobileSearchPlacement = () => {
+      if (!nav || !mobileMenu || !navToggle || !searchRoot) return;
+
+      if (mobileNavQuery.matches) {
+        if (!mobileMenu.contains(searchRoot)) {
+          const firstNavItem = mobileMenu.querySelector("a");
+          if (firstNavItem) {
+            mobileMenu.insertBefore(searchRoot, firstNavItem);
+          } else {
+            mobileMenu.appendChild(searchRoot);
+          }
+        }
+      } else {
+        if (!nav.contains(searchRoot)) {
+          nav.insertBefore(searchRoot, navToggle);
+        }
+        mobileMenu.classList.remove("show-search");
+      }
+    };
+
+    syncMobileSearchPlacement();
+    syncMobileMenuOverlayMetrics();
+
+    const syncOpenMobileMenuOverlay = () => {
+      if (mobileMenu.hidden) return;
+      syncMobileMenuOverlayMetrics();
+    };
+
+    window.addEventListener("resize", syncOpenMobileMenuOverlay);
+    window.addEventListener("scroll", syncOpenMobileMenuOverlay, { passive: true });
+
+    if (typeof mobileNavQuery.addEventListener === "function") {
+      mobileNavQuery.addEventListener("change", syncMobileSearchPlacement);
+    } else if (typeof mobileNavQuery.addListener === "function") {
+      mobileNavQuery.addListener(syncMobileSearchPlacement);
+    }
+
     if (navToggle && mobileMenu) {
       navToggle.addEventListener("click", () => {
         const expanded = navToggle.getAttribute("aria-expanded") === "true";
@@ -169,6 +231,26 @@
         if (lastFocusedElement && !mobileMenu.hidden) lastFocusedElement.focus();
       });
     });
+
+    if (mobileSearchTrigger && searchSubmitButton && searchInput) {
+      mobileSearchTrigger.addEventListener("click", () => {
+        if (mobileNavQuery.matches && mobileMenu.contains(searchRoot)) {
+          mobileMenu.classList.add("show-search");
+        } else {
+          closeMobileMenu();
+          if (searchRoot) {
+            searchRoot.scrollIntoView({
+              behavior: prefersReducedMotion ? "auto" : "smooth",
+              block: "center",
+            });
+          }
+        }
+        searchSubmitButton.click();
+        window.setTimeout(() => {
+          searchInput.focus();
+        }, 120);
+      });
+    }
 
     const onScrollState = () => {
       if (!nav) return;
@@ -667,6 +749,10 @@
   const setupFeaturedCarousel = () => {
     const featuredRoot = document.querySelector("#featured .featured-swiper");
     if (!featuredRoot || typeof window.Swiper === "undefined") return null;
+    const slideCount = Array.from(
+      featuredRoot.querySelectorAll(".swiper-slide")
+    ).filter((slide) => !slide.classList.contains("swiper-slide-duplicate")).length;
+    const canLoop = slideCount >= 3;
 
     const delay = 4500;
     const flipDelay = 2200;
@@ -727,7 +813,7 @@
     const swiper = new window.Swiper(featuredRoot, {
       effect: "coverflow",
       centeredSlides: true,
-      loop: true,
+      loop: canLoop,
       slideToClickedSlide: true,
       grabCursor: true,
       slidesPerView: "auto",
@@ -748,7 +834,7 @@
           },
       keyboard: { enabled: true, onlyInViewport: true },
       breakpoints: {
-        0: { coverflowEffect: { rotate: 0, stretch: 30, depth: 120, modifier: 1, slideShadows: false } },
+        0: { coverflowEffect: { rotate: 0, stretch: 14, depth: 90, modifier: 1, slideShadows: false } },
         768: { coverflowEffect: { rotate: 0, stretch: 56, depth: 170, modifier: 1, slideShadows: false } },
         1100: { coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
       },
@@ -777,8 +863,13 @@
       const clickedSlide = event.target.closest(".swiper-slide");
       if (clickedSlide && !clickedSlide.classList.contains("swiper-slide-active")) {
         const realIndex = Number(clickedSlide.getAttribute("data-swiper-slide-index"));
-        if (Number.isFinite(realIndex)) {
+        if (swiper.params?.loop && Number.isFinite(realIndex)) {
           swiper.slideToLoop(realIndex);
+          return;
+        }
+        const slideIndex = Array.from(swiper.slides || []).indexOf(clickedSlide);
+        if (slideIndex >= 0) {
+          swiper.slideTo(slideIndex);
           return;
         }
       }
@@ -846,6 +937,19 @@
     row.setAttribute("aria-label", `${label} cards`);
 
     let wrapper = Array.from(row.children).find((child) => child.classList?.contains("swiper-wrapper")) || null;
+    const slideCount = wrapper
+      ? Array.from(wrapper.children).filter(
+          (child) =>
+            child.classList?.contains("swiper-slide") &&
+            !child.classList.contains("swiper-slide-duplicate")
+        ).length
+      : Array.from(row.children).filter(
+          (child) =>
+            child.nodeType === Node.ELEMENT_NODE &&
+            !child.classList?.contains("swiper-pagination") &&
+            !child.classList?.contains("swiper-notification")
+        ).length;
+    const canLoop = slideCount >= 3;
     if (!wrapper) {
       wrapper = document.createElement("div");
       wrapper.className = "swiper-wrapper";
@@ -864,6 +968,7 @@
 
     const isMobile = mode === "mobile";
     const isTablet = mode === "tablet";
+    const isPublications = key === "publications";
 
     const swiperConfig = {
       slideToClickedSlide: true,
@@ -880,10 +985,29 @@
       watchSlidesProgress: true,
     };
 
-    if (isMobile || isTablet) {
+    if (isPublications) {
+      Object.assign(swiperConfig, {
+        effect: "coverflow",
+        loop: canLoop,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        coverflowEffect: {
+          rotate: 0,
+          stretch: 70,
+          depth: 200,
+          modifier: 1,
+          slideShadows: false,
+        },
+        breakpoints: {
+          0: { coverflowEffect: { rotate: 0, stretch: 14, depth: 90, modifier: 1, slideShadows: false } },
+          768: { coverflowEffect: { rotate: 0, stretch: 56, depth: 170, modifier: 1, slideShadows: false } },
+          1100: { coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
+        },
+      });
+    } else if (isMobile || isTablet) {
       Object.assign(swiperConfig, {
         effect: "slide",
-        loop: false,
+        loop: canLoop,
         centeredSlides: false,
         spaceBetween: isMobile ? 12 : 16,
         slidesPerView: isMobile ? 1 : 2,
@@ -891,7 +1015,7 @@
     } else {
       Object.assign(swiperConfig, {
         effect: "coverflow",
-        loop: true,
+        loop: canLoop,
         spaceBetween: 20,
         slidesPerView: "auto",
         centeredSlides: true,
@@ -910,6 +1034,7 @@
     }
 
     const swiper = new window.Swiper(row, swiperConfig);
+    swiper.__useNativeSlideStateStyles = isPublications;
 
     bindWheelNavigation(row, swiper);
 
@@ -1018,6 +1143,7 @@
 
   const updateSpotlight = (swiper) => {
     const allCards = Array.from(swiper.el.querySelectorAll("[data-card-id], .skill-group, .edu-item, .exp-item, .project-card"));
+    const useNativeSlideStateStyles = Boolean(swiper.__useNativeSlideStateStyles);
     allCards.forEach((card) => {
       card.classList.remove("card-spotlight", "card-dim");
     });
@@ -1026,8 +1152,10 @@
 
     allCards.forEach((card) => {
       if (card.closest(".slide-hidden")) return;
-      if (spotlight && card === spotlight) card.classList.add("card-spotlight");
-      else card.classList.add("card-dim");
+      if (!useNativeSlideStateStyles) {
+        if (spotlight && card === spotlight) card.classList.add("card-spotlight");
+        else card.classList.add("card-dim");
+      }
 
       if (spotlight && card !== spotlight) {
         setFlipped(card, false, false);
@@ -1657,6 +1785,7 @@
   };
 
   setupNavigation();
+  initAnalytics();
   setupSlideClickToCenter();
   setupBrandBadge();
   setupReveal();
