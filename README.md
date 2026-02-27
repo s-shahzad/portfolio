@@ -66,6 +66,14 @@ $env:GITHUB_TOKEN = '<repo-admin-token>'
 .\scripts\apply-branch-protection.ps1 -Owner 's-shahzad' -Repo 'portfolio' -Branch 'main' -RequiredChecks checks
 ```
 
+If branch protection is unavailable on your GitHub plan for a private repo, use these safeguards:
+
+## Private Repo Safeguards
+
+- `.github/CODEOWNERS`: auto-assigns reviews to `@s-shahzad`
+- `.github/pull_request_template.md`: enforces PR summary/checklist discipline
+- `.github/workflows/main-push-guard.yml`: fails pushes to `main` when commit has no associated PR
+
 ## HTTPS Fronting + Windows Service
 
 1) Configure Caddy reverse proxy (HTTPS):
@@ -149,3 +157,4 @@ This triggers `release.yml`. If `REPO_DISPATCH_TOKEN` is configured in GitHub se
 ## Security
 
 Security guidance and reporting details are in `SECURITY.md`.
+

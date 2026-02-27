@@ -1,0 +1,9 @@
+﻿# Global default ownership
+* @s-shahzad
+
+# Critical automation and infra files
+/.github/workflows/* @s-shahzad
+/scripts/* @s-shahzad
+/server.py @s-shahzad
+/deploy.ps1 @s-shahzad
+/start-server.ps1 @s-shahzad

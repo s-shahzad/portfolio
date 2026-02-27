@@ -1,0 +1,44 @@
+﻿name: Main Push Guard
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  require-pr-origin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if commit is not associated with a pull request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = context.sha;
+
+            const prs = await github.paginate(
+              github.rest.repos.listPullRequestsAssociatedWithCommit,
+              {
+                owner,
+                repo,
+                commit_sha: sha,
+                per_page: 100,
+              }
+            );
+
+            if (prs.length === 0) {
+              core.setFailed(
+                `Direct push detected on main for commit ${sha}. ` +
+                `No associated pull request was found.`
+              );
+              return;
+            }
+
+            core.info(
+              `Commit ${sha} is associated with PR(s): ${prs.map((pr) => '#' + pr.number).join(', ')}`
+            );
