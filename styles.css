@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg: #090c12;
   --panel: #111827;
   --panel-soft: #151f31;
@@ -3475,6 +3475,13 @@ body::-webkit-scrollbar {
 }
 
 @media (min-width: 769px) {
+  .nav-search-panel {
+    top: calc(100% + 10px);
+    transform: none;
+    width: min(420px, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+  }
+
   .nav-links {
     justify-content: center;
   }
