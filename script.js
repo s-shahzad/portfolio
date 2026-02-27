@@ -138,6 +138,7 @@
   const closeMobileMenu = () => {
     if (!navToggle || !mobileMenu) return;
     navToggle.setAttribute("aria-expanded", "false");
+    navToggle.setAttribute("aria-label", "Open menu");
     mobileMenu.hidden = true;
     mobileMenu.classList.remove("show-search");
     document.body.classList.remove("menu-open");
@@ -156,6 +157,7 @@
     lastFocusedElement = document.activeElement;
     syncMobileMenuOverlayMetrics();
     navToggle.setAttribute("aria-expanded", "true");
+    navToggle.setAttribute("aria-label", "Close menu");
     mobileMenu.hidden = false;
     document.body.classList.add("menu-open");
     const firstFocusable = mobileMenu.querySelector(focusableSelector);
