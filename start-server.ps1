@@ -52,6 +52,41 @@ function Get-ListenerOnPort {
     return Get-NetTCPConnection -LocalPort $LocalPort -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
 }
 
+
+function Import-CredentialHelpers {
+    $credScript = Join-Path $scriptRoot 'scripts\credential-manager.ps1'
+    if (Test-Path $credScript) {
+        . $credScript
+        return $true
+    }
+    return $false
+}
+
+function Load-SecretsFromCredentialManager {
+    if (-not (Get-Command Get-PortfolioSecret -ErrorAction SilentlyContinue)) {
+        return
+    }
+
+    if (-not $env:PORTFOLIO_ADMIN_TOKEN -and -not $env:PORTFOLIO_ADMIN_TOKEN_HASH) {
+        $adminToken = Get-PortfolioSecret -Target 'portfolio/admin-token'
+        if ($adminToken) {
+            $env:PORTFOLIO_ADMIN_TOKEN = $adminToken
+        }
+
+        $adminTokenHash = Get-PortfolioSecret -Target 'portfolio/admin-token-hash'
+        if ($adminTokenHash) {
+            $env:PORTFOLIO_ADMIN_TOKEN_HASH = $adminTokenHash
+        }
+    }
+
+    if (-not $env:PORTFOLIO_SMTP_PASSWORD) {
+        $smtpPassword = Get-PortfolioSecret -Target 'portfolio/smtp-password'
+        if ($smtpPassword) {
+            $env:PORTFOLIO_SMTP_PASSWORD = $smtpPassword
+        }
+    }
+}
+
 function Get-PrimaryIPv4 {
     try {
         $route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction Stop |
@@ -76,6 +111,10 @@ if (Test-Path $resolvedEnvFile) {
     Write-Host "Optional env file not found: $resolvedEnvFile"
 }
 
+if (Import-CredentialHelpers) {
+    Load-SecretsFromCredentialManager
+}
+
 $pythonExe = Resolve-PythonExecutable -ExplicitPath $PythonPath
 Write-Host "Python: $pythonExe"
 
@@ -94,7 +133,7 @@ $lanIp = Get-PrimaryIPv4
 $lanUrl = if ($lanIp) { "http://$lanIp`:$Port" } else { $null }
 
 $smtpConfigured = [bool]($env:PORTFOLIO_SMTP_PROVIDER -or $env:PORTFOLIO_SMTP_HOST)
-$adminTokenConfigured = [bool]$env:PORTFOLIO_ADMIN_TOKEN
+$adminTokenConfigured = [bool]($env:PORTFOLIO_ADMIN_TOKEN -or $env:PORTFOLIO_ADMIN_TOKEN_HASH)
 Write-Host ("SMTP configured: {0}" -f $smtpConfigured)
 Write-Host ("Admin token configured: {0}" -f $adminTokenConfigured)
 

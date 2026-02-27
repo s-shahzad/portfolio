@@ -1,0 +1,40 @@
+﻿name: Backup Restore Drill
+
+on:
+  schedule:
+    - cron: "35 4 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drill:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.10"
+
+      - name: Run monthly backup/restore drill
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python scripts/backup_restore_drill.py \
+            --source-db contact_messages/messages.db \
+            --backup-dir backups/restore-drill \
+            --restore-db backups/restore-drill/restore-check.db \
+            --retention-days 120 2>&1 | tee artifacts/backup-restore-drill.log
+
+      - name: Upload drill artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-restore-drill-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: warn

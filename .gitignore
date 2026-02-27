@@ -6,6 +6,7 @@ __pycache__/
 # Runtime logs/pids
 *.log
 *.pid
+logs/
 
 # Local env overrides
 portfolio.env.local.ps1
@@ -20,4 +21,3 @@ styles.css.accidental-truncated-backup-*
 
 # Backup/monitor outputs
 backups/
-logs/monitor/

@@ -102,7 +102,7 @@ def _check_ioc_extract(base_url: str) -> None:
 def _check_admin_routes(base_url: str, admin_mode: str) -> None:
     if admin_mode == "localhost_only":
         expected_status = 200
-    elif admin_mode == "token":
+    elif admin_mode in {"token", "token_hash"}:
         expected_status = 401
     elif admin_mode == "token_required_not_configured":
         expected_status = 503

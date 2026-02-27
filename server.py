@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import hashlib
@@ -32,6 +32,10 @@ CONTACT_DIR = ROOT / "contact_messages"
 CONTACT_JSONL_FILE = CONTACT_DIR / "messages.jsonl"
 CONTACT_DB_FILE = CONTACT_DIR / "messages.db"
 CONTACT_FILE = CONTACT_DB_FILE
+LOGS_DIR = ROOT / "logs"
+ADMIN_AUDIT_FILE = LOGS_DIR / "admin_audit.jsonl"
+ADMIN_TOKEN_HASH_PREFIX = "pbkdf2_sha256"
+ADMIN_TOKEN_HASH_ITERATIONS = 390000
 MAX_BODY_BYTES = 64 * 1024
 IOC_MAX_BODY_BYTES = 256 * 1024
 SMTP_TIMEOUT_SECONDS = 10
@@ -81,6 +85,53 @@ def _env_int(name: str, default: int, minimum: int | None = None) -> int:
     if minimum is not None and value < minimum:
         return minimum
     return value
+
+
+def _hash_admin_token(token: str, *, salt: bytes, iterations: int) -> str:
+    digest = hashlib.pbkdf2_hmac("sha256", token.encode("utf-8"), salt, int(iterations))
+    return digest.hex()
+
+
+def _parse_admin_token_hash(token_hash: str) -> tuple[int, bytes, str] | None:
+    if not token_hash:
+        return None
+    parts = token_hash.split("$")
+    if len(parts) != 4:
+        return None
+    prefix, raw_iterations, raw_salt, raw_digest = parts
+    if prefix != ADMIN_TOKEN_HASH_PREFIX:
+        return None
+    try:
+        iterations = int(raw_iterations)
+        salt = bytes.fromhex(raw_salt)
+    except (TypeError, ValueError):
+        return None
+    digest = raw_digest.strip().lower()
+    if iterations < 100_000:
+        return None
+    if len(salt) < 8:
+        return None
+    if not re.fullmatch(r"[a-f0-9]{64}", digest):
+        return None
+    return iterations, salt, digest
+
+
+def _admin_token_is_configured(config: dict) -> bool:
+    return bool(config.get("token") or config.get("token_hash"))
+
+
+def _verify_admin_token(provided: str, *, plain_token: str | None = None, token_hash: str | None = None) -> bool:
+    candidate = str(provided or "").strip()
+    if not candidate:
+        return False
+    if plain_token and hmac.compare_digest(candidate, str(plain_token)):
+        return True
+    parsed = _parse_admin_token_hash(str(token_hash or ""))
+    if not parsed:
+        return False
+    iterations, salt, expected_digest = parsed
+    computed = _hash_admin_token(candidate, salt=salt, iterations=iterations)
+    return hmac.compare_digest(computed, expected_digest)
 
 
 def _split_recipients(raw: str) -> list[str]:
@@ -213,20 +264,40 @@ def load_smtp_config() -> tuple[dict | None, dict]:
 
 def load_admin_config() -> tuple[dict, dict]:
     token = os.getenv("PORTFOLIO_ADMIN_TOKEN", "").strip()
+    token_hash = os.getenv("PORTFOLIO_ADMIN_TOKEN_HASH", "").strip()
     require_token = _env_bool("PORTFOLIO_ADMIN_REQUIRE_TOKEN", False)
 
-    if token:
-        mode = "token"
+    parsed_hash = _parse_admin_token_hash(token_hash) if token_hash else None
+    if token_hash and not parsed_hash:
+        mode = "token_hash_invalid"
         status = {
-            "enabled": True,
+            "enabled": False,
             "mode": mode,
-            "token_configured": True,
-            "reason": "Admin API requires X-Admin-Token or authenticated session",
+            "token_configured": False,
+            "token_hash_configured": False,
+            "reason": "PORTFOLIO_ADMIN_TOKEN_HASH is invalid. Expected format: pbkdf2_sha256$iterations$salt_hex$hash_hex",
             "api_path": "/api/admin/messages",
             "ui_path": "/admin.html",
             "require_token": True,
         }
-        return {"token": token, "mode": mode, "require_token": True}, status
+        return {"token": None, "token_hash": None, "mode": mode, "require_token": True}, status
+
+    if token or parsed_hash:
+        mode = "token" if token else "token_hash"
+        reason = "Admin API requires X-Admin-Token or authenticated session"
+        if parsed_hash and not token:
+            reason = "Admin API requires X-Admin-Token (validated against PORTFOLIO_ADMIN_TOKEN_HASH) or authenticated session"
+        status = {
+            "enabled": True,
+            "mode": mode,
+            "token_configured": bool(token),
+            "token_hash_configured": bool(parsed_hash),
+            "reason": reason,
+            "api_path": "/api/admin/messages",
+            "ui_path": "/admin.html",
+            "require_token": True,
+        }
+        return {"token": token or None, "token_hash": token_hash if parsed_hash else None, "mode": mode, "require_token": True}, status
 
     if require_token:
         mode = "token_required_not_configured"
@@ -234,24 +305,26 @@ def load_admin_config() -> tuple[dict, dict]:
             "enabled": False,
             "mode": mode,
             "token_configured": False,
-            "reason": "PORTFOLIO_ADMIN_REQUIRE_TOKEN=true but PORTFOLIO_ADMIN_TOKEN is missing",
+            "token_hash_configured": False,
+            "reason": "PORTFOLIO_ADMIN_REQUIRE_TOKEN=true but PORTFOLIO_ADMIN_TOKEN/PORTFOLIO_ADMIN_TOKEN_HASH is missing",
             "api_path": "/api/admin/messages",
             "ui_path": "/admin.html",
             "require_token": True,
         }
-        return {"token": None, "mode": mode, "require_token": True}, status
+        return {"token": None, "token_hash": None, "mode": mode, "require_token": True}, status
 
     mode = "localhost_only"
     status = {
         "enabled": True,
         "mode": mode,
         "token_configured": False,
-        "reason": "Admin API allowed only from localhost unless PORTFOLIO_ADMIN_TOKEN is set",
+        "token_hash_configured": False,
+        "reason": "Admin API allowed only from localhost unless PORTFOLIO_ADMIN_TOKEN or PORTFOLIO_ADMIN_TOKEN_HASH is set",
         "api_path": "/api/admin/messages",
         "ui_path": "/admin.html",
         "require_token": False,
     }
-    return {"token": None, "mode": mode, "require_token": False}, status
+    return {"token": None, "token_hash": None, "mode": mode, "require_token": False}, status
 
 
 def _new_sqlite_connection() -> sqlite3.Connection:
@@ -787,6 +860,39 @@ def _revoke_admin_session_id(session_id: str) -> None:
         ADMIN_SESSIONS.pop(session_id, None)
 
 
+def _append_admin_audit_event(
+    event: str,
+    result: str,
+    *,
+    detail: str = "",
+    client_ip: str = "unknown",
+    path: str = "",
+    user_agent: str = "",
+    metadata: dict | None = None,
+) -> None:
+    entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "event": str(event),
+        "result": str(result),
+        "detail": str(detail),
+        "client_ip": str(client_ip),
+        "path": str(path),
+        "user_agent": str(user_agent),
+        "admin_mode": ADMIN_STATUS.get("mode") if isinstance(ADMIN_STATUS, dict) else "unknown",
+    }
+    if metadata:
+        entry["metadata"] = metadata
+
+    try:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        line = json.dumps(entry, ensure_ascii=False)
+        with ADMIN_AUDIT_LOCK:
+            with ADMIN_AUDIT_FILE.open("a", encoding="utf-8") as fh:
+                fh.write(line + "\n")
+    except OSError:
+        return
+
+
 SMTP_CONFIG, SMTP_STATUS = load_smtp_config()
 ADMIN_CONFIG, ADMIN_STATUS = load_admin_config()
 RATE_LIMIT_CONFIG = _load_rate_limit_config()
@@ -798,6 +904,7 @@ MESSAGES_LOCK = Lock()
 CONTACT_DB_LOCK = Lock()
 ADMIN_SESSIONS: dict[str, int] = {}
 ADMIN_SESSIONS_LOCK = Lock()
+ADMIN_AUDIT_LOCK = Lock()
 
 
 class PortfolioHandler(SimpleHTTPRequestHandler):
@@ -930,6 +1037,7 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
                         "enabled": ADMIN_STATUS["enabled"],
                         "mode": ADMIN_STATUS["mode"],
                         "token_configured": ADMIN_STATUS["token_configured"],
+                        "token_hash_configured": ADMIN_STATUS.get("token_hash_configured", False),
                         "reason": ADMIN_STATUS["reason"],
                         "ui_path": ADMIN_STATUS["ui_path"],
                         "api_path": ADMIN_STATUS["api_path"],
@@ -1044,27 +1152,36 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         return self._send_json({"ok": True, **extract_iocs(text)})
 
     def _handle_admin_login(self):
-        if ADMIN_CONFIG.get("require_token") and not ADMIN_CONFIG.get("token"):
+        if ADMIN_CONFIG.get("require_token") and not _admin_token_is_configured(ADMIN_CONFIG):
+            self._audit_admin_event("admin_login", "denied", detail="required credentials missing")
             return self._send_json(
                 {
                     "ok": False,
-                    "error": "Admin token is required but not configured. Set PORTFOLIO_ADMIN_TOKEN.",
+                    "error": "Admin token is required but not configured. Set PORTFOLIO_ADMIN_TOKEN or PORTFOLIO_ADMIN_TOKEN_HASH.",
                 },
                 status=HTTPStatus.SERVICE_UNAVAILABLE,
             )
 
-        if not ADMIN_CONFIG.get("token"):
+        if not _admin_token_is_configured(ADMIN_CONFIG):
             if self._is_loopback_client():
+                self._audit_admin_event("admin_login", "not_required", detail="localhost-only mode")
                 return self._send_json({"ok": True, "message": "Admin login not required in localhost-only mode", "admin_mode": ADMIN_STATUS["mode"]})
-            return self._send_json({"ok": False, "error": "PORTFOLIO_ADMIN_TOKEN is not configured on the server."}, status=HTTPStatus.BAD_REQUEST)
+            self._audit_admin_event("admin_login", "denied", detail="remote client without configured admin token")
+            return self._send_json({"ok": False, "error": "PORTFOLIO_ADMIN_TOKEN/PORTFOLIO_ADMIN_TOKEN_HASH is not configured on the server."}, status=HTTPStatus.BAD_REQUEST)
 
         try:
             payload = self._read_json_body()
         except ValueError as exc:
+            self._audit_admin_event("admin_login", "error", detail=f"invalid request body: {exc}")
             return self._send_json({"ok": False, "error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
 
         provided = str(payload.get("token", "")).strip()
-        if not provided or not hmac.compare_digest(provided, str(ADMIN_CONFIG["token"])):
+        if not _verify_admin_token(
+            provided,
+            plain_token=ADMIN_CONFIG.get("token"),
+            token_hash=ADMIN_CONFIG.get("token_hash"),
+        ):
+            self._audit_admin_event("admin_login", "denied", detail="invalid admin token")
             return self._send_json({"ok": False, "error": "Invalid admin token"}, status=HTTPStatus.UNAUTHORIZED)
 
         session_id, expires_at = _create_admin_session_id()
@@ -1074,6 +1191,7 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
             max_age=ADMIN_SESSION_TTL_SECONDS,
             secure=self._is_https_request(),
         )
+        self._audit_admin_event("admin_login", "success", detail="session issued")
         return self._send_json(
             {
                 "ok": True,
@@ -1089,6 +1207,9 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         session_id = self._extract_cookie_value(ADMIN_SESSION_COOKIE_NAME)
         if session_id:
             _revoke_admin_session_id(session_id)
+            self._audit_admin_event("admin_logout", "success", detail="session revoked")
+        else:
+            self._audit_admin_event("admin_logout", "success", detail="no active session cookie")
         return self._send_json(
             {"ok": True, "message": "Admin session cleared"},
             extra_headers={
@@ -1441,23 +1562,29 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         client.send_message(message)
 
     def _authorize_admin_api(self) -> bool:
-        if ADMIN_CONFIG.get("require_token") and not ADMIN_CONFIG.get("token"):
+        if ADMIN_CONFIG.get("require_token") and not _admin_token_is_configured(ADMIN_CONFIG):
+            self._audit_admin_event("admin_api_authorize", "denied", detail="required credentials missing")
             self._send_json(
                 {
                     "ok": False,
-                    "error": "Admin API disabled: token is required but PORTFOLIO_ADMIN_TOKEN is not configured.",
+                    "error": "Admin API disabled: token is required but PORTFOLIO_ADMIN_TOKEN/PORTFOLIO_ADMIN_TOKEN_HASH is not configured.",
                 },
                 status=HTTPStatus.SERVICE_UNAVAILABLE,
             )
             return False
 
-        if ADMIN_CONFIG["token"]:
+        if _admin_token_is_configured(ADMIN_CONFIG):
             provided = self.headers.get("X-Admin-Token", "").strip()
-            if provided and hmac.compare_digest(provided, str(ADMIN_CONFIG["token"])):
+            if _verify_admin_token(
+                provided,
+                plain_token=ADMIN_CONFIG.get("token"),
+                token_hash=ADMIN_CONFIG.get("token_hash"),
+            ):
                 return True
             session_id = self._extract_cookie_value(ADMIN_SESSION_COOKIE_NAME)
             if session_id and _validate_admin_session_id(session_id):
                 return True
+            self._audit_admin_event("admin_api_authorize", "denied", detail="missing/invalid token and no valid session")
             self._send_json(
                 {"ok": False, "error": "Unauthorized admin request. Log in or provide X-Admin-Token."},
                 status=HTTPStatus.UNAUTHORIZED,
@@ -1467,10 +1594,11 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         if self._is_loopback_client():
             return True
 
+        self._audit_admin_event("admin_api_authorize", "denied", detail="remote client blocked in localhost-only mode")
         self._send_json(
             {
                 "ok": False,
-                "error": "Admin API is localhost-only unless PORTFOLIO_ADMIN_TOKEN is configured.",
+                "error": "Admin API is localhost-only unless PORTFOLIO_ADMIN_TOKEN or PORTFOLIO_ADMIN_TOKEN_HASH is configured.",
             },
             status=HTTPStatus.FORBIDDEN,
         )
@@ -1495,6 +1623,17 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         if self.client_address and len(self.client_address) > 0:
             return str(self.client_address[0])
         return "unknown"
+
+    def _audit_admin_event(self, event: str, result: str, *, detail: str = "", metadata: dict | None = None) -> None:
+        _append_admin_audit_event(
+            event,
+            result,
+            detail=detail,
+            client_ip=self._client_ip(),
+            path=self._request_path(),
+            user_agent=self.headers.get("User-Agent", ""),
+            metadata=metadata,
+        )
 
     @staticmethod
     def _record_id_from_line(line_number: int, raw_line: str) -> str:
@@ -1561,6 +1700,7 @@ def main():
     if migration.get("legacy_exists"):
         print(f"Legacy JSONL migration -> migrated={migration.get('migrated')}, skipped={migration.get('skipped')}")
     print(f"Admin panel: {ADMIN_STATUS['ui_path']} ({ADMIN_STATUS['reason']})")
+    print(f"Admin audit log: {ADMIN_AUDIT_FILE}")
     if SMTP_STATUS.get("enabled"):
         provider_label = SMTP_STATUS.get("provider") or "custom"
         print(

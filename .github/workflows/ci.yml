@@ -19,12 +19,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.12.10"
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: "24.14.0"
 
       - name: Install test dependencies
         run: |
@@ -36,21 +36,50 @@ jobs:
           fi
 
       - name: Python compile check
-        run: python -m py_compile server.py
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python -m py_compile server.py 2>&1 | tee artifacts/python-compile.log
 
       - name: JS syntax check
         run: |
-          node --check script.js
-          node --check chatbot-upgrade.js
+          mkdir -p artifacts
+          set -o pipefail
+          {
+            echo '--- script.js ---'
+            node --check script.js
+            echo '--- chatbot-upgrade.js ---'
+            node --check chatbot-upgrade.js
+          } 2>&1 | tee artifacts/js-syntax.log
 
       - name: Static HTML sanity
-        run: python scripts/static_sanity.py
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python scripts/static_sanity.py 2>&1 | tee artifacts/static-sanity.log
 
       - name: Accessibility/performance sanity
-        run: python scripts/accessibility_perf_sanity.py
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python scripts/accessibility_perf_sanity.py 2>&1 | tee artifacts/a11y-perf-sanity.log
 
       - name: API smoke tests
-        run: python scripts/api_smoke_test.py --port 8123
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python scripts/api_smoke_test.py --port 8123 2>&1 | tee artifacts/api-smoke.log
 
       - name: Pytest integration tests
-        run: python -m pytest -q
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          python -m pytest -q --junitxml artifacts/pytest-junit.xml 2>&1 | tee artifacts/pytest.log
+
+      - name: Upload CI artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: warn
