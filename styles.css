@@ -3566,6 +3566,13 @@ body::-webkit-scrollbar {
   .hero {
     padding-top: 72px;
   }
+  .nav-links {
+    display: none !important;
+  }
+
+  .theme-toggle {
+    display: none !important;
+  }
 
   .nav-toggle {
     display: inline-flex;
