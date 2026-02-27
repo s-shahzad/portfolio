@@ -1,6 +1,7 @@
 ﻿# Python cache/artifacts
 __pycache__/
 *.py[cod]
+.pytest_cache/
 
 # Runtime logs/pids
 *.log
@@ -16,3 +17,7 @@ contact_messages/*.jsonl
 # Local scans/debug outputs
 mobile-scan/
 styles.css.accidental-truncated-backup-*
+
+# Backup/monitor outputs
+backups/
+logs/monitor/

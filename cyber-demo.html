@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cyber IOC Extractor Demo</title>
+    <meta name="description" content="IOC extraction demo for URLs, IPv4, domains, and hashes via the local Python API." />
     <style>
       :root {
         color-scheme: dark;
@@ -41,6 +42,26 @@
           radial-gradient(circle at 10% 10%, rgba(58, 118, 207, 0.18), transparent 52%),
           radial-gradient(circle at 90% 12%, rgba(70, 173, 147, 0.12), transparent 58%),
           linear-gradient(180deg, #04080d, var(--bg));
+      }
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+      .skip-link:focus {
+        left: .8rem;
+        top: .8rem;
+        width: auto;
+        height: auto;
+        padding: .45rem .7rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        z-index: 1000;
       }
       .wrap { width: min(1240px, calc(100% - 1.2rem)); margin: 0 auto; padding: 1rem 0 2rem; }
       .head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; align-items:center; }
@@ -634,6 +655,8 @@
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+    <main id="mainContent" tabindex="-1">
     <div class="wrap">
       <div class="head">
         <div class="head-copy">
@@ -670,7 +693,7 @@
             <button id="clearBtn" type="button">Clear</button>
             <button id="copyJsonBtn" type="button">Copy JSON</button>
           </div>
-          <div id="status" class="status">Ready.</div>
+          <div id="status" class="status" role="status" aria-live="polite">Ready.</div>
           <div class="pills">
             <span class="pill" id="apiPill">API: checking...</span>
             <span class="pill" id="totalPill">Total IOCs: 0</span>
@@ -698,6 +721,8 @@
         </section>
       </div>
     </div>
+
+    </main>
 
     <button id="themeToggleFab" class="theme-toggle theme-fab" type="button" aria-pressed="false" aria-label="Toggle theme" title="Toggle theme">
       <span class="theme-toggle__glyph" aria-hidden="true">D</span>
@@ -1263,3 +1288,9 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+

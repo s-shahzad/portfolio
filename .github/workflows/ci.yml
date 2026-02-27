@@ -5,6 +5,9 @@ on:
     branches: ["main"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -23,6 +26,15 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then
+            python -m pip install -r requirements-dev.txt
+          else
+            python -m pip install pytest
+          fi
+
       - name: Python compile check
         run: python -m py_compile server.py
 
@@ -34,5 +46,11 @@ jobs:
       - name: Static HTML sanity
         run: python scripts/static_sanity.py
 
+      - name: Accessibility/performance sanity
+        run: python scripts/accessibility_perf_sanity.py
+
       - name: API smoke tests
         run: python scripts/api_smoke_test.py --port 8123
+
+      - name: Pytest integration tests
+        run: python -m pytest -q

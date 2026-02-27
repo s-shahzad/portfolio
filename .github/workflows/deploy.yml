@@ -1,0 +1,54 @@
+﻿name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag (optional)"
+        required: false
+        type: string
+      reason:
+        description: "Deployment reason"
+        required: false
+        default: "manual"
+        type: string
+  repository_dispatch:
+    types: [release_deploy]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, windows]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve deployment context
+        id: context
+        shell: pwsh
+        run: |
+          $tag = '${{ github.event.inputs.release_tag }}'
+          if (-not $tag) {
+            $tag = '${{ github.event.client_payload.tag }}'
+          }
+          if (-not $tag) {
+            $tag = 'manual'
+          }
+
+          $reason = '${{ github.event.inputs.reason }}'
+          if (-not $reason) {
+            $reason = 'repository_dispatch'
+          }
+
+          "release_tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "reason=$reason" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Run deployment script
+        shell: pwsh
+        run: |
+          Write-Host "Deployment reason: ${{ steps.context.outputs.reason }}"
+          Write-Host "Release tag: ${{ steps.context.outputs.release_tag }}"
+          powershell -ExecutionPolicy Bypass -File .\deploy.ps1

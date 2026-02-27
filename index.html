@@ -10,12 +10,15 @@
       content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net; img-src 'self' data: https:; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
     />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY"></script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="icon" href="assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="shortcut icon" href="assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="styles.css?v=20260226-82" />
   </head>
   <body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
     <div class="grain"></div>
 
     <header class="hero">
@@ -80,7 +83,7 @@
             </div>
           </div>
           <div class="hero-photo">
-            <img class="profile-photo" src="assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" loading="eager" decoding="async" fetchpriority="high" />
+            <img class="profile-photo" src="assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" width="1200" height="1200" loading="eager" decoding="async" fetchpriority="high" />
           </div>
           <div class="hero-card">
             <p class="card-title">Currently</p>
@@ -94,7 +97,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="mainContent" tabindex="-1">
       <div id="search-status" class="search-status" aria-live="polite" hidden></div>
       <section id="featured" class="section reveal">
         <div class="container">
@@ -354,7 +357,7 @@
           <div class="edu-list">
             <div class="edu-item">
               <div class="edu-logo-wrap" aria-hidden="true">
-                <img class="edu-logo" src="assets/logos/shu.png" alt="Sacred Heart University logo" loading="lazy" />
+                <img class="edu-logo" src="assets/logos/shu.png" alt="Sacred Heart University logo" width="56" height="56" loading="lazy" decoding="async" />
                 <span class="edu-logo-fallback">SHU</span>
               </div>
               <div class="edu-content">
@@ -366,7 +369,7 @@
             </div>
             <div class="edu-item">
               <div class="edu-logo-wrap" aria-hidden="true">
-                <img class="edu-logo" src="assets/logos/klu.png" alt="Koneru Lakshmaiah College of Engineering logo" loading="lazy" />
+                <img class="edu-logo" src="assets/logos/klu.png" alt="Koneru Lakshmaiah College of Engineering logo" width="56" height="56" loading="lazy" decoding="async" />
                 <span class="edu-logo-fallback">KLU</span>
               </div>
               <div class="edu-content">
@@ -703,5 +706,12 @@
     <script src="chatbot-upgrade.js?v=20260226-02" defer></script>
   </body>
 </html>
+
+
+
+
+
+
+
 
 

@@ -1,0 +1,20 @@
+﻿{
+    email admin@example.com
+}
+
+__DOMAIN__ {
+    encode gzip zstd
+
+    reverse_proxy __BACKEND__
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    log {
+        output file __ACCESS_LOG__
+        format json
+    }
+}

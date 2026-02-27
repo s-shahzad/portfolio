@@ -27,6 +27,13 @@ Target response time: 48 hours.
 - Optional `Strict-Transport-Security` (when HTTPS + `PORTFOLIO_ENABLE_HSTS=true`).
 - Session cookie hardened with `HttpOnly`, `SameSite=Lax`, and `Secure` on HTTPS.
 
+## Repository and CI Safeguards
+
+- Branch protection automation script: `scripts/apply-branch-protection.ps1`
+- CI quality gate: `.github/workflows/ci.yml`
+- Security scans: `.github/workflows/security.yml`
+- Release and deploy workflow chain: `.github/workflows/release.yml`, `.github/workflows/deploy.yml`
+
 ## Recommended Deployment Settings
 
 For LAN/public deployment, use these minimum environment settings:
@@ -35,6 +42,13 @@ For LAN/public deployment, use these minimum environment settings:
 - `PORTFOLIO_ADMIN_REQUIRE_TOKEN=true`
 - `PORTFOLIO_ENABLE_HSTS=true` (only when TLS/HTTPS is active)
 - `PORTFOLIO_STATIC_CACHE_MAX_AGE_SECONDS=604800`
+
+## Operational Hardening
+
+- Run Python API behind HTTPS reverse proxy (`scripts/setup-caddy.ps1`).
+- Run API as a Windows service (`scripts/install-portfolio-service.ps1`).
+- Configure daily DB backups (`scripts/register-backup-task.ps1`).
+- Configure recurring health monitoring (`scripts/register-health-monitor-task.ps1`).
 
 ## Verification
 

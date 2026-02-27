@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio Messages Admin</title>
+    <meta name="description" content="Admin dashboard for portfolio contact messages, token auth, and trend chart management." />
     <style>
       :root {
         color-scheme: dark;
@@ -41,6 +42,26 @@
           radial-gradient(circle at 88% 12%, rgba(60, 167, 143, 0.1), transparent 58%),
           linear-gradient(180deg, #050a11, var(--bg));
         min-height: 100vh;
+      }
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+      .skip-link:focus {
+        left: .8rem;
+        top: .8rem;
+        width: auto;
+        height: auto;
+        padding: .45rem .7rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        z-index: 1000;
       }
       .wrap { width: min(1240px, calc(100% - 1.2rem)); margin: 0 auto; padding: 1rem 0 2rem; }
       .head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.8rem; }
@@ -680,6 +701,8 @@
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+    <main id="mainContent" tabindex="-1">
     <div class="wrap">
       <div class="head">
         <div class="head-copy">
@@ -752,7 +775,7 @@
           <button id="deleteBtn" type="button" class="danger" disabled>Delete Selected</button>
         </div>
 
-        <div id="status" class="status">Ready.</div>
+        <div id="status" class="status" role="status" aria-live="polite">Ready.</div>
 
         <div class="meta">
           <span class="pill" id="modePill">Admin Mode: checking...</span>
@@ -781,7 +804,7 @@
             </div>
           </div>
           <div class="chart-frame">
-            <img id="contactTrendChart" alt="Python-generated contact submissions trend chart" />
+            <img id="contactTrendChart" alt="Python-generated contact submissions trend chart" loading="lazy" decoding="async" />
           </div>
           <div class="note">In token mode, click <strong>Login</strong> first so the image request can use the admin session cookie.</div>
         </div>
@@ -809,6 +832,8 @@
         </div>
       </div>
     </div>
+
+    </main>
 
     <button id="themeToggleFab" class="theme-toggle theme-fab" type="button" aria-pressed="false" aria-label="Toggle theme" title="Toggle theme">
       <span class="theme-toggle__glyph" aria-hidden="true">D</span>
@@ -1594,3 +1619,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+
+

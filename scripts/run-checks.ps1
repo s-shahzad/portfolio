@@ -50,6 +50,11 @@ Invoke-CheckedCommand -Label 'Python compile check' -FilePath $pythonExe -Argume
 Invoke-CheckedCommand -Label 'JS syntax check (script.js)' -FilePath 'node' -Arguments @('--check', 'script.js')
 Invoke-CheckedCommand -Label 'JS syntax check (chatbot-upgrade.js)' -FilePath 'node' -Arguments @('--check', 'chatbot-upgrade.js')
 Invoke-CheckedCommand -Label 'Static HTML sanity' -FilePath $pythonExe -Arguments @('scripts/static_sanity.py')
+Invoke-CheckedCommand -Label 'Accessibility/performance sanity' -FilePath $pythonExe -Arguments @('scripts/accessibility_perf_sanity.py')
 Invoke-CheckedCommand -Label 'API smoke tests' -FilePath $pythonExe -Arguments @('scripts/api_smoke_test.py', '--port', [string]$SmokePort)
+
+if (Test-Path 'tests') {
+    Invoke-CheckedCommand -Label 'Pytest integration tests' -FilePath $pythonExe -Arguments @('-m', 'pytest', '-q')
+}
 
 Write-Host 'All checks passed.'
