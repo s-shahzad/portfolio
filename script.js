@@ -235,13 +235,9 @@
       if (!nav || !mobileMenu || !navToggle || !searchRoot) return;
 
       if (mobileNavQuery.matches) {
-        if (!mobileMenu.contains(searchRoot)) {
-          const firstNavItem = mobileMenu.querySelector("a");
-          if (firstNavItem) {
-            mobileMenu.insertBefore(searchRoot, firstNavItem);
-          } else {
-            mobileMenu.appendChild(searchRoot);
-          }
+        const firstItem = mobileMenu.firstElementChild;
+        if (firstItem !== searchRoot) {
+          mobileMenu.insertBefore(searchRoot, firstItem || null);
         }
       } else {
         if (!nav.contains(searchRoot)) {
