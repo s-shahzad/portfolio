@@ -1,0 +1,18 @@
+﻿# Python cache/artifacts
+__pycache__/
+*.py[cod]
+
+# Runtime logs/pids
+*.log
+*.pid
+
+# Local env overrides
+portfolio.env.local.ps1
+
+# Local data artifacts
+contact_messages/*.db
+contact_messages/*.jsonl
+
+# Local scans/debug outputs
+mobile-scan/
+styles.css.accidental-truncated-backup-*

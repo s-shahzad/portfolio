@@ -1,0 +1,47 @@
+{
+  "updated_at": "2026-02-26T00:00:00Z",
+  "featured": [
+    {
+      "id": "evcs-dos-ml-ieee",
+      "badge": "IEEE",
+      "title": "ML-based DoS Detection for EV Charging Infrastructure",
+      "tags": ["ML", "IDS", "IoT", "EVCS"],
+      "problem": "DoS risk in EV charging networks.",
+      "action": "Built an ML-based intrusion detection approach for EVCS traffic.",
+      "impact": "Strengthened detection readiness for connected infrastructure.",
+      "link": {
+        "href": "https://ieeexplore.ieee.org/document/11275540",
+        "label": "View case study",
+        "external": true
+      }
+    },
+    {
+      "id": "enterprise-risk-threat-analysis",
+      "badge": "SOC / Threat Analysis",
+      "title": "Enterprise Risk & Threat Analysis (Internship)",
+      "tags": ["NIST", "Risk", "IR", "SOC"],
+      "problem": "Limited visibility into security maturity and risk exposure.",
+      "action": "Mapped findings to NIST risk categories and incident patterns.",
+      "impact": "Delivered prioritized remediation guidance tied to business impact.",
+      "link": {
+        "href": "case-studies/enterprise-risk-threat-analysis.html",
+        "label": "View case study",
+        "external": false
+      }
+    },
+    {
+      "id": "hl7-fhir-clinical-integration",
+      "badge": "Healthcare Data",
+      "title": "HL7 -> FHIR Data Integration for Clinical Systems",
+      "tags": ["HL7", "FHIR", "Data QA", "Healthcare"],
+      "problem": "Interoperability gaps across clinical data systems.",
+      "action": "Validated and mapped HL7 messages into FHIR resources.",
+      "impact": "Improved deployment-ready data exchange and compliance.",
+      "link": {
+        "href": "case-studies/hl7-fhir-integration.html",
+        "label": "View case study",
+        "external": false
+      }
+    }
+  ]
+}

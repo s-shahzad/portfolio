@@ -1,0 +1,1265 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber IOC Extractor Demo</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #060c13;
+        --panel: #0d1622;
+        --panel-2: #111c2c;
+        --border: rgba(128, 164, 212, 0.18);
+        --text: #e8f1ff;
+        --muted: #9bb0cc;
+        --accent: #88c2ff;
+        --ok: #9bf2bd;
+        --warn: #ffd990;
+        --err: #ff9b9b;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #eef4fc;
+        --panel: #f9fbff;
+        --panel-2: #f3f8ff;
+        --border: rgba(102, 136, 184, 0.18);
+        --text: #112135;
+        --muted: #5f7390;
+        --accent: #2961a9;
+        --ok: #1c855f;
+        --warn: #9a7100;
+        --err: #b53d3d;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 10% 10%, rgba(58, 118, 207, 0.18), transparent 52%),
+          radial-gradient(circle at 90% 12%, rgba(70, 173, 147, 0.12), transparent 58%),
+          linear-gradient(180deg, #04080d, var(--bg));
+      }
+      .wrap { width: min(1240px, calc(100% - 1.2rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+      .head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; align-items:center; }
+      h1 { margin:0; font-size: clamp(1.1rem, 2.8vw, 1.55rem); }
+      .links { display:flex; flex-wrap:wrap; gap:.45rem; }
+      .links a {
+        color: var(--accent);
+        text-decoration:none;
+        border:1px solid var(--border);
+        background: rgba(121, 164, 227, 0.08);
+        border-radius:999px;
+        padding:.32rem .7rem;
+      }
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: .38rem;
+        min-height: 34px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(121, 164, 227, 0.08);
+        color: var(--text);
+        padding: .32rem .62rem;
+        cursor: pointer;
+      }
+      .theme-toggle__glyph {
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid rgba(128, 164, 212, 0.18);
+        background: rgba(121, 164, 227, 0.08);
+        font-size: .72rem;
+        line-height: 1;
+      }
+      .theme-toggle__text {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .01em;
+      }
+      .theme-fab {
+        position: fixed;
+        right: .9rem;
+        bottom: calc(.9rem + env(safe-area-inset-bottom, 0px));
+        width: 46px;
+        height: 46px;
+        min-height: 46px;
+        padding: 0;
+        border-radius: 14px;
+        justify-content: center;
+        box-shadow: 0 12px 26px rgba(0,0,0,.28);
+        z-index: 18;
+        display: none;
+      }
+      .theme-fab .theme-toggle__text {
+        display: none;
+      }
+      .theme-fab .theme-toggle__glyph {
+        width: 1.45rem;
+        height: 1.45rem;
+        font-size: .78rem;
+      }
+      .theme-toggle,
+      .theme-fab {
+        display: none !important;
+      }
+      .theme-fab {
+        touch-action: none;
+        -ms-touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .theme-fab.is-dragging {
+        cursor: grabbing;
+        box-shadow: 0 16px 30px rgba(0,0,0,.34);
+        transform: scale(1.02);
+      }
+      .viewport-debug {
+        position: fixed;
+        left: .75rem;
+        bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+        z-index: 17;
+        display: none;
+        align-items: center;
+        gap: .4rem;
+        min-height: 30px;
+        max-width: calc(100vw - 6rem);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(9, 15, 24, 0.82);
+        color: var(--text);
+        padding: .25rem .5rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,.24);
+        font: 600 .74rem/1 Consolas, "Courier New", monospace;
+        letter-spacing: .01em;
+        pointer-events: auto;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        outline: none;
+        transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease, transform 120ms ease;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .viewport-debug.is-visible {
+        display: inline-flex;
+      }
+      .viewport-debug:hover,
+      .viewport-debug:focus-visible {
+        border-color: rgba(140, 189, 255, 0.34);
+        box-shadow: 0 10px 22px rgba(0,0,0,.28);
+        transform: translateY(-1px);
+      }
+      .viewport-debug:focus-visible {
+        box-shadow: 0 0 0 2px rgba(120, 178, 251, 0.16), 0 10px 22px rgba(0,0,0,.28);
+      }
+      .viewport-debug.is-copied {
+        border-color: rgba(119, 226, 176, 0.34);
+        background: rgba(26, 84, 56, 0.28);
+      }
+      .viewport-debug.is-copy-fail {
+        border-color: rgba(255, 164, 164, 0.32);
+        background: rgba(94, 38, 38, 0.28);
+      }
+      :root[data-theme="light"] .viewport-debug:hover,
+      :root[data-theme="light"] .viewport-debug:focus-visible {
+        box-shadow: 0 10px 22px rgba(34, 57, 88, .14);
+      }
+      :root[data-theme="light"] .viewport-debug.is-copied {
+        background: rgba(36, 153, 100, 0.12);
+      }
+      :root[data-theme="light"] .viewport-debug.is-copy-fail {
+        background: rgba(204, 78, 78, 0.1);
+      }
+      :root[data-theme="light"] .viewport-debug {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 20px rgba(34, 57, 88, .12);
+      }
+      .ui-debug-reset {
+        position: fixed;
+        left: .75rem;
+        bottom: calc(3.05rem + env(safe-area-inset-bottom, 0px));
+        z-index: 17;
+        display: none;
+        align-items: center;
+        min-height: 26px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(9, 15, 24, 0.72);
+        color: var(--muted);
+        padding: .14rem .46rem;
+        font: 600 .68rem/1 Consolas, "Courier New", monospace;
+        cursor: pointer;
+      }
+      .ui-debug-reset.is-visible { display: inline-flex; }
+      .ui-debug-reset:hover,
+      .ui-debug-reset:focus-visible { border-color: rgba(140, 189, 255, 0.32); color: var(--text); background: rgba(20, 31, 49, 0.84); outline: none; }
+      .ui-debug-reset.is-done { border-color: rgba(119, 226, 176, 0.34); color: #dfffee; }
+      .ui-debug-reset.is-error { border-color: rgba(255, 164, 164, 0.32); color: #ffd7d7; }
+      :root[data-theme="light"] .ui-debug-reset { background: rgba(255,255,255,.9); color: var(--muted); }
+
+      :root[data-theme="light"] body {
+        background:
+          radial-gradient(circle at 10% 10%, rgba(58, 118, 207, 0.12), transparent 56%),
+          radial-gradient(circle at 90% 12%, rgba(70, 173, 147, 0.08), transparent 62%),
+          linear-gradient(180deg, #f8fbff, var(--bg));
+      }
+      :root[data-theme="light"] body::before {
+        opacity: .24 !important;
+      }
+      :root[data-theme="light"] .panel,
+      :root[data-theme="light"] .workflow-step,
+      :root[data-theme="light"] .list-box,
+      :root[data-theme="light"] pre,
+      :root[data-theme="light"] textarea {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 249, 255, 0.96));
+        box-shadow: 0 14px 34px rgba(34, 57, 88, 0.08);
+      }
+      :root[data-theme="light"] button,
+      :root[data-theme="light"] .links a,
+      :root[data-theme="light"] .pill,
+      :root[data-theme="light"] .theme-toggle {
+        background: rgba(90, 132, 209, 0.06);
+      }
+      :root[data-theme="light"] .list-box li,
+      :root[data-theme="light"] pre {
+        color: #21344f;
+      }
+      .layout {
+        margin-top:.85rem;
+        display:grid;
+        gap:.8rem;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
+      }
+      .panel {
+        border:1px solid var(--border);
+        border-radius:14px;
+        background: linear-gradient(180deg, rgba(16, 27, 42, 0.94), rgba(9, 15, 24, 0.94));
+        box-shadow: 0 14px 36px rgba(0,0,0,.22);
+        padding:.85rem;
+      }
+      .panel h2 { margin:0 0 .55rem; font-size:1rem; }
+      .sub { color: var(--muted); font-size:.85rem; margin-bottom:.55rem; }
+      textarea {
+        width:100%;
+        min-height: 320px;
+        resize: vertical;
+        border-radius: 12px;
+        border:1px solid var(--border);
+        background: rgba(13, 23, 36, 0.9);
+        color: var(--text);
+        padding:.75rem;
+        font: 400 .9rem/1.4 Consolas, "Courier New", monospace;
+      }
+      .row { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:.65rem; }
+      button {
+        height: 38px;
+        border-radius:10px;
+        border:1px solid var(--border);
+        color: var(--text);
+        background: rgba(108, 151, 219, 0.12);
+        padding: 0 .8rem;
+        cursor:pointer;
+      }
+      button.primary {
+        background: linear-gradient(180deg, rgba(106, 155, 234, 0.24), rgba(83, 121, 184, 0.18));
+        border-color: rgba(129, 174, 245, 0.28);
+      }
+      button:disabled { opacity:.6; cursor:not-allowed; }
+      .status { min-height:1.2rem; color: var(--muted); font-size:.9rem; margin-top:.55rem; }
+      .status.ok { color: var(--ok); }
+      .status.warn { color: var(--warn); }
+      .status.err { color: var(--err); }
+      .pills { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.55rem; }
+      .pill {
+        border:1px solid var(--border);
+        border-radius:999px;
+        padding:.18rem .56rem;
+        background: rgba(112, 151, 215, 0.08);
+        color: var(--muted);
+        font-size:.82rem;
+      }
+      .pill.ok { color: var(--ok); }
+      .pill.warn { color: var(--warn); }
+      .grid {
+        display:grid;
+        gap:.6rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top:.7rem;
+      }
+      .list-box {
+        border:1px solid var(--border);
+        border-radius:12px;
+        background: rgba(10, 17, 26, 0.82);
+        padding:.65rem;
+        min-height: 140px;
+      }
+      .list-box h3 { margin:0 0 .45rem; font-size:.9rem; }
+      .list-box ul { margin:0; padding-left:1rem; display:grid; gap:.25rem; }
+      .list-box li { word-break: break-word; color:#dceaff; font-size:.86rem; }
+      .list-box .empty { color: var(--muted); font-size:.84rem; }
+      pre {
+        margin:0;
+        white-space:pre-wrap;
+        word-break:break-word;
+        border:1px solid var(--border);
+        border-radius:12px;
+        background: rgba(10, 17, 26, 0.82);
+        padding:.7rem;
+        font: 400 .82rem/1.35 Consolas, "Courier New", monospace;
+        color:#dceaff;
+        max-height: 340px;
+        overflow:auto;
+      }
+      .hint { color: var(--muted); font-size:.82rem; line-height:1.35; margin-top:.55rem; }
+      @media (max-width: 980px) {
+        .layout { grid-template-columns: 1fr; }
+        .grid { grid-template-columns: 1fr; }
+      }
+    
+      /* Modern polish overrides */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 12% 10%, rgba(84, 135, 215, 0.18), transparent 48%),
+          radial-gradient(circle at 88% 18%, rgba(70, 173, 147, 0.14), transparent 56%),
+          linear-gradient(rgba(140, 183, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(140, 183, 255, 0.025) 1px, transparent 1px);
+        background-size: auto, auto, 30px 30px, 30px 30px;
+        opacity: 0.78;
+        z-index: 0;
+      }
+      .wrap { position: relative; z-index: 1; }
+      .head {
+        margin-top: 0.15rem;
+        align-items: flex-start;
+      }
+      .head-copy {
+        display: grid;
+        gap: 0.18rem;
+        max-width: 840px;
+      }
+      .page-kicker {
+        margin: 0;
+        color: #bce2ff;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .head-sub {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.35;
+        font-size: 0.89rem;
+      }
+      h1 {
+        font-family: Bahnschrift, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        letter-spacing: 0.01em;
+      }
+      .links a,
+      button,
+      textarea,
+      .list-box,
+      pre {
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+      }
+      .links a:hover {
+        transform: translateY(-1px);
+        border-color: rgba(136, 194, 255, 0.38);
+        box-shadow: 0 8px 20px rgba(36, 74, 115, 0.18);
+        background: rgba(121, 164, 227, 0.14);
+      }
+      .workflow-band {
+        margin-top: 0.85rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+      .workflow-step {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.55rem;
+        align-items: start;
+        border-radius: 14px;
+        border: 1px solid rgba(128, 164, 212, 0.16);
+        background: linear-gradient(160deg, rgba(18, 28, 44, 0.95), rgba(10, 17, 27, 0.93));
+        box-shadow: inset 0 1px 0 rgba(216, 237, 255, 0.03), 0 12px 24px rgba(0, 0, 0, 0.14);
+        padding: 0.68rem;
+      }
+      .workflow-step .step-index {
+        min-width: 2rem;
+        height: 2rem;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font: 700 0.78rem/1 Consolas, "Courier New", monospace;
+        color: #e2f3ff;
+        border: 1px solid rgba(136, 194, 255, 0.26);
+        background: linear-gradient(180deg, rgba(97, 150, 231, 0.18), rgba(69, 103, 157, 0.14));
+      }
+      .workflow-step .step-copy {
+        display: grid;
+        gap: 0.14rem;
+      }
+      .workflow-step strong {
+        color: #eff7ff;
+        font-size: 0.84rem;
+      }
+      .workflow-step span {
+        color: var(--muted);
+        font-size: 0.77rem;
+        line-height: 1.25;
+      }
+      .layout {
+        margin-top: 0.95rem;
+        gap: 0.95rem;
+        align-items: start;
+      }
+      .panel {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        border-color: rgba(128, 164, 212, 0.22);
+        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.26);
+      }
+      .panel::before {
+        content: "";
+        position: absolute;
+        right: -40px;
+        top: -34px;
+        width: 170px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(116, 173, 255, 0.16), transparent 72%);
+        pointer-events: none;
+      }
+      .panel h2,
+      .panel .sub,
+      .panel textarea,
+      .panel .row,
+      .panel .status,
+      .panel .pills,
+      .panel .hint,
+      .panel .grid,
+      .panel pre {
+        position: relative;
+        z-index: 1;
+      }
+      .panel h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .input-panel h2::before,
+      .output-panel h2::before {
+        content: "";
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #8ecfff, #4a89d6);
+        box-shadow: 0 0 0 4px rgba(120, 179, 255, 0.1);
+      }
+      textarea {
+        min-height: 338px;
+        border-radius: 14px;
+        border-color: rgba(128, 164, 212, 0.2);
+        background:
+          linear-gradient(180deg, rgba(13, 23, 36, 0.94), rgba(10, 18, 28, 0.94));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 -10px 24px rgba(5, 10, 17, 0.12);
+      }
+      textarea:focus {
+        outline: none;
+        border-color: rgba(136, 194, 255, 0.5);
+        box-shadow: 0 0 0 3px rgba(102, 164, 240, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        border-color: rgba(136, 194, 255, 0.34);
+        box-shadow: 0 10px 18px rgba(18, 35, 56, 0.2);
+      }
+      .pills {
+        gap: 0.48rem;
+      }
+      .pill {
+        border-color: rgba(128, 164, 212, 0.2);
+        background: linear-gradient(180deg, rgba(112, 151, 215, 0.1), rgba(112, 151, 215, 0.05));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+      .list-box {
+        border-radius: 14px;
+        border-color: rgba(128, 164, 212, 0.18);
+        background:
+          linear-gradient(180deg, rgba(10, 17, 26, 0.9), rgba(8, 14, 22, 0.9));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+      .list-box h3 {
+        color: #ddecff;
+        letter-spacing: 0.02em;
+      }
+      .list-box ul {
+        padding-left: 1rem;
+      }
+      .list-box li::marker {
+        color: rgba(136, 194, 255, 0.8);
+      }
+      pre {
+        border-radius: 14px;
+        border-color: rgba(128, 164, 212, 0.18);
+        background:
+          linear-gradient(180deg, rgba(10, 17, 26, 0.93), rgba(8, 14, 22, 0.94));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+      .hint {
+        margin-top: 0.65rem;
+        padding-top: 0.55rem;
+        border-top: 1px dashed rgba(128, 164, 212, 0.12);
+      }
+      @media (max-width: 1100px) {
+        .workflow-band {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 640px) {
+        .workflow-band {
+          grid-template-columns: 1fr;
+        }
+        .head-sub {
+          font-size: 0.84rem;
+        }
+        .links {
+          width: 100%;
+        }
+        .theme-toggle {
+          margin-left: auto;
+        }
+      }
+      @media (max-width: 560px) {
+        .theme-toggle__text {
+          display: none;
+        }
+        .theme-toggle {
+          padding-inline: .46rem;
+          min-width: 2rem;
+          justify-content: center;
+        }
+      }
+      @media (max-width: 900px) {
+        .theme-fab {
+          display: inline-flex;
+        }
+      }
+      @media (max-width: 480px) {
+        .wrap {
+          width: min(1240px, calc(100% - .8rem));
+          padding-top: .8rem;
+        }
+        .theme-fab {
+          right: .7rem;
+          bottom: calc(.7rem + env(safe-area-inset-bottom, 0px));
+          width: 44px;
+          height: 44px;
+          min-height: 44px;
+        }
+        .page-kicker {
+          font-size: .66rem;
+          letter-spacing: .13em;
+        }
+        h1 {
+          line-height: 1.12;
+        }
+        .viewport-debug {
+          left: .6rem;
+          bottom: calc(.6rem + env(safe-area-inset-bottom, 0px));
+          font-size: .68rem;
+          padding: .22rem .42rem;
+          max-width: calc(100vw - 5.4rem);
+        }
+        .ui-debug-reset {
+          left: .6rem;
+          bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+          font-size: .64rem;
+          padding: .12rem .4rem;
+        }
+   
+        .head-sub,
+        .sub,
+        .hint,
+        .pill,
+        .list-box .empty {
+          font-size: .8rem;
+          line-height: 1.35;
+        }
+        textarea {
+          min-height: 280px;
+          font-size: 16px;
+          line-height: 1.45;
+          padding: .68rem;
+        }
+        button {
+          font-size: .85rem;
+        }
+        .list-box li,
+        pre {
+          font-size: .8rem;
+          line-height: 1.38;
+        }
+        .list-box h3 {
+          font-size: .84rem;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .head,
+        .workflow-step,
+        .panel {
+          animation: cyberRise 420ms ease both;
+        }
+        .workflow-step:nth-child(2) { animation-delay: 60ms; }
+        .workflow-step:nth-child(3) { animation-delay: 100ms; }
+        .workflow-step:nth-child(4) { animation-delay: 140ms; }
+        @keyframes cyberRise {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="head-copy">
+          <p class="page-kicker">Threat Intel Utility</p>
+          <h1>Cyber IOC Extractor Demo (Python API)</h1>
+          <p class="head-sub">Paste evidence, extract indicators, review grouped output, and export JSON from a cleaner modern workflow.</p>
+        </div>
+        <div class="links">
+          <a href="/" target="_blank" rel="noopener">Portfolio</a>
+          <a href="/admin.html" target="_blank" rel="noopener">Admin Messages</a>
+          <a href="/api/health" target="_blank" rel="noopener">API Health</a>
+          <button id="themeToggleBtn" class="theme-toggle" type="button" aria-pressed="false" title="Toggle theme">
+            <span class="theme-toggle__glyph" aria-hidden="true">D</span>
+            <span class="theme-toggle__text">Dark</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="workflow-band" aria-label="IOC extraction workflow steps">
+        <div class="workflow-step"><span class="step-index">01</span><div class="step-copy"><strong>Paste</strong><span>Logs, emails, or incident notes</span></div></div>
+        <div class="workflow-step"><span class="step-index">02</span><div class="step-copy"><strong>Extract</strong><span>Python API parses URLs, IPs, domains, hashes</span></div></div>
+        <div class="workflow-step"><span class="step-index">03</span><div class="step-copy"><strong>Review</strong><span>Inspect grouped indicators and counts</span></div></div>
+        <div class="workflow-step"><span class="step-index">04</span><div class="step-copy"><strong>Export</strong><span>Copy JSON or reuse in another workflow</span></div></div>
+      </div>
+
+      <div class="layout">
+        <section class="panel input-panel">
+          <h2>Input</h2>
+          <div class="sub">Paste incident notes, logs, email text, or threat intel snippets. The Python backend extracts common IOCs.</div>
+          <textarea id="iocInput" spellcheck="false"></textarea>
+          <div class="row">
+            <button id="analyzeBtn" type="button" class="primary">Extract IOCs</button>
+            <button id="sampleBtn" type="button">Load Sample</button>
+            <button id="clearBtn" type="button">Clear</button>
+            <button id="copyJsonBtn" type="button">Copy JSON</button>
+          </div>
+          <div id="status" class="status">Ready.</div>
+          <div class="pills">
+            <span class="pill" id="apiPill">API: checking...</span>
+            <span class="pill" id="totalPill">Total IOCs: 0</span>
+            <span class="pill" id="urlPill">URLs: 0</span>
+            <span class="pill" id="ipPill">IPv4: 0</span>
+            <span class="pill" id="domainPill">Domains: 0</span>
+            <span class="pill" id="md5Pill">MD5: 0</span>
+            <span class="pill" id="sha1Pill">SHA1: 0</span>
+            <span class="pill" id="sha256Pill">SHA256: 0</span>
+          </div>
+          <div class="hint">Endpoint: <code>/api/cyber/ioc/extract</code>. This is a local demo parser, not a full SIEM or threat intel platform.</div>
+        </section>
+
+        <section class="panel output-panel">
+          <h2>Parsed Output</h2>
+          <div class="sub">Extracted indicators grouped by type.</div>
+          <div class="grid">
+            <div class="list-box"><h3>URLs</h3><div id="urlsBox"></div></div>
+            <div class="list-box"><h3>IPv4 Addresses</h3><div id="ipv4Box"></div></div>
+            <div class="list-box"><h3>Domains</h3><div id="domainsBox"></div></div>
+            <div class="list-box"><h3>Hashes</h3><div id="hashesBox"></div></div>
+          </div>
+          <div class="sub" style="margin-top:.7rem;">Raw JSON Response</div>
+          <pre id="jsonOut">{}</pre>
+        </section>
+      </div>
+    </div>
+
+    <button id="themeToggleFab" class="theme-toggle theme-fab" type="button" aria-pressed="false" aria-label="Toggle theme" title="Toggle theme">
+      <span class="theme-toggle__glyph" aria-hidden="true">D</span>
+    </button>
+
+    <div id="viewportDebugBadge" class="viewport-debug" hidden aria-hidden="true"></div>
+    <button id="uiDebugResetBtn" class="ui-debug-reset" type="button" hidden aria-label="Reset UI debug state">Reset UI debug</button>
+
+    <script>
+      (() => {
+        const THEME_KEY = "portfolio_theme";
+        const SAMPLE_TEXT = [
+          "SOC note:",
+          "User received phishing email linking to https://secure-payments-check.example/login and backup URL http://45.77.12.44/reset.",
+          "DNS queries observed for login-office365-alerts.net and cdn.example.org.",
+          "Suspicious binary hashes:",
+          "MD5: d41d8cd98f00b204e9800998ecf8427e",
+          "SHA1: da39a3ee5e6b4b0d3255bfef95601890afd80709",
+          "SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "Src IP 192.168.1.10 attempted outbound to 104.26.10.78 and 8.8.8.8"
+        ].join("\n");
+
+        const els = {
+          input: document.getElementById("iocInput"),
+          analyzeBtn: document.getElementById("analyzeBtn"),
+          sampleBtn: document.getElementById("sampleBtn"),
+          clearBtn: document.getElementById("clearBtn"),
+          copyJsonBtn: document.getElementById("copyJsonBtn"),
+          themeToggleBtn: document.getElementById("themeToggleBtn"),
+          themeToggleFab: document.getElementById("themeToggleFab"),
+          viewportDebugBadge: document.getElementById("viewportDebugBadge"),
+          uiDebugResetBtn: document.getElementById("uiDebugResetBtn"),
+          status: document.getElementById("status"),
+          apiPill: document.getElementById("apiPill"),
+          totalPill: document.getElementById("totalPill"),
+          urlPill: document.getElementById("urlPill"),
+          ipPill: document.getElementById("ipPill"),
+          domainPill: document.getElementById("domainPill"),
+          md5Pill: document.getElementById("md5Pill"),
+          sha1Pill: document.getElementById("sha1Pill"),
+          sha256Pill: document.getElementById("sha256Pill"),
+          urlsBox: document.getElementById("urlsBox"),
+          ipv4Box: document.getElementById("ipv4Box"),
+          domainsBox: document.getElementById("domainsBox"),
+          hashesBox: document.getElementById("hashesBox"),
+          jsonOut: document.getElementById("jsonOut"),
+        };
+
+        let lastJson = {};
+
+
+        const THEME_FAB_POS_PREFIX = "portfolio_theme_fab_pos:";
+        let themeFabDragHandle = { shouldIgnoreClick: () => false, resetPosition: () => false };
+
+        const getPreferredTheme = () => {
+          try {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === "light" || saved === "dark") return saved;
+          } catch {}
+          return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        };
+
+        const getThemeButtons = () => [els.themeToggleBtn, els.themeToggleFab].filter(Boolean);
+
+        const applyTheme = (theme) => {
+          const next = theme === "light" ? "light" : "dark";
+          const isLight = next === "light";
+          document.documentElement.setAttribute("data-theme", next);
+          getThemeButtons().forEach((btn) => {
+            btn.setAttribute("aria-pressed", String(isLight));
+            btn.setAttribute("aria-label", isLight ? "Switch to dark theme" : "Switch to light theme");
+            btn.title = isLight ? "Switch to dark theme" : "Switch to light theme";
+            const glyph = btn.querySelector(".theme-toggle__glyph");
+            const label = btn.querySelector(".theme-toggle__text");
+            if (glyph) glyph.textContent = isLight ? "L" : "D";
+            if (label) label.textContent = isLight ? "Light" : "Dark";
+          });
+        };
+
+        const setupThemeFabDrag = () => {
+          const btn = els.themeToggleFab;
+          if (!btn) return { shouldIgnoreClick: () => false, resetPosition: () => false };
+
+          const positionKey = `${THEME_FAB_POS_PREFIX}${window.location.pathname || "page"}`;
+          const drag = {
+            active: false,
+            moved: false,
+            pointerId: null,
+            startX: 0,
+            startY: 0,
+            originLeft: 0,
+            originTop: 0,
+            ignoreClickUntil: 0,
+          };
+
+          const clampPos = (left, top) => {
+            const margin = 8;
+            const width = btn.offsetWidth || 46;
+            const height = btn.offsetHeight || 46;
+            const maxLeft = Math.max(margin, window.innerWidth - width - margin);
+            const maxTop = Math.max(margin, window.innerHeight - height - margin);
+            return {
+              left: Math.min(maxLeft, Math.max(margin, left)),
+              top: Math.min(maxTop, Math.max(margin, top)),
+            };
+          };
+
+          const placeBtn = (left, top) => {
+            const pos = clampPos(left, top);
+            btn.style.left = `${pos.left}px`;
+            btn.style.top = `${pos.top}px`;
+            btn.style.right = "auto";
+            btn.style.bottom = "auto";
+            return pos;
+          };
+
+          const saveBtnPosition = () => {
+            const left = Number.parseFloat(btn.style.left || "");
+            const top = Number.parseFloat(btn.style.top || "");
+            if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+            try {
+              localStorage.setItem(positionKey, JSON.stringify({ left, top }));
+            } catch {}
+          };
+
+          const restoreBtnPosition = () => {
+            let parsed = null;
+            try {
+              const raw = localStorage.getItem(positionKey);
+              if (!raw) return;
+              parsed = JSON.parse(raw);
+            } catch {
+              return;
+            }
+            const left = Number(parsed?.left);
+            const top = Number(parsed?.top);
+            if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+            placeBtn(left, top);
+          };
+
+          const resetPosition = () => {
+            try { localStorage.removeItem(positionKey); } catch {}
+            btn.style.left = "";
+            btn.style.top = "";
+            btn.style.right = "";
+            btn.style.bottom = "";
+            btn.classList.remove("is-dragging");
+            return true;
+          };
+
+          const finishDrag = (event) => {
+            if (!drag.active) return;
+            if (event && drag.pointerId !== null && event.pointerId != null && event.pointerId !== drag.pointerId) return;
+            drag.active = false;
+            if (drag.moved) {
+              drag.ignoreClickUntil = (window.performance?.now?.() ?? Date.now()) + 280;
+              saveBtnPosition();
+            }
+            drag.pointerId = null;
+            btn.classList.remove("is-dragging");
+            try { if (event && typeof btn.releasePointerCapture === "function" && event.pointerId != null) btn.releasePointerCapture(event.pointerId); } catch {}
+          };
+
+          btn.addEventListener("pointerdown", (event) => {
+            if (event.pointerType !== "touch" && event.pointerType !== "pen" && event.button !== 0) return;
+            const rect = btn.getBoundingClientRect();
+            drag.active = true;
+            drag.moved = false;
+            drag.pointerId = event.pointerId ?? null;
+            drag.startX = event.clientX;
+            drag.startY = event.clientY;
+            drag.originLeft = rect.left;
+            drag.originTop = rect.top;
+            btn.classList.add("is-dragging");
+            try { if (typeof btn.setPointerCapture === "function" && event.pointerId != null) btn.setPointerCapture(event.pointerId); } catch {}
+          });
+
+          btn.addEventListener("pointermove", (event) => {
+            if (!drag.active) return;
+            if (drag.pointerId !== null && event.pointerId !== drag.pointerId) return;
+            const dx = event.clientX - drag.startX;
+            const dy = event.clientY - drag.startY;
+            if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+            drag.moved = true;
+            event.preventDefault();
+            placeBtn(drag.originLeft + dx, drag.originTop + dy);
+          });
+
+          btn.addEventListener("pointerup", finishDrag);
+          btn.addEventListener("pointercancel", finishDrag);
+          btn.addEventListener("lostpointercapture", finishDrag);
+
+          window.addEventListener("resize", () => {
+            if (!btn.style.left || !btn.style.top) return;
+            const currentLeft = Number.parseFloat(btn.style.left);
+            const currentTop = Number.parseFloat(btn.style.top);
+            if (!Number.isFinite(currentLeft) || !Number.isFinite(currentTop)) return;
+            placeBtn(currentLeft, currentTop);
+            saveBtnPosition();
+          }, { passive: true });
+
+          restoreBtnPosition();
+
+          return {
+            shouldIgnoreClick: () => (window.performance?.now?.() ?? Date.now()) < drag.ignoreClickUntil,
+            resetPosition,
+          };
+        };
+
+        const setupViewportDebugBadge = () => {
+          const badge = els.viewportDebugBadge;
+          const resetBtn = els.uiDebugResetBtn;
+          if (!badge) return;
+
+          const host = window.location.hostname || "";
+          const isPrivateHost = host === "localhost"
+            || host === "127.0.0.1"
+            || host === "::1"
+            || /^10\./.test(host)
+            || /^192\.168\./.test(host)
+            || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host);
+          const params = new URLSearchParams(window.location.search);
+          const forced = params.get("debugViewport");
+          const enabled = forced === "1" || (forced != null && forced !== "0") || window.location.protocol === "file:" || isPrivateHost;
+          if (!enabled) return;
+
+          const getBp = (w) => {
+            if (w <= 480) return "phone-xs";
+            if (w <= 768) return "phone";
+            if (w <= 1024) return "tablet";
+            if (w <= 1280) return "laptop";
+            return "desktop";
+          };
+
+          const setBadgeVisualState = (kind) => {
+            badge.classList.remove("is-copied", "is-copy-fail");
+            if (kind === "copied") badge.classList.add("is-copied");
+            if (kind === "error") badge.classList.add("is-copy-fail");
+          };
+          const setResetBtnState = (kind) => {
+            if (!resetBtn) return;
+            resetBtn.classList.remove("is-done", "is-error");
+            if (kind === "done") resetBtn.classList.add("is-done");
+            if (kind === "error") resetBtn.classList.add("is-error");
+          };
+
+          const fallbackCopyText = (value) => {
+            const ta = document.createElement("textarea");
+            ta.value = value;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            ta.style.pointerEvents = "none";
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            let ok = false;
+            try { ok = document.execCommand("copy"); } catch { ok = false; }
+            ta.remove();
+            return ok;
+          };
+
+          const clearStoredUiDebugState = () => {
+            try { localStorage.removeItem(THEME_KEY); } catch {}
+            try {
+              for (let i = localStorage.length - 1; i >= 0; i -= 1) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith(THEME_FAB_POS_PREFIX)) localStorage.removeItem(key);
+              }
+            } catch {}
+            if (themeFabDragHandle && typeof themeFabDragHandle.resetPosition === "function") themeFabDragHandle.resetPosition();
+            applyTheme(getPreferredTheme());
+          };
+
+          let restoreTimer = 0;
+          let resetBtnTimer = 0;
+          let lastViewportText = "";
+          let ignoreClickUntil = 0;
+          const press = { active: false, pointerId: null, startX: 0, startY: 0, timerId: 0 };
+
+          const restoreBadgeText = () => {
+            if (!lastViewportText) return;
+            badge.textContent = lastViewportText;
+            setBadgeVisualState("");
+            badge.title = "Tap to copy viewport info. Long-press to reset theme-toggle position";
+          };
+          const flashBadge = (message, kind) => {
+            window.clearTimeout(restoreTimer);
+            badge.textContent = message;
+            setBadgeVisualState(kind);
+            badge.title = kind === "copied" ? "Copied" : "Copy failed";
+            restoreTimer = window.setTimeout(restoreBadgeText, 950);
+          };
+          const flashResetBtn = (message, kind) => {
+            if (!resetBtn) return;
+            window.clearTimeout(resetBtnTimer);
+            const original = resetBtn.dataset.baseLabel || "Reset UI debug";
+            resetBtn.textContent = message;
+            setResetBtnState(kind);
+            resetBtnTimer = window.setTimeout(() => { resetBtn.textContent = original; setResetBtnState(""); }, 1050);
+          };
+
+          const copyViewportInfo = async () => {
+            const value = lastViewportText || badge.textContent.trim();
+            if (!value) return;
+            let copied = false;
+            try {
+              if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(value); copied = true; }
+              else { copied = fallbackCopyText(value); }
+            } catch { copied = fallbackCopyText(value); }
+            flashBadge(copied ? "Copied viewport info" : "Copy failed", copied ? "copied" : "error");
+          };
+
+          const resetUiDebug = (source) => {
+            if (source === "longpress") {
+              const ok = !!(themeFabDragHandle && typeof themeFabDragHandle.resetPosition === "function" && themeFabDragHandle.resetPosition());
+              flashBadge(ok ? "Theme toggle position reset" : "No floating toggle on this page", ok ? "copied" : "error");
+              return;
+            }
+            clearStoredUiDebugState();
+            flashBadge("UI debug state reset", "copied");
+            flashResetBtn("Reset", "done");
+          };
+          const cancelLongPress = () => {
+            press.active = false;
+            if (press.timerId) { window.clearTimeout(press.timerId); press.timerId = 0; }
+          };
+
+          badge.addEventListener("pointerdown", (event) => {
+            if (event.button != null && event.button !== 0) return;
+            cancelLongPress();
+            press.active = true;
+            press.pointerId = event.pointerId ?? null;
+            press.startX = event.clientX; press.startY = event.clientY;
+            press.timerId = window.setTimeout(() => {
+              if (!press.active) return;
+              ignoreClickUntil = (window.performance?.now?.() ?? Date.now()) + 420;
+              cancelLongPress();
+              resetUiDebug("longpress");
+            }, 560);
+          });
+          badge.addEventListener("pointermove", (event) => {
+            if (!press.active) return;
+            if (press.pointerId !== null && event.pointerId !== press.pointerId) return;
+            if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 8) cancelLongPress();
+          });
+          badge.addEventListener("pointerup", cancelLongPress);
+          badge.addEventListener("pointercancel", cancelLongPress);
+          badge.addEventListener("pointerleave", cancelLongPress);
+          badge.addEventListener("lostpointercapture", cancelLongPress);
+
+          const render = () => {
+            const w = Math.round(window.innerWidth || document.documentElement.clientWidth || 0);
+            const h = Math.round(window.innerHeight || document.documentElement.clientHeight || 0);
+            const bp = getBp(w);
+            const orientation = w >= h ? "land" : "port";
+            const dpr = Number(window.devicePixelRatio || 1).toFixed(2).replace(/\.00$/, "");
+            lastViewportText = `${w}x${h} ${bp} ${orientation} dpr:${dpr}`;
+            if (!badge.classList.contains("is-copied") && !badge.classList.contains("is-copy-fail")) badge.textContent = lastViewportText;
+            badge.dataset.bp = bp;
+            badge.dataset.viewportText = lastViewportText;
+            badge.hidden = false; badge.setAttribute("aria-hidden", "false"); badge.classList.add("is-visible");
+          };
+
+          badge.setAttribute("role", "button");
+          badge.tabIndex = 0;
+          badge.setAttribute("aria-label", "Viewport debug info. Tap to copy viewport info. Long-press to reset floating theme toggle position");
+          badge.title = "Tap to copy viewport info. Long-press to reset theme-toggle position";
+          if (badge.dataset.copyInit !== "1") {
+            badge.dataset.copyInit = "1";
+            badge.addEventListener("click", (event) => {
+              if ((window.performance?.now?.() ?? Date.now()) < ignoreClickUntil) { event.preventDefault(); return; }
+              void copyViewportInfo();
+            });
+            badge.addEventListener("keydown", (event) => {
+              if (event.key !== "Enter" && event.key !== " ") return;
+              event.preventDefault();
+              void copyViewportInfo();
+            });
+          }
+
+          if (resetBtn) {
+            resetBtn.hidden = false;
+            resetBtn.classList.add("is-visible");
+            resetBtn.dataset.baseLabel = resetBtn.dataset.baseLabel || resetBtn.textContent || "Reset UI debug";
+            resetBtn.title = "Clear saved theme and floating-toggle positions";
+            if (resetBtn.dataset.init !== "1") {
+              resetBtn.dataset.init = "1";
+              resetBtn.addEventListener("click", () => { resetUiDebug("button"); });
+            }
+          }
+
+          render();
+          window.addEventListener("resize", render, { passive: true });
+          window.addEventListener("orientationchange", render);
+        };
+
+        const setupThemeToggle = () => {
+          try { localStorage.removeItem(THEME_KEY); } catch {}
+          applyTheme("dark");
+          themeFabDragHandle = { shouldIgnoreClick: () => false, resetPosition: () => false };
+          getThemeButtons().forEach((btn) => {
+            btn.hidden = true;
+            btn.disabled = true;
+            btn.tabIndex = -1;
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          });
+        };
+
+        const setStatus = (text, kind = "") => {
+          els.status.textContent = text;
+          els.status.className = kind ? `status ${kind}` : "status";
+        };
+
+        const setPill = (pill, text, kind = "") => {
+          pill.textContent = text;
+          pill.classList.remove("ok", "warn", "err");
+          if (kind) pill.classList.add(kind);
+        };
+
+        const escapeHtml = (value) => String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+        const renderList = (root, values) => {
+          if (!Array.isArray(values) || !values.length) {
+            root.innerHTML = '<div class="empty">No items.</div>';
+            return;
+          }
+          root.innerHTML = `<ul>${values
+            .map((v) => {
+              if (v && typeof v === "object") {
+                const value = Object.prototype.hasOwnProperty.call(v, "value") ? v.value : JSON.stringify(v);
+                const classification = Object.prototype.hasOwnProperty.call(v, "classification") ? v.classification : "";
+                const suffix = classification ? ` (${escapeHtml(classification)})` : "";
+                return `<li>${escapeHtml(value)}${suffix}</li>`;
+              }
+              return `<li>${escapeHtml(v)}</li>`;
+            })
+            .join("")}</ul>`;
+        };
+
+        const renderHashes = (hashes) => {
+          const md5 = Array.isArray(hashes?.md5) ? hashes.md5 : [];
+          const sha1 = Array.isArray(hashes?.sha1) ? hashes.sha1 : [];
+          const sha256 = Array.isArray(hashes?.sha256) ? hashes.sha256 : [];
+          const blocks = [];
+          if (md5.length) blocks.push(`<div><strong>MD5</strong><ul>${md5.map((v) => `<li>${escapeHtml(v)}</li>`).join("")}</ul></div>`);
+          if (sha1.length) blocks.push(`<div><strong>SHA1</strong><ul>${sha1.map((v) => `<li>${escapeHtml(v)}</li>`).join("")}</ul></div>`);
+          if (sha256.length) blocks.push(`<div><strong>SHA256</strong><ul>${sha256.map((v) => `<li>${escapeHtml(v)}</li>`).join("")}</ul></div>`);
+          els.hashesBox.innerHTML = blocks.length ? blocks.join("") : '<div class="empty">No hash indicators.</div>';
+        };
+
+        const updateCountPills = (data) => {
+          const counts = data?.counts || {};
+          setPill(els.totalPill, `Total IOCs: ${counts.total_iocs ?? 0}`, "ok");
+          setPill(els.urlPill, `URLs: ${counts.urls ?? 0}`);
+          setPill(els.ipPill, `IPv4: ${counts.ipv4 ?? 0}`);
+          setPill(els.domainPill, `Domains: ${counts.domains ?? 0}`);
+          setPill(els.md5Pill, `MD5: ${counts.md5 ?? 0}`);
+          setPill(els.sha1Pill, `SHA1: ${counts.sha1 ?? 0}`);
+          setPill(els.sha256Pill, `SHA256: ${counts.sha256 ?? 0}`);
+        };
+
+        const renderResult = (data) => {
+          renderList(els.urlsBox, data?.urls || []);
+          renderList(els.ipv4Box, data?.ipv4 || []);
+          renderList(els.domainsBox, data?.domains || []);
+          renderHashes(data?.hashes || {});
+          updateCountPills(data || {});
+          lastJson = data || {};
+          els.jsonOut.textContent = JSON.stringify(data || {}, null, 2);
+        };
+
+        const analyze = async () => {
+          const text = els.input.value.trim();
+          if (!text) {
+            setStatus("Paste text to analyze first.", "warn");
+            return;
+          }
+          els.analyzeBtn.disabled = true;
+          setStatus("Extracting IOCs via Python API...", "warn");
+          try {
+            if (window.location.protocol === "file:") {
+              throw new Error("Open this page through the local Python server (not file://)");
+            }
+            const response = await fetch("/api/cyber/ioc/extract", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify({ text }),
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data?.ok) {
+              throw new Error(data?.error || `Request failed (${response.status})`);
+            }
+            setPill(els.apiPill, "API: online", "ok");
+            renderResult(data);
+            setStatus(`IOC extraction complete. Total: ${data?.counts?.total_iocs ?? 0}.`, "ok");
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "Unable to analyze input";
+            setPill(els.apiPill, "API: unavailable", "err");
+            setStatus(message, "err");
+          } finally {
+            els.analyzeBtn.disabled = false;
+          }
+        };
+
+        const loadHealth = async () => {
+          try {
+            const response = await fetch("/api/health", { headers: { Accept: "application/json" } });
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data?.ok) throw new Error(`Health failed (${response.status})`);
+            setPill(els.apiPill, `API: online (${data.server || "server"})`, "ok");
+          } catch {
+            if (window.location.protocol === "file:") {
+              setPill(els.apiPill, "API: file preview mode", "warn");
+              setStatus("Open via python server.py to call the IOC API.", "warn");
+            } else {
+              setPill(els.apiPill, "API: unavailable", "err");
+            }
+          }
+        };
+
+        const clearAll = () => {
+          els.input.value = "";
+          renderResult({ counts: {} });
+          setStatus("Cleared input and results.", "warn");
+        };
+
+        const copyJson = async () => {
+          try {
+            await navigator.clipboard.writeText(JSON.stringify(lastJson || {}, null, 2));
+            setStatus("JSON copied to clipboard.", "ok");
+          } catch {
+            setStatus("Clipboard copy failed. Select and copy manually from Raw JSON Response.", "warn");
+          }
+        };
+
+        setupThemeToggle();
+        setupViewportDebugBadge();
+
+        els.sampleBtn.addEventListener("click", () => {
+          els.input.value = SAMPLE_TEXT;
+          setStatus("Sample loaded. Click Extract IOCs.", "warn");
+        });
+        els.clearBtn.addEventListener("click", clearAll);
+        els.copyJsonBtn.addEventListener("click", () => { void copyJson(); });
+        els.analyzeBtn.addEventListener("click", () => { void analyze(); });
+        els.input.addEventListener("keydown", (event) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+            event.preventDefault();
+            void analyze();
+          }
+        });
+
+        els.input.value = SAMPLE_TEXT;
+        renderResult({ counts: {} });
+        void loadHealth();
+      })();
+    </script>
+  </body>
+</html>

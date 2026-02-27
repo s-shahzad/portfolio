@@ -1,0 +1,1596 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Messages Admin</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #06101a;
+        --panel: #0d1724;
+        --panel-2: #121f31;
+        --border: rgba(149, 182, 226, 0.18);
+        --text: #eaf2ff;
+        --muted: #9fb2cc;
+        --accent: #82b8ff;
+        --ok: #97efb8;
+        --warn: #ffd88f;
+        --danger: #ff9b9b;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #edf3fb;
+        --panel: #f9fbff;
+        --panel-2: #f3f7ff;
+        --border: rgba(102, 136, 184, 0.18);
+        --text: #102033;
+        --muted: #5d718d;
+        --accent: #295ca2;
+        --ok: #19855f;
+        --warn: #9a6f00;
+        --danger: #b53c3c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background:
+          radial-gradient(circle at 10% 8%, rgba(90, 132, 209, 0.18), transparent 56%),
+          radial-gradient(circle at 88% 12%, rgba(60, 167, 143, 0.1), transparent 58%),
+          linear-gradient(180deg, #050a11, var(--bg));
+        min-height: 100vh;
+      }
+      .wrap { width: min(1240px, calc(100% - 1.2rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+      .head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.8rem; }
+      h1 { margin:0; font-size: clamp(1.05rem, 2.7vw, 1.45rem); }
+      .links { display:flex; flex-wrap:wrap; gap:.45rem; }
+      .links a {
+        color: var(--accent);
+        text-decoration: none;
+        border: 1px solid var(--border);
+        background: rgba(110, 150, 219, 0.08);
+        border-radius: 999px;
+        padding: .32rem .7rem;
+      }
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: .38rem;
+        min-height: 34px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(110, 150, 219, 0.08);
+        color: var(--text);
+        padding: .32rem .62rem;
+        cursor: pointer;
+      }
+      .theme-toggle__glyph {
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid rgba(149, 182, 226, 0.18);
+        background: rgba(110, 150, 219, 0.08);
+        font-size: .72rem;
+        line-height: 1;
+      }
+      .theme-toggle__text {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .01em;
+      }
+      .theme-fab {
+        position: fixed;
+        right: .9rem;
+        bottom: calc(.9rem + env(safe-area-inset-bottom, 0px));
+        width: 46px;
+        height: 46px;
+        min-height: 46px;
+        padding: 0;
+        border-radius: 14px;
+        justify-content: center;
+        box-shadow: 0 12px 26px rgba(0,0,0,.28);
+        z-index: 18;
+        display: none;
+      }
+      .theme-fab .theme-toggle__text {
+        display: none;
+      }
+      .theme-fab .theme-toggle__glyph {
+        width: 1.45rem;
+        height: 1.45rem;
+        font-size: .78rem;
+      }
+      .theme-toggle,
+      .theme-fab {
+        display: none !important;
+      }
+      .theme-fab {
+        touch-action: none;
+        -ms-touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .theme-fab.is-dragging {
+        cursor: grabbing;
+        box-shadow: 0 16px 30px rgba(0,0,0,.34);
+        transform: scale(1.02);
+      }
+      .viewport-debug {
+        position: fixed;
+        left: .75rem;
+        bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+        z-index: 17;
+        display: none;
+        align-items: center;
+        gap: .4rem;
+        min-height: 30px;
+        max-width: calc(100vw - 6rem);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(9, 15, 24, 0.82);
+        color: var(--text);
+        padding: .25rem .5rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,.24);
+        font: 600 .74rem/1 Consolas, "Courier New", monospace;
+        letter-spacing: .01em;
+        pointer-events: auto;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        outline: none;
+        transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease, transform 120ms ease;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .viewport-debug.is-visible {
+        display: inline-flex;
+      }
+      .viewport-debug:hover,
+      .viewport-debug:focus-visible {
+        border-color: rgba(140, 189, 255, 0.34);
+        box-shadow: 0 10px 22px rgba(0,0,0,.28);
+        transform: translateY(-1px);
+      }
+      .viewport-debug:focus-visible {
+        box-shadow: 0 0 0 2px rgba(120, 178, 251, 0.16), 0 10px 22px rgba(0,0,0,.28);
+      }
+      .viewport-debug.is-copied {
+        border-color: rgba(119, 226, 176, 0.34);
+        background: rgba(26, 84, 56, 0.28);
+      }
+      .viewport-debug.is-copy-fail {
+        border-color: rgba(255, 164, 164, 0.32);
+        background: rgba(94, 38, 38, 0.28);
+      }
+      :root[data-theme="light"] .viewport-debug:hover,
+      :root[data-theme="light"] .viewport-debug:focus-visible {
+        box-shadow: 0 10px 22px rgba(34, 57, 88, .14);
+      }
+      :root[data-theme="light"] .viewport-debug.is-copied {
+        background: rgba(36, 153, 100, 0.12);
+      }
+      :root[data-theme="light"] .viewport-debug.is-copy-fail {
+        background: rgba(204, 78, 78, 0.1);
+      }
+      :root[data-theme="light"] .viewport-debug {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 20px rgba(34, 57, 88, .12);
+      }
+      .ui-debug-reset {
+        position: fixed;
+        left: .75rem;
+        bottom: calc(3.05rem + env(safe-area-inset-bottom, 0px));
+        z-index: 17;
+        display: none;
+        align-items: center;
+        min-height: 26px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(9, 15, 24, 0.72);
+        color: var(--muted);
+        padding: .14rem .46rem;
+        font: 600 .68rem/1 Consolas, "Courier New", monospace;
+        cursor: pointer;
+      }
+      .ui-debug-reset.is-visible { display: inline-flex; }
+      .ui-debug-reset:hover,
+      .ui-debug-reset:focus-visible { border-color: rgba(140, 189, 255, 0.32); color: var(--text); background: rgba(20, 31, 49, 0.84); outline: none; }
+      .ui-debug-reset.is-done { border-color: rgba(119, 226, 176, 0.34); color: #dfffee; }
+      .ui-debug-reset.is-error { border-color: rgba(255, 164, 164, 0.32); color: #ffd7d7; }
+      :root[data-theme="light"] .ui-debug-reset { background: rgba(255,255,255,.9); color: var(--muted); }
+
+      :root[data-theme="light"] body {
+        background:
+          radial-gradient(circle at 10% 8%, rgba(90, 132, 209, 0.12), transparent 58%),
+          radial-gradient(circle at 88% 12%, rgba(60, 167, 143, 0.08), transparent 62%),
+          linear-gradient(180deg, #f7faff, var(--bg));
+      }
+      :root[data-theme="light"] body::before {
+        opacity: .22 !important;
+      }
+      :root[data-theme="light"] .panel,
+      :root[data-theme="light"] .chart-panel,
+      :root[data-theme="light"] .chart-frame,
+      :root[data-theme="light"] .table-wrap,
+      :root[data-theme="light"] .workflow-step {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 249, 255, 0.96));
+        box-shadow: 0 14px 34px rgba(34, 57, 88, 0.09);
+      }
+      :root[data-theme="light"] th {
+        background: rgba(244, 248, 255, .94);
+        color: #173355;
+      }
+      :root[data-theme="light"] .field input,
+      :root[data-theme="light"] .chart-controls .field-sm input {
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--text);
+      }
+      :root[data-theme="light"] button,
+      :root[data-theme="light"] .links a,
+      :root[data-theme="light"] .chart-link,
+      :root[data-theme="light"] .theme-toggle,
+      :root[data-theme="light"] .pill {
+        background: rgba(90, 132, 209, 0.06);
+      }
+      :root[data-theme="light"] .msg {
+        color: #223651;
+      }
+      :root[data-theme="light"] .muted,
+      :root[data-theme="light"] .head-sub,
+      :root[data-theme="light"] .chart-title span,
+      :root[data-theme="light"] .note,
+      :root[data-theme="light"] .meta {
+        color: var(--muted);
+      }
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(17, 28, 42, 0.95), rgba(9, 16, 26, 0.95));
+        box-shadow: 0 16px 40px rgba(0,0,0,.25);
+        padding: .9rem;
+      }
+      .grid {
+        display:grid;
+        gap:.55rem;
+        grid-template-columns: minmax(220px, 1.2fr) minmax(160px, .8fr) minmax(160px, .8fr) minmax(110px, .55fr) auto auto auto auto;
+        align-items:end;
+      }
+      .field { display:grid; gap:.26rem; }
+      .field label { color: var(--muted); font-size:.78rem; }
+      .field input {
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(14, 24, 38, 0.88);
+        color: var(--text);
+        padding: 0 .7rem;
+        min-width: 0;
+      }
+      button {
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(108, 151, 219, 0.12);
+        color: var(--text);
+        padding: 0 .75rem;
+        cursor: pointer;
+      }
+      button.primary {
+        background: linear-gradient(180deg, rgba(106, 155, 234, 0.24), rgba(83, 121, 184, 0.18));
+        border-color: rgba(129, 174, 245, 0.28);
+      }
+      button.danger {
+        background: rgba(205, 93, 93, 0.12);
+        border-color: rgba(236, 132, 132, 0.24);
+        color: #ffdcdc;
+      }
+      button:disabled { opacity:.58; cursor:not-allowed; }
+      .row { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:.65rem; }
+      .status { margin-top:.7rem; min-height:1.2rem; color: var(--muted); font-size:.9rem; }
+      .status.ok { color: var(--ok); }
+      .status.warn { color: var(--warn); }
+      .status.err { color: var(--danger); }
+      .meta { margin-top:.55rem; display:flex; flex-wrap:wrap; gap:.45rem; color:var(--muted); font-size:.82rem; }
+      .pill {
+        border:1px solid var(--border);
+        border-radius:999px;
+        padding:.16rem .56rem;
+        background: rgba(112, 151, 215, 0.08);
+      }
+      .pill.ok { color: var(--ok); }
+      .pill.warn { color: var(--warn); }
+      .pill.err { color: var(--danger); }
+      .table-wrap {
+        margin-top:.8rem;
+        border:1px solid var(--border);
+        border-radius:12px;
+        overflow:auto;
+        background: rgba(9, 15, 24, .8);
+      }
+      table { width:100%; min-width:980px; border-collapse:collapse; }
+      th, td {
+        border-bottom:1px solid rgba(149, 182, 226, 0.12);
+        padding:.55rem;
+        text-align:left;
+        vertical-align:top;
+        font-size:.84rem;
+      }
+      th { position:sticky; top:0; background: rgba(16, 27, 41, .96); z-index:1; color:#d6e6ff; }
+      tr:hover td { background: rgba(89, 134, 204, 0.05); }
+      .msg { white-space: pre-wrap; max-width: 460px; line-height:1.35; color:#dbe9fb; }
+      .mono { font-family: Consolas, "Courier New", monospace; }
+      .muted { color: var(--muted); }
+      .note { margin-top:.65rem; color: var(--muted); font-size:.82rem; line-height:1.35; }
+      .chart-panel {
+        margin-top:.8rem;
+        border:1px solid var(--border);
+        border-radius:12px;
+        background: rgba(10, 17, 26, .72);
+        padding:.75rem;
+      }
+      .chart-head {
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:space-between;
+        align-items:flex-end;
+        gap:.65rem;
+      }
+      .chart-title {
+        display:grid;
+        gap:.2rem;
+      }
+      .chart-title strong { font-size:.92rem; }
+      .chart-title span { color: var(--muted); font-size:.8rem; }
+      .chart-controls {
+        display:flex;
+        flex-wrap:wrap;
+        gap:.45rem;
+        align-items:flex-end;
+      }
+      .chart-controls .field-sm {
+        display:grid;
+        gap:.18rem;
+      }
+      .chart-controls .field-sm label {
+        color: var(--muted);
+        font-size:.74rem;
+      }
+      .chart-controls .field-sm input {
+        width:84px;
+        height:36px;
+        border-radius:10px;
+        border:1px solid var(--border);
+        background: rgba(14, 24, 38, 0.88);
+        color: var(--text);
+        padding: 0 .55rem;
+      }
+      .chart-link {
+        height: 38px;
+        display:inline-flex;
+        align-items:center;
+        border-radius:10px;
+        border:1px solid var(--border);
+        color: var(--accent);
+        text-decoration:none;
+        padding: 0 .75rem;
+        background: rgba(108, 151, 219, 0.08);
+      }
+      .chart-frame {
+        margin-top:.65rem;
+        border:1px solid var(--border);
+        border-radius:12px;
+        background: rgba(9, 15, 24, .86);
+        padding:.35rem;
+      }
+      .chart-frame img {
+        width:100%;
+        height:auto;
+        display:block;
+        border-radius:10px;
+        background: #09131f;
+      }
+      @media (max-width: 1100px) {
+        .grid { grid-template-columns: 1fr 1fr; }
+        .grid button { width:100%; }
+      }
+    
+      /* Modern polish overrides */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(130, 184, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(130, 184, 255, 0.03) 1px, transparent 1px);
+        background-size: 32px 32px;
+        mask-image: radial-gradient(circle at 50% 20%, black 35%, transparent 88%);
+        opacity: 0.55;
+        z-index: 0;
+      }
+      .wrap { position: relative; z-index: 1; }
+      .head {
+        margin-bottom: 0.95rem;
+        align-items: flex-start;
+      }
+      .head-copy {
+        display: grid;
+        gap: 0.18rem;
+        max-width: 760px;
+      }
+      .page-kicker {
+        margin: 0;
+        color: #b9d7ff;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .head-sub {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.35;
+        font-size: 0.88rem;
+      }
+      h1 {
+        font-family: Bahnschrift, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        letter-spacing: 0.01em;
+      }
+      .links a,
+      .chart-link,
+      button,
+      .field input,
+      .chart-controls .field-sm input {
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+      }
+      .links a:hover,
+      .chart-link:hover {
+        transform: translateY(-1px);
+        border-color: rgba(137, 191, 255, 0.38);
+        box-shadow: 0 8px 20px rgba(34, 71, 112, 0.18);
+        background: rgba(110, 150, 219, 0.14);
+      }
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        border-color: rgba(137, 191, 255, 0.35);
+        box-shadow: 0 8px 18px rgba(18, 39, 64, 0.22);
+      }
+      button.primary:hover:not(:disabled) {
+        box-shadow: 0 12px 24px rgba(52, 88, 140, 0.24);
+      }
+      .field input:focus,
+      .chart-controls .field-sm input:focus {
+        outline: none;
+        border-color: rgba(137, 191, 255, 0.52);
+        box-shadow: 0 0 0 3px rgba(114, 171, 239, 0.15);
+      }
+      .workflow-band {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.55rem;
+        margin-bottom: 0.85rem;
+      }
+      .workflow-step {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.55rem;
+        align-items: start;
+        border: 1px solid rgba(149, 182, 226, 0.16);
+        border-radius: 14px;
+        padding: 0.65rem;
+        background:
+          linear-gradient(160deg, rgba(19, 30, 45, 0.96), rgba(12, 20, 31, 0.94));
+        box-shadow: inset 0 1px 0 rgba(200, 225, 255, 0.03), 0 12px 24px rgba(0, 0, 0, 0.14);
+      }
+      .workflow-step .step-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.05rem;
+        height: 2.05rem;
+        border-radius: 10px;
+        font: 700 0.78rem/1 Consolas, "Courier New", monospace;
+        color: #d9ecff;
+        border: 1px solid rgba(137, 191, 255, 0.26);
+        background: linear-gradient(180deg, rgba(108, 160, 235, 0.18), rgba(71, 104, 153, 0.14));
+        box-shadow: inset 0 1px 0 rgba(224, 241, 255, 0.06);
+      }
+      .workflow-step .step-copy {
+        display: grid;
+        gap: 0.14rem;
+      }
+      .workflow-step .step-copy strong {
+        font-size: 0.84rem;
+        color: #eaf2ff;
+      }
+      .workflow-step .step-copy span {
+        font-size: 0.76rem;
+        color: var(--muted);
+        line-height: 1.25;
+      }
+      .panel {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        border-color: rgba(149, 182, 226, 0.22);
+        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.28);
+      }
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: -20% -10% auto auto;
+        width: 280px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(121, 171, 245, 0.18), transparent 70%);
+        pointer-events: none;
+        filter: blur(2px);
+      }
+      .grid, .row, .status, .meta, .chart-panel, .table-wrap, .note {
+        position: relative;
+        z-index: 1;
+      }
+      .chart-panel {
+        border-radius: 14px;
+        border-color: rgba(149, 182, 226, 0.2);
+        background:
+          radial-gradient(circle at 10% 12%, rgba(95, 148, 225, 0.12), transparent 52%),
+          linear-gradient(180deg, rgba(12, 20, 31, 0.88), rgba(9, 15, 24, 0.9));
+      }
+      .chart-frame {
+        border-radius: 14px;
+        background:
+          linear-gradient(180deg, rgba(9, 15, 24, 0.95), rgba(8, 13, 21, 0.95));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+      .chart-frame img {
+        border-radius: 12px;
+      }
+      .table-wrap {
+        border-radius: 14px;
+        border-color: rgba(149, 182, 226, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+      th {
+        backdrop-filter: blur(8px);
+        background: rgba(15, 25, 39, 0.84);
+      }
+      tbody tr:nth-child(even) td {
+        background: rgba(255, 255, 255, 0.01);
+      }
+      .note {
+        margin-top: 0.75rem;
+        padding-top: 0.65rem;
+        border-top: 1px dashed rgba(149, 182, 226, 0.14);
+      }
+      @media (max-width: 1200px) {
+        .workflow-band {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 800px) {
+        .workflow-band {
+          grid-template-columns: 1fr;
+        }
+        .head-sub {
+          font-size: 0.84rem;
+        }
+        .links {
+          width: 100%;
+        }
+        .theme-toggle {
+          margin-left: auto;
+        }
+      }
+      @media (max-width: 560px) {
+        .theme-toggle__text {
+          display: none;
+        }
+        .theme-toggle {
+          padding-inline: .46rem;
+          min-width: 2rem;
+          justify-content: center;
+        }
+      }
+      @media (max-width: 900px) {
+        .theme-fab {
+          display: inline-flex;
+        }
+      }
+      @media (max-width: 480px) {
+        .wrap {
+          width: min(1240px, calc(100% - .8rem));
+          padding-top: .8rem;
+        }
+        .theme-fab {
+          right: .7rem;
+          bottom: calc(.7rem + env(safe-area-inset-bottom, 0px));
+          width: 44px;
+          height: 44px;
+          min-height: 44px;
+        }
+        .page-kicker {
+          font-size: .66rem;
+          letter-spacing: .13em;
+        }
+        h1 {
+          line-height: 1.12;
+        }
+        .viewport-debug {
+          left: .6rem;
+          bottom: calc(.6rem + env(safe-area-inset-bottom, 0px));
+          font-size: .68rem;
+          padding: .22rem .42rem;
+          max-width: calc(100vw - 5.4rem);
+        }
+        .ui-debug-reset {
+          left: .6rem;
+          bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+          font-size: .64rem;
+          padding: .12rem .4rem;
+        }
+   
+        .head-sub,
+        .chart-title span,
+        .note,
+        .field label,
+        .chart-controls .field-sm label {
+          font-size: .78rem;
+          line-height: 1.35;
+        }
+        .grid,
+        .row,
+        .chart-controls {
+          gap: .4rem;
+        }
+        .field input,
+        .chart-controls .field-sm input,
+        button,
+        .chart-link {
+          font-size: .85rem;
+        }
+        th,
+        td {
+          font-size: .8rem;
+          padding: .45rem;
+        }
+        .msg {
+          line-height: 1.4;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .head,
+        .workflow-step,
+        .panel {
+          animation: adminRise 420ms ease both;
+        }
+        .workflow-step:nth-child(2) { animation-delay: 60ms; }
+        .workflow-step:nth-child(3) { animation-delay: 100ms; }
+        .workflow-step:nth-child(4) { animation-delay: 140ms; }
+        .workflow-step:nth-child(5) { animation-delay: 180ms; }
+        @keyframes adminRise {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="head-copy">
+          <p class="page-kicker">Python Backend Control Center</p>
+          <h1>Portfolio Contact Messages Admin</h1>
+          <p class="head-sub">Review SQLite contact messages, inspect trends, and manage records with a modern local workflow.</p>
+        </div>
+        <div class="links">
+          <a href="/" target="_blank" rel="noopener">Portfolio</a>
+          <a href="/cyber-demo.html" target="_blank" rel="noopener">Cyber IOC Demo</a>
+          <a href="/api/health" target="_blank" rel="noopener">API Health</a>
+          <button id="themeToggleBtn" class="theme-toggle" type="button" aria-pressed="false" title="Toggle theme">
+            <span class="theme-toggle__glyph" aria-hidden="true">D</span>
+            <span class="theme-toggle__text">Dark</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="workflow-band" aria-label="Admin workflow steps">
+        <div class="workflow-step">
+          <span class="step-index">01</span>
+          <div class="step-copy"><strong>Connect</strong><span>Localhost access or token login</span></div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-index">02</span>
+          <div class="step-copy"><strong>Filter</strong><span>Search by sender, text, or source</span></div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-index">03</span>
+          <div class="step-copy"><strong>Review</strong><span>Inspect messages and select rows</span></div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-index">04</span>
+          <div class="step-copy"><strong>Visualize</strong><span>Refresh Python-generated trend chart</span></div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-index">05</span>
+          <div class="step-copy"><strong>Export / Clean</strong><span>Open SVG/PNG or delete selected</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="grid">
+          <div class="field">
+            <label for="adminToken">Admin Token (required only when server uses token mode)</label>
+            <input id="adminToken" type="password" autocomplete="off" placeholder="Leave blank for localhost-only mode" />
+          </div>
+          <div class="field">
+            <label for="searchQuery">Search (name/email/message/source)</label>
+            <input id="searchQuery" type="text" autocomplete="off" placeholder="e.g. incident, gmail, portfolio" />
+          </div>
+          <div class="field">
+            <label for="emailFilter">Email Filter</label>
+            <input id="emailFilter" type="text" autocomplete="off" placeholder="Filter by sender email" />
+          </div>
+          <div class="field">
+            <label for="messageLimit">Limit</label>
+            <input id="messageLimit" type="number" min="1" max="1000" value="250" />
+          </div>
+          <button id="saveTokenBtn" type="button">Save Token</button>
+          <button id="loginBtn" type="button">Login</button>
+          <button id="logoutBtn" type="button">Logout</button>
+          <button id="refreshBtn" type="button" class="primary">Refresh</button>
+        </div>
+
+        <div class="row">
+          <button id="clearFiltersBtn" type="button">Clear Filters</button>
+          <button id="selectAllBtn" type="button">Select All (Visible)</button>
+          <button id="clearSelectionBtn" type="button">Clear Selection</button>
+          <button id="deleteBtn" type="button" class="danger" disabled>Delete Selected</button>
+        </div>
+
+        <div id="status" class="status">Ready.</div>
+
+        <div class="meta">
+          <span class="pill" id="modePill">Admin Mode: checking...</span>
+          <span class="pill" id="authPill">Auth: unknown</span>
+          <span class="pill" id="countPill">Messages: 0</span>
+          <span class="pill" id="selectedPill">Selected: 0</span>
+          <span class="pill" id="storePill">Store: -</span>
+          <span class="pill" id="filterPill">Filters: none</span>
+        </div>
+
+        <div class="chart-panel">
+          <div class="chart-head">
+            <div class="chart-title">
+              <strong>Python-Generated Graphic: Contact Trend (SVG)</strong>
+              <span>Rendered by <span class="mono">server.py</span> from SQLite contact-message counts.</span>
+            </div>
+            <div class="chart-controls">
+              <span class="pill" id="chartPill">Chart: idle</span>
+              <div class="field-sm">
+                <label for="chartDays">Days</label>
+                <input id="chartDays" type="number" min="3" max="90" value="14" />
+              </div>
+              <button id="refreshChartBtn" type="button">Refresh Chart</button>
+              <a id="openChartLink" class="chart-link" href="/api/admin/contact-trend.svg?days=14" target="_blank" rel="noopener">Open SVG</a>
+              <a id="openChartPngLink" class="chart-link" href="/api/admin/contact-trend.png?days=14" target="_blank" rel="noopener" download="contact-trend.png">Open PNG</a>
+            </div>
+          </div>
+          <div class="chart-frame">
+            <img id="contactTrendChart" alt="Python-generated contact submissions trend chart" />
+          </div>
+          <div class="note">In token mode, click <strong>Login</strong> first so the image request can use the admin session cookie.</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px"><input id="masterCheckbox" type="checkbox" aria-label="Select all visible messages" /></th>
+                <th style="width:170px">Received</th>
+                <th style="width:220px">Name / Email</th>
+                <th style="width:240px">Source</th>
+                <th>Message</th>
+                <th style="width:180px">ID</th>
+              </tr>
+            </thead>
+            <tbody id="messageRows">
+              <tr><td colspan="6" class="muted">No messages loaded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          Localhost mode: no login required on the same PC. Token mode: enter your token and click Login (cookie session) or use the saved token header. Filters are applied to the SQLite message store.
+        </div>
+      </div>
+    </div>
+
+    <button id="themeToggleFab" class="theme-toggle theme-fab" type="button" aria-pressed="false" aria-label="Toggle theme" title="Toggle theme">
+      <span class="theme-toggle__glyph" aria-hidden="true">D</span>
+    </button>
+
+    <div id="viewportDebugBadge" class="viewport-debug" hidden aria-hidden="true"></div>
+    <button id="uiDebugResetBtn" class="ui-debug-reset" type="button" hidden aria-label="Reset UI debug state">Reset UI debug</button>
+
+    <script>
+      (() => {
+        const TOKEN_KEY = "portfolio_admin_token";
+        const SESSION_HINT_KEY = "portfolio_admin_session_hint";
+        const THEME_KEY = "portfolio_theme";
+
+        const el = {
+          token: document.getElementById("adminToken"),
+          q: document.getElementById("searchQuery"),
+          email: document.getElementById("emailFilter"),
+          limit: document.getElementById("messageLimit"),
+          saveTokenBtn: document.getElementById("saveTokenBtn"),
+          loginBtn: document.getElementById("loginBtn"),
+          logoutBtn: document.getElementById("logoutBtn"),
+          refreshBtn: document.getElementById("refreshBtn"),
+          themeToggleBtn: document.getElementById("themeToggleBtn"),
+          themeToggleFab: document.getElementById("themeToggleFab"),
+          viewportDebugBadge: document.getElementById("viewportDebugBadge"),
+          uiDebugResetBtn: document.getElementById("uiDebugResetBtn"),
+          clearFiltersBtn: document.getElementById("clearFiltersBtn"),
+          selectAllBtn: document.getElementById("selectAllBtn"),
+          clearSelectionBtn: document.getElementById("clearSelectionBtn"),
+          deleteBtn: document.getElementById("deleteBtn"),
+          master: document.getElementById("masterCheckbox"),
+          rows: document.getElementById("messageRows"),
+          status: document.getElementById("status"),
+          modePill: document.getElementById("modePill"),
+          authPill: document.getElementById("authPill"),
+          countPill: document.getElementById("countPill"),
+          selectedPill: document.getElementById("selectedPill"),
+          storePill: document.getElementById("storePill"),
+          filterPill: document.getElementById("filterPill"),
+          chartPill: document.getElementById("chartPill"),
+          chartDays: document.getElementById("chartDays"),
+          refreshChartBtn: document.getElementById("refreshChartBtn"),
+          openChartLink: document.getElementById("openChartLink"),
+          openChartPngLink: document.getElementById("openChartPngLink"),
+          contactTrendChart: document.getElementById("contactTrendChart"),
+        };
+
+        const state = {
+          health: null,
+          messages: [],
+          mode: "unknown",
+          sessionHint: sessionStorage.getItem(SESSION_HINT_KEY) === "1",
+          chartLoadNonce: 0,
+        };
+
+
+        const THEME_FAB_POS_PREFIX = "portfolio_theme_fab_pos:";
+        let themeFabDragHandle = { shouldIgnoreClick: () => false, resetPosition: () => false };
+
+        const getPreferredTheme = () => {
+          try {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === "light" || saved === "dark") return saved;
+          } catch {}
+          return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        };
+
+        const getThemeButtons = () => [el.themeToggleBtn, el.themeToggleFab].filter(Boolean);
+
+        const applyTheme = (theme) => {
+          const next = theme === "light" ? "light" : "dark";
+          const isLight = next === "light";
+          document.documentElement.setAttribute("data-theme", next);
+          getThemeButtons().forEach((btn) => {
+            btn.setAttribute("aria-pressed", String(isLight));
+            btn.setAttribute("aria-label", isLight ? "Switch to dark theme" : "Switch to light theme");
+            btn.title = isLight ? "Switch to dark theme" : "Switch to light theme";
+            const glyph = btn.querySelector(".theme-toggle__glyph");
+            const label = btn.querySelector(".theme-toggle__text");
+            if (glyph) glyph.textContent = isLight ? "L" : "D";
+            if (label) label.textContent = isLight ? "Light" : "Dark";
+          });
+        };
+
+        const setupThemeFabDrag = () => {
+          const btn = el.themeToggleFab;
+          if (!btn) return { shouldIgnoreClick: () => false, resetPosition: () => false };
+
+          const positionKey = `${THEME_FAB_POS_PREFIX}${window.location.pathname || "page"}`;
+          const drag = {
+            active: false,
+            moved: false,
+            pointerId: null,
+            startX: 0,
+            startY: 0,
+            originLeft: 0,
+            originTop: 0,
+            ignoreClickUntil: 0,
+          };
+
+          const clampPos = (left, top) => {
+            const margin = 8;
+            const width = btn.offsetWidth || 46;
+            const height = btn.offsetHeight || 46;
+            const maxLeft = Math.max(margin, window.innerWidth - width - margin);
+            const maxTop = Math.max(margin, window.innerHeight - height - margin);
+            return {
+              left: Math.min(maxLeft, Math.max(margin, left)),
+              top: Math.min(maxTop, Math.max(margin, top)),
+            };
+          };
+
+          const placeBtn = (left, top) => {
+            const pos = clampPos(left, top);
+            btn.style.left = `${pos.left}px`;
+            btn.style.top = `${pos.top}px`;
+            btn.style.right = "auto";
+            btn.style.bottom = "auto";
+            return pos;
+          };
+
+          const saveBtnPosition = () => {
+            const left = Number.parseFloat(btn.style.left || "");
+            const top = Number.parseFloat(btn.style.top || "");
+            if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+            try {
+              localStorage.setItem(positionKey, JSON.stringify({ left, top }));
+            } catch {}
+          };
+
+          const restoreBtnPosition = () => {
+            let parsed = null;
+            try {
+              const raw = localStorage.getItem(positionKey);
+              if (!raw) return;
+              parsed = JSON.parse(raw);
+            } catch {
+              return;
+            }
+            const left = Number(parsed?.left);
+            const top = Number(parsed?.top);
+            if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+            placeBtn(left, top);
+          };
+
+          const resetPosition = () => {
+            try { localStorage.removeItem(positionKey); } catch {}
+            btn.style.left = "";
+            btn.style.top = "";
+            btn.style.right = "";
+            btn.style.bottom = "";
+            btn.classList.remove("is-dragging");
+            return true;
+          };
+
+          const finishDrag = (event) => {
+            if (!drag.active) return;
+            if (event && drag.pointerId !== null && event.pointerId != null && event.pointerId !== drag.pointerId) return;
+            drag.active = false;
+            if (drag.moved) {
+              drag.ignoreClickUntil = (window.performance?.now?.() ?? Date.now()) + 280;
+              saveBtnPosition();
+            }
+            drag.pointerId = null;
+            btn.classList.remove("is-dragging");
+            try { if (event && typeof btn.releasePointerCapture === "function" && event.pointerId != null) btn.releasePointerCapture(event.pointerId); } catch {}
+          };
+
+          btn.addEventListener("pointerdown", (event) => {
+            if (event.pointerType !== "touch" && event.pointerType !== "pen" && event.button !== 0) return;
+            const rect = btn.getBoundingClientRect();
+            drag.active = true;
+            drag.moved = false;
+            drag.pointerId = event.pointerId ?? null;
+            drag.startX = event.clientX;
+            drag.startY = event.clientY;
+            drag.originLeft = rect.left;
+            drag.originTop = rect.top;
+            btn.classList.add("is-dragging");
+            try { if (typeof btn.setPointerCapture === "function" && event.pointerId != null) btn.setPointerCapture(event.pointerId); } catch {}
+          });
+
+          btn.addEventListener("pointermove", (event) => {
+            if (!drag.active) return;
+            if (drag.pointerId !== null && event.pointerId !== drag.pointerId) return;
+            const dx = event.clientX - drag.startX;
+            const dy = event.clientY - drag.startY;
+            if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+            drag.moved = true;
+            event.preventDefault();
+            placeBtn(drag.originLeft + dx, drag.originTop + dy);
+          });
+
+          btn.addEventListener("pointerup", finishDrag);
+          btn.addEventListener("pointercancel", finishDrag);
+          btn.addEventListener("lostpointercapture", finishDrag);
+
+          window.addEventListener("resize", () => {
+            if (!btn.style.left || !btn.style.top) return;
+            const currentLeft = Number.parseFloat(btn.style.left);
+            const currentTop = Number.parseFloat(btn.style.top);
+            if (!Number.isFinite(currentLeft) || !Number.isFinite(currentTop)) return;
+            placeBtn(currentLeft, currentTop);
+            saveBtnPosition();
+          }, { passive: true });
+
+          restoreBtnPosition();
+
+          return {
+            shouldIgnoreClick: () => (window.performance?.now?.() ?? Date.now()) < drag.ignoreClickUntil,
+            resetPosition,
+          };
+        };
+
+        const setupViewportDebugBadge = () => {
+          const badge = el.viewportDebugBadge;
+          const resetBtn = el.uiDebugResetBtn;
+          if (!badge) return;
+
+          const host = window.location.hostname || "";
+          const isPrivateHost = host === "localhost"
+            || host === "127.0.0.1"
+            || host === "::1"
+            || /^10\./.test(host)
+            || /^192\.168\./.test(host)
+            || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host);
+          const params = new URLSearchParams(window.location.search);
+          const forced = params.get("debugViewport");
+          const enabled = forced === "1" || (forced != null && forced !== "0") || window.location.protocol === "file:" || isPrivateHost;
+          if (!enabled) return;
+
+          const getBp = (w) => {
+            if (w <= 480) return "phone-xs";
+            if (w <= 768) return "phone";
+            if (w <= 1024) return "tablet";
+            if (w <= 1280) return "laptop";
+            return "desktop";
+          };
+
+          const setBadgeVisualState = (kind) => {
+            badge.classList.remove("is-copied", "is-copy-fail");
+            if (kind === "copied") badge.classList.add("is-copied");
+            if (kind === "error") badge.classList.add("is-copy-fail");
+          };
+          const setResetBtnState = (kind) => {
+            if (!resetBtn) return;
+            resetBtn.classList.remove("is-done", "is-error");
+            if (kind === "done") resetBtn.classList.add("is-done");
+            if (kind === "error") resetBtn.classList.add("is-error");
+          };
+
+          const fallbackCopyText = (value) => {
+            const ta = document.createElement("textarea");
+            ta.value = value;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            ta.style.pointerEvents = "none";
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            let ok = false;
+            try { ok = document.execCommand("copy"); } catch { ok = false; }
+            ta.remove();
+            return ok;
+          };
+
+          const clearStoredUiDebugState = () => {
+            try { localStorage.removeItem(THEME_KEY); } catch {}
+            try {
+              for (let i = localStorage.length - 1; i >= 0; i -= 1) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith(THEME_FAB_POS_PREFIX)) localStorage.removeItem(key);
+              }
+            } catch {}
+            if (themeFabDragHandle && typeof themeFabDragHandle.resetPosition === "function") themeFabDragHandle.resetPosition();
+            applyTheme(getPreferredTheme());
+          };
+
+          let restoreTimer = 0;
+          let resetBtnTimer = 0;
+          let lastViewportText = "";
+          let ignoreClickUntil = 0;
+          const press = { active: false, pointerId: null, startX: 0, startY: 0, timerId: 0 };
+
+          const restoreBadgeText = () => {
+            if (!lastViewportText) return;
+            badge.textContent = lastViewportText;
+            setBadgeVisualState("");
+            badge.title = "Tap to copy viewport info. Long-press to reset theme-toggle position";
+          };
+          const flashBadge = (message, kind) => {
+            window.clearTimeout(restoreTimer);
+            badge.textContent = message;
+            setBadgeVisualState(kind);
+            badge.title = kind === "copied" ? "Copied" : "Copy failed";
+            restoreTimer = window.setTimeout(restoreBadgeText, 950);
+          };
+          const flashResetBtn = (message, kind) => {
+            if (!resetBtn) return;
+            window.clearTimeout(resetBtnTimer);
+            const original = resetBtn.dataset.baseLabel || "Reset UI debug";
+            resetBtn.textContent = message;
+            setResetBtnState(kind);
+            resetBtnTimer = window.setTimeout(() => { resetBtn.textContent = original; setResetBtnState(""); }, 1050);
+          };
+
+          const copyViewportInfo = async () => {
+            const value = lastViewportText || badge.textContent.trim();
+            if (!value) return;
+            let copied = false;
+            try {
+              if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(value); copied = true; }
+              else { copied = fallbackCopyText(value); }
+            } catch { copied = fallbackCopyText(value); }
+            flashBadge(copied ? "Copied viewport info" : "Copy failed", copied ? "copied" : "error");
+          };
+
+          const resetUiDebug = (source) => {
+            if (source === "longpress") {
+              const ok = !!(themeFabDragHandle && typeof themeFabDragHandle.resetPosition === "function" && themeFabDragHandle.resetPosition());
+              flashBadge(ok ? "Theme toggle position reset" : "No floating toggle on this page", ok ? "copied" : "error");
+              return;
+            }
+            clearStoredUiDebugState();
+            flashBadge("UI debug state reset", "copied");
+            flashResetBtn("Reset", "done");
+          };
+          const cancelLongPress = () => {
+            press.active = false;
+            if (press.timerId) { window.clearTimeout(press.timerId); press.timerId = 0; }
+          };
+
+          badge.addEventListener("pointerdown", (event) => {
+            if (event.button != null && event.button !== 0) return;
+            cancelLongPress();
+            press.active = true;
+            press.pointerId = event.pointerId ?? null;
+            press.startX = event.clientX; press.startY = event.clientY;
+            press.timerId = window.setTimeout(() => {
+              if (!press.active) return;
+              ignoreClickUntil = (window.performance?.now?.() ?? Date.now()) + 420;
+              cancelLongPress();
+              resetUiDebug("longpress");
+            }, 560);
+          });
+          badge.addEventListener("pointermove", (event) => {
+            if (!press.active) return;
+            if (press.pointerId !== null && event.pointerId !== press.pointerId) return;
+            if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 8) cancelLongPress();
+          });
+          badge.addEventListener("pointerup", cancelLongPress);
+          badge.addEventListener("pointercancel", cancelLongPress);
+          badge.addEventListener("pointerleave", cancelLongPress);
+          badge.addEventListener("lostpointercapture", cancelLongPress);
+
+          const render = () => {
+            const w = Math.round(window.innerWidth || document.documentElement.clientWidth || 0);
+            const h = Math.round(window.innerHeight || document.documentElement.clientHeight || 0);
+            const bp = getBp(w);
+            const orientation = w >= h ? "land" : "port";
+            const dpr = Number(window.devicePixelRatio || 1).toFixed(2).replace(/\.00$/, "");
+            lastViewportText = `${w}x${h} ${bp} ${orientation} dpr:${dpr}`;
+            if (!badge.classList.contains("is-copied") && !badge.classList.contains("is-copy-fail")) badge.textContent = lastViewportText;
+            badge.dataset.bp = bp;
+            badge.dataset.viewportText = lastViewportText;
+            badge.hidden = false; badge.setAttribute("aria-hidden", "false"); badge.classList.add("is-visible");
+          };
+
+          badge.setAttribute("role", "button");
+          badge.tabIndex = 0;
+          badge.setAttribute("aria-label", "Viewport debug info. Tap to copy viewport info. Long-press to reset floating theme toggle position");
+          badge.title = "Tap to copy viewport info. Long-press to reset theme-toggle position";
+          if (badge.dataset.copyInit !== "1") {
+            badge.dataset.copyInit = "1";
+            badge.addEventListener("click", (event) => {
+              if ((window.performance?.now?.() ?? Date.now()) < ignoreClickUntil) { event.preventDefault(); return; }
+              void copyViewportInfo();
+            });
+            badge.addEventListener("keydown", (event) => {
+              if (event.key !== "Enter" && event.key !== " ") return;
+              event.preventDefault();
+              void copyViewportInfo();
+            });
+          }
+
+          if (resetBtn) {
+            resetBtn.hidden = false;
+            resetBtn.classList.add("is-visible");
+            resetBtn.dataset.baseLabel = resetBtn.dataset.baseLabel || resetBtn.textContent || "Reset UI debug";
+            resetBtn.title = "Clear saved theme and floating-toggle positions";
+            if (resetBtn.dataset.init !== "1") {
+              resetBtn.dataset.init = "1";
+              resetBtn.addEventListener("click", () => { resetUiDebug("button"); });
+            }
+          }
+
+          render();
+          window.addEventListener("resize", render, { passive: true });
+          window.addEventListener("orientationchange", render);
+        };
+
+        const setupThemeToggle = () => {
+          try { localStorage.removeItem(THEME_KEY); } catch {}
+          applyTheme("dark");
+          themeFabDragHandle = { shouldIgnoreClick: () => false, resetPosition: () => false };
+          getThemeButtons().forEach((btn) => {
+            btn.hidden = true;
+            btn.disabled = true;
+            btn.tabIndex = -1;
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          });
+        };
+
+        const escapeHtml = (v) => String(v ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+        const setStatus = (text, kind = "") => {
+          el.status.textContent = text;
+          el.status.className = kind ? `status ${kind}` : "status";
+        };
+
+        const setPillKind = (pill, kind) => {
+          pill.classList.remove("ok", "warn", "err");
+          if (kind) pill.classList.add(kind);
+        };
+
+        const getToken = () => el.token.value.trim();
+
+        const persistToken = () => {
+          const token = getToken();
+          if (token) {
+            sessionStorage.setItem(TOKEN_KEY, token);
+            setStatus("Admin token saved for this tab.", "ok");
+          } else {
+            sessionStorage.removeItem(TOKEN_KEY);
+            setStatus("Admin token cleared from this tab.", "warn");
+          }
+          updateAuthPill();
+        };
+
+        const buildHeaders = (extra = {}) => {
+          const headers = { ...extra };
+          const token = getToken();
+          if (token) headers["X-Admin-Token"] = token;
+          return headers;
+        };
+
+        const apiFetchJson = async (url, options = {}) => {
+          const response = await fetch(url, { credentials: "same-origin", ...options });
+          const data = await response.json().catch(() => null);
+          if (!response.ok) {
+            const message = data?.error || `Request failed (${response.status})`;
+            const err = new Error(message);
+            err.status = response.status;
+            err.payload = data;
+            throw err;
+          }
+          return data;
+        };
+
+        const updateFilterPill = () => {
+          const q = el.q.value.trim();
+          const email = el.email.value.trim();
+          const parts = [];
+          if (q) parts.push(`q=${q}`);
+          if (email) parts.push(`email=${email}`);
+          el.filterPill.textContent = `Filters: ${parts.length ? parts.join(" | ") : "none"}`;
+        };
+
+        const setChartPill = (text, kind = "") => {
+          if (!el.chartPill) return;
+          el.chartPill.textContent = text;
+          setPillKind(el.chartPill, kind);
+        };
+
+        const getChartDays = () => {
+          const raw = Number.parseInt(el.chartDays?.value ?? "14", 10);
+          const days = Number.isFinite(raw) ? Math.min(90, Math.max(3, raw)) : 14;
+          if (el.chartDays) el.chartDays.value = String(days);
+          return days;
+        };
+
+        const refreshChartImage = () => {
+          if (!el.contactTrendChart) return;
+          const days = getChartDays();
+          const baseUrl = `/api/admin/contact-trend.svg?days=${days}`;
+          const pngUrl = `/api/admin/contact-trend.png?days=${days}`;
+          const imageUrl = `${baseUrl}&v=${Date.now()}`;
+          state.chartLoadNonce += 1;
+          const nonce = state.chartLoadNonce;
+          if (el.refreshChartBtn) el.refreshChartBtn.disabled = true;
+          if (el.openChartLink) el.openChartLink.href = baseUrl;
+          if (el.openChartPngLink) el.openChartPngLink.href = pngUrl;
+          setChartPill("Chart: loading...", "warn");
+
+          el.contactTrendChart.onload = () => {
+            if (nonce !== state.chartLoadNonce) return;
+            if (el.refreshChartBtn) el.refreshChartBtn.disabled = false;
+            setChartPill("Chart: loaded (Python SVG)", "ok");
+          };
+          el.contactTrendChart.onerror = () => {
+            if (nonce !== state.chartLoadNonce) return;
+            if (el.refreshChartBtn) el.refreshChartBtn.disabled = false;
+            setChartPill("Chart: unavailable (login may be required)", "err");
+          };
+          el.contactTrendChart.src = imageUrl;
+        };
+
+        const updateAuthPill = () => {
+          const tokenPresent = !!getToken();
+          let text = "Auth: unknown";
+          let kind = "warn";
+          if (state.mode === "localhost_only") {
+            text = tokenPresent ? "Auth: localhost + token header set" : "Auth: localhost (no login required)";
+            kind = "ok";
+          } else if (state.mode === "token" || state.mode === "token_only") {
+            if (state.sessionHint) {
+              text = tokenPresent ? "Auth: cookie session + token header" : "Auth: cookie session";
+              kind = "ok";
+            } else if (tokenPresent) {
+              text = "Auth: token header ready (login optional)";
+              kind = "warn";
+            } else {
+              text = "Auth: login/token required";
+              kind = "err";
+            }
+          }
+          el.authPill.textContent = text;
+          setPillKind(el.authPill, kind);
+        };
+
+        const renderRows = (messages) => {
+          if (!Array.isArray(messages) || !messages.length) {
+            el.rows.innerHTML = '<tr><td colspan="6" class="muted">No saved contact messages.</td></tr>';
+            updateSelectionUi();
+            return;
+          }
+
+          el.rows.innerHTML = messages.map((item) => {
+            const received = item?.received_at ? new Date(item.received_at).toLocaleString() : "-";
+            const who = item?.parse_error
+              ? '<span class="muted">Unreadable record</span>'
+              : `<div>${escapeHtml(item?.name || "-")}</div><div class="muted">${escapeHtml(item?.email || "-")}</div>`;
+            const source = item?.source
+              ? `<span class="mono">${escapeHtml(item.source)}</span>`
+              : '<span class="muted">-</span>';
+            const msg = item?.parse_error
+              ? `<div class="msg muted">${escapeHtml(item?.raw || "")}</div>`
+              : `<div class="msg">${escapeHtml(item?.message || "")}</div>`;
+            return `
+              <tr>
+                <td><input class="msg-check" type="checkbox" data-id="${escapeHtml(item?.id || "")}" /></td>
+                <td>${escapeHtml(received)}</td>
+                <td>${who}</td>
+                <td>${source}</td>
+                <td>${msg}</td>
+                <td class="mono">${escapeHtml(item?.id || "")}</td>
+              </tr>`;
+          }).join("");
+
+          el.rows.querySelectorAll(".msg-check").forEach((cb) => cb.addEventListener("change", updateSelectionUi));
+          updateSelectionUi();
+        };
+
+        const getSelectedIds = () => Array.from(el.rows.querySelectorAll(".msg-check:checked"))
+          .map((cb) => cb.dataset.id || "")
+          .filter(Boolean);
+
+        const updateSelectionUi = () => {
+          const total = el.rows.querySelectorAll(".msg-check").length;
+          const selected = getSelectedIds().length;
+          el.selectedPill.textContent = `Selected: ${selected}`;
+          el.deleteBtn.disabled = selected === 0;
+          el.master.checked = total > 0 && total === selected;
+          el.master.indeterminate = selected > 0 && selected < total;
+        };
+
+        const loadHealth = async () => {
+          try {
+            const data = await apiFetchJson("/api/health");
+            state.health = data;
+            state.mode = data?.admin_panel?.mode || "unknown";
+            const reason = data?.admin_panel?.reason || "";
+            el.modePill.textContent = `Admin Mode: ${state.mode}`;
+            el.modePill.title = reason;
+            setPillKind(el.modePill, state.mode === "token" ? "warn" : "ok");
+          } catch (error) {
+            state.mode = "unknown";
+            el.modePill.textContent = "Admin Mode: unavailable";
+            setPillKind(el.modePill, "err");
+            const message = error instanceof Error ? error.message : "Unable to load health";
+            setStatus(message, "err");
+          }
+          updateAuthPill();
+        };
+
+        const buildMessagesUrl = () => {
+          const rawLimit = Number.parseInt(el.limit.value, 10);
+          const limit = Number.isFinite(rawLimit) ? Math.min(1000, Math.max(1, rawLimit)) : 250;
+          el.limit.value = String(limit);
+          const params = new URLSearchParams({ limit: String(limit) });
+          const q = el.q.value.trim();
+          const email = el.email.value.trim();
+          if (q) params.set("q", q);
+          if (email) params.set("email", email);
+          updateFilterPill();
+          return `/api/admin/messages?${params.toString()}`;
+        };
+
+        const loadMessages = async () => {
+          el.refreshBtn.disabled = true;
+          setStatus("Loading messages...", "warn");
+          try {
+            const data = await apiFetchJson(buildMessagesUrl(), {
+              headers: buildHeaders({ Accept: "application/json" }),
+            });
+            state.messages = Array.isArray(data?.messages) ? data.messages : [];
+            renderRows(state.messages);
+            el.countPill.textContent = `Messages: ${data?.count ?? state.messages.length} / ${data?.total ?? state.messages.length}`;
+            el.storePill.textContent = `Store: ${data?.contact_store || "-"}`;
+            setPillKind(el.storePill, "ok");
+            refreshChartImage();
+            setStatus(`Loaded ${state.messages.length} message(s).`, "ok");
+          } catch (error) {
+            renderRows([]);
+            if (error && typeof error === "object" && error.status === 401) {
+              state.sessionHint = false;
+              sessionStorage.removeItem(SESSION_HINT_KEY);
+              updateAuthPill();
+            }
+            const message = error instanceof Error ? error.message : "Unable to load messages";
+            setStatus(message, "err");
+          } finally {
+            el.refreshBtn.disabled = false;
+          }
+        };
+
+        const login = async () => {
+          el.loginBtn.disabled = true;
+          setStatus("Logging in...", "warn");
+          try {
+            const token = getToken();
+            const data = await apiFetchJson("/api/admin/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify(token ? { token } : {}),
+            });
+            if (token) {
+              sessionStorage.setItem(TOKEN_KEY, token);
+            }
+            state.sessionHint = true;
+            sessionStorage.setItem(SESSION_HINT_KEY, "1");
+            if (typeof data?.admin_mode === "string") {
+              state.mode = data.admin_mode;
+            }
+            updateAuthPill();
+            setStatus(data?.message || "Admin login completed.", "ok");
+            await loadHealth();
+            await loadMessages();
+          } catch (error) {
+            state.sessionHint = false;
+            sessionStorage.removeItem(SESSION_HINT_KEY);
+            updateAuthPill();
+            const message = error instanceof Error ? error.message : "Login failed";
+            setStatus(message, "err");
+          } finally {
+            el.loginBtn.disabled = false;
+          }
+        };
+
+        const logout = async () => {
+          el.logoutBtn.disabled = true;
+          setStatus("Logging out...", "warn");
+          try {
+            const data = await apiFetchJson("/api/admin/logout", {
+              method: "POST",
+              headers: buildHeaders({ Accept: "application/json" }),
+            });
+            state.sessionHint = false;
+            sessionStorage.removeItem(SESSION_HINT_KEY);
+            updateAuthPill();
+            setStatus(data?.message || "Logged out.", "ok");
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "Logout failed";
+            setStatus(message, "err");
+          } finally {
+            el.logoutBtn.disabled = false;
+          }
+        };
+
+        const deleteSelected = async () => {
+          const ids = getSelectedIds();
+          if (!ids.length) return;
+          if (!window.confirm(`Delete ${ids.length} message(s)? This cannot be undone.`)) return;
+
+          el.deleteBtn.disabled = true;
+          setStatus(`Deleting ${ids.length} message(s)...`, "warn");
+          try {
+            const data = await apiFetchJson("/api/admin/messages/delete", {
+              method: "POST",
+              headers: buildHeaders({ "Content-Type": "application/json", Accept: "application/json" }),
+              body: JSON.stringify({ ids }),
+            });
+            setStatus(`Deleted ${data?.deleted ?? 0} message(s).`, "ok");
+            await loadMessages();
+          } catch (error) {
+            if (error && typeof error === "object" && error.status === 401) {
+              state.sessionHint = false;
+              sessionStorage.removeItem(SESSION_HINT_KEY);
+              updateAuthPill();
+            }
+            const message = error instanceof Error ? error.message : "Delete failed";
+            setStatus(message, "err");
+          } finally {
+            updateSelectionUi();
+          }
+        };
+
+        const clearFilters = () => {
+          el.q.value = "";
+          el.email.value = "";
+          updateFilterPill();
+          void loadMessages();
+        };
+
+        const onEnterRefresh = (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          void loadMessages();
+        };
+
+        el.saveTokenBtn.addEventListener("click", persistToken);
+        el.loginBtn.addEventListener("click", () => { void login(); });
+        el.logoutBtn.addEventListener("click", () => { void logout(); });
+        el.refreshBtn.addEventListener("click", () => { void loadMessages(); });
+        el.deleteBtn.addEventListener("click", () => { void deleteSelected(); });
+        el.clearFiltersBtn.addEventListener("click", clearFilters);
+        el.refreshChartBtn.addEventListener("click", refreshChartImage);
+        el.selectAllBtn.addEventListener("click", () => {
+          el.rows.querySelectorAll(".msg-check").forEach((cb) => { cb.checked = true; });
+          updateSelectionUi();
+        });
+        el.clearSelectionBtn.addEventListener("click", () => {
+          el.rows.querySelectorAll(".msg-check").forEach((cb) => { cb.checked = false; });
+          updateSelectionUi();
+        });
+        el.master.addEventListener("change", () => {
+          el.rows.querySelectorAll(".msg-check").forEach((cb) => { cb.checked = el.master.checked; });
+          updateSelectionUi();
+        });
+        el.q.addEventListener("keydown", onEnterRefresh);
+        el.email.addEventListener("keydown", onEnterRefresh);
+        el.limit.addEventListener("keydown", onEnterRefresh);
+        el.chartDays.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          refreshChartImage();
+        });
+        el.token.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          void login();
+        });
+        el.q.addEventListener("input", updateFilterPill);
+        el.email.addEventListener("input", updateFilterPill);
+        el.token.value = sessionStorage.getItem(TOKEN_KEY) || "";
+
+        setupThemeToggle();
+        setupViewportDebugBadge();
+        updateFilterPill();
+        updateAuthPill();
+        (async () => {
+          await loadHealth();
+          await loadMessages();
+        })();
+      })();
+    </script>
+  </body>
+</html>

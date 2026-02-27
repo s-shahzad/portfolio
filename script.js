@@ -20,13 +20,19 @@
   const logoModalCard = logoModal?.querySelector(".logo-modal__card") || null;
   const logoFlip = document.getElementById("logoFlip");
   const searchRoot = document.querySelector(".nav-search");
+  const navSearchBtn = document.getElementById("nav-search-btn");
+  const navSearchPanel = document.getElementById("nav-search-panel");
   const searchExpand = searchRoot?.querySelector(".search-expand") || null;
   const searchInput = document.getElementById("site-search");
-  const searchSubmitButton = document.querySelector(".search-submit");
+  const searchSubmitButton = document.querySelector(".search-submit") || navSearchBtn;
   const mobileSearchTrigger = document.getElementById("mobileSearchTrigger");
+  const themeToggleBtn = document.getElementById("themeToggleBtn");
+  const mobileThemeToggleBtn = document.getElementById("mobileThemeToggleBtn");
   const searchSuggestions = document.getElementById("site-search-suggestions");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
+  const featuredProjectsWrapper = document.getElementById("featuredProjectsWrapper");
+  const featuredApiStatus = document.getElementById("featuredApiStatus");
   const chatbot = document.getElementById("chatbot");
   const chatbotToggle = document.getElementById("chatbotToggle");
   const chatbotPanel = document.getElementById("chatbotPanel");
@@ -34,6 +40,14 @@
   const chatbotBody = document.getElementById("chatbotBody");
   const chatbotForm = document.getElementById("chatbotForm");
   const chatbotInput = document.getElementById("chatbotInput");
+  const contactForm = document.getElementById("contactForm");
+  const contactNameInput = document.getElementById("contactName");
+  const contactEmailInput = document.getElementById("contactEmail");
+  const contactMessageInput = document.getElementById("contactMessage");
+  const contactWebsiteInput = document.getElementById("contactWebsite");
+  const contactSubmit = document.getElementById("contactSubmit");
+  const contactFormStatus = document.getElementById("contactFormStatus");
+  const contactApiStatus = document.getElementById("contactApiStatus");
 
   let lastFocusedElement = null;
   let currentOpenFlip = null;
@@ -42,6 +56,12 @@
 
   const normalizeText = (value) => value.toLowerCase().replace(/\s+/g, " ").trim();
   const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapeHtml = (value) => String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
   const cardRegistry = [];
   const swiperRegistry = [];
@@ -142,6 +162,72 @@
     if (firstFocusable) firstFocusable.focus();
   };
 
+  const THEME_STORAGE_KEY = "portfolio_theme";
+
+  const getSystemTheme = () => {
+    try {
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch {
+      return "dark";
+    }
+  };
+
+  const readSavedTheme = () => {
+    try {
+      const value = window.localStorage.getItem(THEME_STORAGE_KEY);
+      return value === "light" || value === "dark" ? value : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const writeSavedTheme = (theme) => {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Ignore storage failures in private browsing / restricted modes.
+    }
+  };
+
+  const applyTheme = (theme) => {
+    const resolved = theme === "light" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", resolved);
+    const nextLabel = resolved === "light" ? "Switch to dark" : "Switch to light";
+    [themeToggleBtn, mobileThemeToggleBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.setAttribute("aria-pressed", String(resolved === "light"));
+      btn.setAttribute("aria-label", nextLabel);
+      if (btn === themeToggleBtn) {
+        const text = btn.querySelector(".theme-toggle__text");
+        const glyph = btn.querySelector(".theme-toggle__glyph");
+        if (text) text.textContent = resolved === "light" ? "Light" : "Dark";
+        if (glyph) glyph.textContent = resolved === "light" ? "L" : "D";
+      } else {
+        btn.textContent = resolved === "light" ? "Theme: Light" : "Theme: Dark";
+      }
+    });
+    return resolved;
+  };
+
+  const setupThemeToggle = () => {
+    try {
+      window.localStorage.removeItem(THEME_STORAGE_KEY);
+    } catch {
+      // Ignore storage failures in restricted modes.
+    }
+
+    applyTheme("dark");
+
+    [themeToggleBtn, mobileThemeToggleBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.hidden = true;
+      btn.disabled = true;
+      btn.tabIndex = -1;
+      btn.setAttribute("aria-hidden", "true");
+      btn.style.display = "none";
+    });
+  };
+
   const setupNavigation = () => {
     const syncMobileSearchPlacement = () => {
       if (!nav || !mobileMenu || !navToggle || !searchRoot) return;
@@ -228,7 +314,9 @@
         });
         history.replaceState(null, "", href);
         closeMobileMenu();
-        if (lastFocusedElement && !mobileMenu.hidden) lastFocusedElement.focus();
+        if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+          lastFocusedElement.focus();
+        }
       });
     });
 
@@ -313,6 +401,72 @@
 
   const setupBrandBadge = () => {
     if (!brandLogoBtn || !logoModal || !logoModalCard || !logoFlip) return;
+
+    const setLogoVisualState = (hostEl, { hasRichLogo = false, broken = false } = {}) => {
+      if (!(hostEl instanceof HTMLElement)) return;
+      hostEl.classList.toggle("has-rich-logo", Boolean(hasRichLogo));
+      hostEl.classList.toggle("is-logo-fallback", Boolean(broken));
+    };
+
+    const initLogoFallback = (logoEl, hostEl, { requireVisibleSize = false } = {}) => {
+      if (!(hostEl instanceof HTMLElement) || !(logoEl instanceof Element)) return;
+
+      if (logoEl instanceof HTMLImageElement) {
+        const sync = () => {
+          const isMissing = logoEl.complete && logoEl.naturalWidth === 0;
+          setLogoVisualState(hostEl, { hasRichLogo: !isMissing, broken: isMissing });
+        };
+
+        logoEl.addEventListener("load", () => {
+          setLogoVisualState(hostEl, { hasRichLogo: true, broken: false });
+        });
+        logoEl.addEventListener("error", () => {
+          setLogoVisualState(hostEl, { hasRichLogo: false, broken: true });
+        });
+
+        if (logoEl.complete) sync();
+        return;
+      }
+
+      if (logoEl instanceof SVGElement) {
+        const probe = () => {
+          let ok = true;
+          try {
+            const vb = logoEl.viewBox?.baseVal;
+            ok = ok && Boolean(vb && vb.width > 0 && vb.height > 0);
+          } catch {
+            ok = false;
+          }
+
+          if (requireVisibleSize) {
+            const rect = logoEl.getBoundingClientRect();
+            ok = ok && rect.width >= 20 && rect.height >= 20;
+          }
+
+          try {
+            if (typeof logoEl.getBBox === "function") {
+              const box = logoEl.getBBox();
+              if (Number.isFinite(box?.width) && Number.isFinite(box?.height) && (box.width || box.height)) {
+                ok = ok && box.width >= 60 && box.height >= 60;
+              }
+            }
+          } catch {
+            // Ignore getBBox failures for hidden nodes; visible-size check handles the header logo.
+          }
+
+          setLogoVisualState(hostEl, { hasRichLogo: ok, broken: !ok });
+        };
+
+        window.requestAnimationFrame(() => {
+          probe();
+          window.setTimeout(probe, 140);
+        });
+      }
+    };
+
+    // Use the monogram fallback in the header button for webview reliability.
+    setLogoVisualState(brandLogoBtn, { hasRichLogo: false, broken: true });
+    initLogoFallback(logoModal.querySelector(".logo-big"), logoModal.querySelector(".logo-face--front"));
 
     let isOpen = false;
     let lastBrandFocus = null;
@@ -744,6 +898,79 @@
         button.textContent = previous || "Copy citation";
       }, 1400);
     });
+  };
+
+  const setFeaturedApiStatus = (message, state = "") => {
+    if (!featuredApiStatus) return;
+    if (!message) {
+      featuredApiStatus.hidden = true;
+      featuredApiStatus.textContent = "";
+      delete featuredApiStatus.dataset.state;
+      return;
+    }
+    featuredApiStatus.hidden = false;
+    featuredApiStatus.textContent = message;
+    if (state) featuredApiStatus.dataset.state = state;
+    else delete featuredApiStatus.dataset.state;
+  };
+
+  const renderFeaturedProjectsFromApi = (items) => {
+    if (!featuredProjectsWrapper || !Array.isArray(items) || !items.length) return false;
+    featuredProjectsWrapper.innerHTML = items
+      .map((item) => {
+        const badge = escapeHtml(item?.badge || "Project");
+        const title = escapeHtml(item?.title || "Untitled Project");
+        const tags = Array.isArray(item?.tags) ? item.tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("") : "";
+        const problem = escapeHtml(item?.problem || "N/A");
+        const action = escapeHtml(item?.action || "N/A");
+        const impact = escapeHtml(item?.impact || "N/A");
+        const href = escapeHtml(item?.link?.href || "#");
+        const linkLabel = escapeHtml(item?.link?.label || "View case study");
+        const linkAttrs = item?.link?.external ? ' target="_blank" rel="noopener noreferrer"' : "";
+        return `
+                <div class="swiper-slide">
+                  <article class="project-card featured-case">
+                    <div class="flip-card">
+                      <div class="flip-inner">
+                        <div class="flip-front">
+                          <div class="chip">${badge}</div>
+                          <h3>${title}</h3>
+                          <div class="chip-row">${tags}</div>
+                        </div>
+                        <div class="flip-back">
+                          <p><strong>Problem:</strong> ${problem}</p>
+                          <p><strong>Action:</strong> ${action}</p>
+                          <p><strong>Impact:</strong> ${impact}</p>
+                          <a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>`;
+      })
+      .join("");
+    return true;
+  };
+
+  const loadFeaturedProjectsFromApi = async () => {
+    if (!featuredProjectsWrapper) return false;
+    if (window.location.protocol === "file:") {
+      setFeaturedApiStatus("Using embedded featured projects (file preview).", "offline");
+      return false;
+    }
+    try {
+      const response = await fetch("/api/projects", { headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error(String(response.status));
+      const data = await response.json().catch(() => null);
+      const items = Array.isArray(data?.featured) ? data.featured : [];
+      if (!items.length) throw new Error("No featured projects in API response");
+      renderFeaturedProjectsFromApi(items);
+      setFeaturedApiStatus("Featured projects loaded from Python API.", "online");
+      return true;
+    } catch {
+      setFeaturedApiStatus("Using embedded featured projects (API unavailable).", "offline");
+      return false;
+    }
   };
 
   const setupFeaturedCarousel = () => {
@@ -1636,6 +1863,83 @@
     syncSearchState();
   };
 
+  const setupHeaderSearchPanel = () => {
+    const navBtn = navSearchBtn;
+    const panel = navSearchPanel;
+    const input = searchInput;
+    const clearBtn = searchClearButton;
+    const root = searchRoot;
+    if (!navBtn || !panel || !input || !root) return;
+
+    const syncState = (open) => {
+      panel.hidden = !open;
+      root.classList.toggle("is-open", open);
+      root.setAttribute("aria-expanded", open ? "true" : "false");
+      navBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
+    const openPanel = () => {
+      if (!panel.hidden) {
+        syncState(true);
+      } else {
+        syncState(true);
+      }
+      window.setTimeout(() => {
+        try {
+          input.focus({ preventScroll: true });
+        } catch {
+          input.focus();
+        }
+      }, 0);
+    };
+
+    const closePanel = ({ returnFocus = false } = {}) => {
+      if (!panel.hidden && document.activeElement === input) {
+        input.blur();
+      }
+      syncState(false);
+      if (returnFocus) {
+        navBtn.focus();
+      }
+    };
+
+    navBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (panel.hidden) {
+        openPanel();
+      } else {
+        closePanel({ returnFocus: true });
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (panel.hidden) return;
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (root.contains(target)) return;
+      closePanel();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || panel.hidden) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") {
+        event.stopImmediatePropagation();
+      }
+      closePanel({ returnFocus: true });
+    }, true);
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        window.setTimeout(() => {
+          closePanel({ returnFocus: true });
+        }, 0);
+      });
+    }
+
+    syncState(false);
+  };
   const setupSearch = () => {
     if (!searchInput) return;
 
@@ -1699,6 +2003,100 @@
       applySearchAndFilters();
       jumpToFirstSearchResult();
     }
+  };
+
+  const setupContactForm = () => {
+    if (!contactForm || !contactNameInput || !contactEmailInput || !contactMessageInput || !contactSubmit || !contactFormStatus) {
+      return;
+    }
+
+    const fallbackEmailLink = document.querySelector('.contact-link[href^="mailto:"]');
+    const fallbackEmail = fallbackEmailLink?.textContent?.trim() || "shaikazhadshahzad@gmail.com";
+
+    const setFormStatus = (text, state = "") => {
+      contactFormStatus.textContent = text;
+      if (state) contactFormStatus.dataset.state = state;
+      else delete contactFormStatus.dataset.state;
+    };
+
+    const setApiStatus = (text, state = "") => {
+      if (!contactApiStatus) return;
+      contactApiStatus.textContent = text;
+      if (state) contactApiStatus.dataset.state = state;
+      else delete contactApiStatus.dataset.state;
+    };
+
+    const checkApiStatus = async () => {
+      if (!contactApiStatus) return;
+      if (window.location.protocol === "file:") {
+        setApiStatus("Python API: offline (file preview)", "offline");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/health", { headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(String(response.status));
+        setApiStatus("Python API: online", "online");
+      } catch {
+        setApiStatus("Python API: offline (static mode)", "offline");
+      }
+    };
+
+    void checkApiStatus();
+
+    contactForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!contactForm.reportValidity()) return;
+
+      const payload = {
+        name: contactNameInput.value.trim(),
+        email: contactEmailInput.value.trim(),
+        message: contactMessageInput.value.trim(),
+        website: contactWebsiteInput?.value ?? "",
+        source: window.location.href,
+      };
+
+      if (!payload.name || !payload.email || !payload.message) {
+        setFormStatus("Please complete all fields before sending.", "error");
+        return;
+      }
+
+      contactSubmit.disabled = true;
+      setFormStatus("Sending to local Python API...", "pending");
+
+      let apiResponded = false;
+
+      try {
+        if (window.location.protocol === "file:") {
+          throw new Error("Open the portfolio through a local server.");
+        }
+
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        apiResponded = true;
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data?.ok) {
+          throw new Error(data?.error || `Request failed (${response.status})`);
+        }
+
+        contactForm.reset();
+        setApiStatus("Python API: online", "online");
+        const successMessage = typeof data?.message === "string" ? data.message : "Message captured locally by Python. Check contact_messages/messages.db.";
+        setFormStatus(successMessage, "success");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unable to reach the Python API.";
+        if (apiResponded) setApiStatus("Python API: online", "online");
+        else setApiStatus("Python API: offline", "offline");
+        const prefix = apiResponded ? "Submission blocked: " : "Python API unavailable: ";
+        setFormStatus(`${prefix}${message} Use the email link above (${fallbackEmail}).`, "error");
+      } finally {
+        contactSubmit.disabled = false;
+      }
+    });
   };
 
   const setupChatbot = () => {
@@ -1784,20 +2182,28 @@
     appendMessage("bot", "Hi, I am your portfolio assistant. Ask about projects, skills, resume, or contact.");
   };
 
-  setupNavigation();
-  initAnalytics();
-  setupSlideClickToCenter();
-  setupBrandBadge();
-  setupReveal();
-  setupEducationLogoFallbacks();
-  setupFlipCards();
-  setupCopyCitation();
-  setupPremiumSearch();
-  setupSearch();
-  setupChatbot();
-  setupCertFilters();
-  setupFeaturedCarousel();
-  applySearchAndFilters();
+  const bootstrapApp = async () => {
+    setupThemeToggle();
+    setupNavigation();
+    initAnalytics();
+    setupSlideClickToCenter();
+    setupBrandBadge();
+    setupReveal();
+    setupEducationLogoFallbacks();
+    setupCopyCitation();
+    setupPremiumSearch();
+    setupSearch();
+    setupHeaderSearchPanel();
+    setupContactForm();
+    setupChatbot();
+    setupCertFilters();
+    await loadFeaturedProjectsFromApi();
+    setupFlipCards();
+    setupFeaturedCarousel();
+    applySearchAndFilters();
+  };
+
+  void bootstrapApp();
 
   let swipersStarted = false;
   const startDeferredSwipers = () => {
