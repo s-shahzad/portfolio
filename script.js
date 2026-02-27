@@ -660,7 +660,7 @@
         .map((n) => n.textContent?.trim())
         .filter(Boolean)
         .slice(0, 2)
-        .join(" · ");
+        .join(" | ");
       addLine("Venue + Year", venueYear);
       const authorsLine = Array.from(source.querySelectorAll("details p"))
         .map((p) => p.textContent?.trim())
@@ -2128,13 +2128,13 @@
       const q = normalizeText(message);
 
       if (q.includes("contact") || q.includes("email") || q.includes("hire")) {
-        return "You can reach me at shaikazhadshahzad@gmail.com or scroll to the Contact section.";
+        return "I am open to software, cybersecurity, and ML engineering roles. Reach me at shaikazhadshahzad@gmail.com or use the Contact section.";
       }
       if (q.includes("resume") || q.includes("cv")) {
         return "Use the Download Resume button in the hero section.";
       }
       if (q.includes("project") || q.includes("featured")) {
-        return "Start with Featured Work for top security and ML projects.";
+        return "Start with Featured Work for high-impact security and ML case studies.";
       }
       if (q.includes("skill") || q.includes("technology") || q.includes("tool")) {
         return "Skills include cybersecurity, threat analysis, Python, AWS, and data/ML workflows.";
@@ -2143,7 +2143,7 @@
         return "Education includes M.S. in Cyber/Computer Forensics and Counterterrorism plus B.Tech in ECE.";
       }
       if (q.includes("experience") || q.includes("work")) {
-        return "Experience spans cybersecurity engineering, risk analysis, data analytics, and telecom operations.";
+        return "Experience spans cybersecurity engineering, risk analysis, healthcare data integration, and telecom operations.";
       }
       if (q.includes("certification") || q.includes("comptia") || q.includes("hackerrank")) {
         return "Certifications include Security+, Fortinet NSE, and HackerRank credentials.";
@@ -2179,7 +2179,7 @@
       }, 180);
     });
 
-    appendMessage("bot", "Hi, I am your portfolio assistant. Ask about projects, skills, resume, or contact.");
+    appendMessage("bot", "Hi, I am your portfolio assistant. Ask about projects, impact, skills, resume, or contact.");
   };
 
   const bootstrapApp = async () => {
