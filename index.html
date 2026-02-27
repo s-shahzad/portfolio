@@ -441,23 +441,20 @@
           </div>
           <div class="contact-card">
             <div class="contact-links">
-              <div><span class="contact-label">Email</span><a class="contact-link" href="mailto:shaikazhadshahzad@gmail.com">shaikazhadshahzad@gmail.com</a></div>
-              <div><span class="contact-label">GitHub</span><a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a></div>
+              <div class="contact-link-item"><span class="contact-label">Email</span><a class="contact-link" href="mailto:shaikazhadshahzad@gmail.com">shaikazhadshahzad@gmail.com</a></div>
+              <div class="contact-link-item"><span class="contact-label">GitHub</span><a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a></div>
             </div>
             <p class="response-time">Responding within 24-48 hours.</p>
-            <div class="contact-api-note">
-              <span class="contact-api-badge" id="contactApiStatus" data-state="checking">Python API: checking...</span>
-              <span>Local demo: run <code>python server.py</code> in this folder. <a class="contact-link" href="/admin.html">Admin messages</a> &bull; <a class="contact-link" href="/cyber-demo.html">Cyber IOC demo</a></span>
-            </div>
+            <p class="contact-helper">Email is the fastest way to reach me for interviews, projects, and collaboration.</p>
             <form class="contact-form" id="contactForm" novalidate>
-              <div class="contact-form-grid">
+              <div class="form-row">
                 <label class="contact-field">
                   <span>Name</span>
-                  <input id="contactName" name="name" type="text" autocomplete="name" required />
+                  <input id="contactName" name="name" type="text" autocomplete="name" placeholder="Your full name" required />
                 </label>
                 <label class="contact-field">
                   <span>Email</span>
-                  <input id="contactEmail" name="email" type="email" autocomplete="email" required />
+                  <input id="contactEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
                 </label>
               </div>
               <label class="contact-field">
@@ -471,7 +468,7 @@
                 </label>
               </div>
               <div class="contact-form-actions">
-                <button class="btn primary small" id="contactSubmit" type="submit">Send Message</button>
+                <button class="btn primary" id="contactSubmit" type="submit">Send Message</button>
                 <p class="contact-form-status" id="contactFormStatus" aria-live="polite"></p>
               </div>
             </form>
@@ -707,12 +704,3 @@
     <script src="chatbot-upgrade.js?v=20260226-02" defer></script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
