@@ -1,2 +1,13 @@
-#!/usr/bin/env sh
-exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\\scripts\\run-checks.ps1"
+#!/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -ExecutionPolicy Bypass
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$checkScript = Join-Path $repoRoot 'scripts/run-checks.ps1'
+if (-not (Test-Path $checkScript)) {
+    Write-Error "Required check script not found: $checkScript"
+    exit 1
+}
+
+& $checkScript
+exit $LASTEXITCODE
