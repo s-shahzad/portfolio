@@ -31,6 +31,7 @@
   const searchSuggestions = document.getElementById("site-search-suggestions");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
+  const featuredFilterButtons = Array.from(document.querySelectorAll(".featured-filters [data-featured-filter]"));
   const featuredProjectsWrapper = document.getElementById("featuredProjectsWrapper");
   const featuredApiStatus = document.getElementById("featuredApiStatus");
   const chatbot = document.getElementById("chatbot");
@@ -53,6 +54,8 @@
   let currentOpenFlip = null;
   let currentSearchQuery = "";
   let certFilter = "all";
+  let featuredFilter = "all";
+  let featuredCarousel = null;
 
   const normalizeText = (value) => value.toLowerCase().replace(/\s+/g, " ").trim();
   const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -950,26 +953,32 @@
         const badge = escapeHtml(item?.badge || "Project");
         const title = escapeHtml(item?.title || "Untitled Project");
         const tags = Array.isArray(item?.tags) ? item.tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("") : "";
+        const categories = Array.isArray(item?.categories) ? item.categories.map((value) => String(value).trim()).filter(Boolean) : [];
+        const categoryAttr = categories.length ? ` data-category="${escapeHtml(categories.join(" "))}"` : "";
         const problem = escapeHtml(item?.problem || "N/A");
         const action = escapeHtml(item?.action || "N/A");
         const impact = escapeHtml(item?.impact || "N/A");
+        const proof = item?.proof ? `<p class="featured-proof">${escapeHtml(item.proof)}</p>` : "";
+        const result = item?.result ? `<p class="featured-outcome"><strong>Result:</strong> ${escapeHtml(item.result)}</p>` : "";
         const href = escapeHtml(item?.link?.href || "#");
         const linkLabel = escapeHtml(item?.link?.label || "View case study");
         const linkAttrs = item?.link?.external ? ' target="_blank" rel="noopener noreferrer"' : "";
         return `
                 <div class="swiper-slide">
-                  <article class="project-card featured-case">
+                  <article class="project-card featured-case"${categoryAttr}>
                     <div class="flip-card">
                       <div class="flip-inner">
                         <div class="flip-front">
                           <div class="chip">${badge}</div>
                           <h3>${title}</h3>
                           <div class="chip-row">${tags}</div>
+                          ${proof}
                         </div>
                         <div class="flip-back">
                           <p><strong>Problem:</strong> ${problem}</p>
                           <p><strong>Action:</strong> ${action}</p>
                           <p><strong>Impact:</strong> ${impact}</p>
+                          ${result}
                           <a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>
                         </div>
                       </div>
@@ -1004,7 +1013,10 @@
 
   const setupFeaturedCarousel = () => {
     const featuredRoot = document.querySelector("#featured .featured-swiper");
-    if (!featuredRoot || typeof window.Swiper === "undefined") return null;
+    if (!featuredRoot || typeof window.Swiper === "undefined") {
+      featuredCarousel = null;
+      return null;
+    }
     const slideCount = Array.from(
       featuredRoot.querySelectorAll(".swiper-slide")
     ).filter((slide) => !slide.classList.contains("swiper-slide-duplicate")).length;
@@ -1173,6 +1185,7 @@
       else resumeAutoplay();
     });
 
+    featuredCarousel = swiper;
     return swiper;
   };
 
@@ -1504,6 +1517,28 @@
     });
   };
 
+  const syncFeaturedCarousel = () => {
+    if (!featuredCarousel) return;
+
+    featuredCarousel.update();
+
+    const firstVisibleSlide = Array.from(document.querySelectorAll("#featured .swiper-slide"))
+      .find((slide) => !slide.classList.contains("swiper-slide-duplicate") && !slide.classList.contains("slide-hidden"));
+
+    if (!firstVisibleSlide) return;
+
+    const realIndex = Number(firstVisibleSlide.getAttribute("data-swiper-slide-index"));
+    if (Number.isFinite(realIndex)) {
+      featuredCarousel.slideToLoop(realIndex, 0, false);
+      return;
+    }
+
+    const slideIndex = Array.from(featuredCarousel.slides || []).indexOf(firstVisibleSlide);
+    if (slideIndex >= 0) {
+      featuredCarousel.slideTo(slideIndex, 0, false);
+    }
+  };
+
   const clearHighlights = (root) => {
     root.querySelectorAll("mark.hit").forEach((mark) => {
       const parent = mark.parentNode;
@@ -1604,7 +1639,8 @@
     cardRegistry.forEach((entry) => {
       const matchesSearch = !currentSearchQuery || entry.text.includes(currentSearchQuery);
       const matchesCert = entry.section !== "certifications" || certFilter === "all" || entry.categories.includes(certFilter);
-      const visible = matchesSearch && matchesCert;
+      const matchesFeatured = entry.section !== "featured" || featuredFilter === "all" || entry.categories.includes(featuredFilter);
+      const visible = matchesSearch && matchesCert && matchesFeatured;
 
       applyCardVisibilityById(entry.id, visible);
 
@@ -1620,6 +1656,8 @@
       swiper.update();
       updateSpotlight(swiper);
     });
+
+    syncFeaturedCarousel();
 
     updateSearchStatus(searchInput?.value?.trim() || "", visibleCount);
     updateUrlQuery(currentSearchQuery);
@@ -1667,6 +1705,19 @@
         filterButtons.forEach((b) => b.classList.remove("is-active"));
         button.classList.add("is-active");
         certFilter = button.getAttribute("data-filter") || "all";
+        applySearchAndFilters();
+      });
+    });
+  };
+
+  const setupFeaturedFilters = () => {
+    if (!featuredFilterButtons.length) return;
+
+    featuredFilterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        featuredFilterButtons.forEach((item) => item.classList.remove("is-active"));
+        button.classList.add("is-active");
+        featuredFilter = button.getAttribute("data-featured-filter") || "all";
         applySearchAndFilters();
       });
     });
@@ -2114,7 +2165,9 @@
 
         contactForm.reset();
         setApiStatus("Python API: online", "online");
-        const successMessage = typeof data?.message === "string" ? data.message : "Message captured locally by Python. Check contact_messages/messages.db.";
+        const successMessage = typeof data?.message === "string" && data.message.trim()
+          ? `${data.message.trim()} I usually reply within 24-48 hours.`
+          : "Thanks, your message was sent successfully. I usually reply within 24-48 hours.";
         setFormStatus(successMessage, "success");
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to reach the Python API.";
@@ -2159,6 +2212,12 @@
       if (q.includes("contact") || q.includes("email") || q.includes("hire")) {
         return "I am open to software, cybersecurity, and ML engineering roles. Reach me at shaikazhadshahzad@gmail.com or use the Contact section.";
       }
+      if (q.includes("about") || q.includes("background")) {
+        return "I build secure APIs, resilient data pipelines, and ML-assisted detection workflows across healthcare, connected systems, and security-focused software.";
+      }
+      if (q.includes("why hire") || q.includes("why should") || q.includes("strength")) {
+        return "You will see the strongest fit in secure backend delivery, risk-aware engineering, healthcare integration, and teams that need clear execution under real constraints.";
+      }
       if (q.includes("resume") || q.includes("cv")) {
         return "Use the Download Resume button in the hero section.";
       }
@@ -2180,7 +2239,7 @@
       if (q.includes("github") || q.includes("code")) {
         return "GitHub: github.com/s-shahzad";
       }
-      return "I can help with projects, skills, certifications, education, experience, contact, and resume.";
+      return "I can help with background, projects, skills, certifications, education, experience, contact, and resume.";
     };
 
     chatbotToggle.addEventListener("click", () => {
@@ -2226,6 +2285,7 @@
     setupContactForm();
     setupChatbot();
     setupCertFilters();
+    setupFeaturedFilters();
     await loadFeaturedProjectsFromApi();
     setupFlipCards();
     setupFeaturedCarousel();

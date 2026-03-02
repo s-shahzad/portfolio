@@ -53,13 +53,12 @@ function Get-ListenerOnPort {
 }
 
 
-function Import-CredentialHelpers {
+function Get-CredentialHelperScript {
     $credScript = Join-Path $scriptRoot 'scripts\credential-manager.ps1'
     if (Test-Path $credScript) {
-        . $credScript
-        return $true
+        return $credScript
     }
-    return $false
+    return $null
 }
 
 function Load-SecretsFromCredentialManager {
@@ -111,7 +110,9 @@ if (Test-Path $resolvedEnvFile) {
     Write-Host "Optional env file not found: $resolvedEnvFile"
 }
 
-if (Import-CredentialHelpers) {
+$credHelperScript = Get-CredentialHelperScript
+if ($credHelperScript) {
+    . $credHelperScript
     Load-SecretsFromCredentialManager
 }
 

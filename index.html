@@ -5,17 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Azhad Shahzad Shaik | Portfolio</title>
     <meta name="description" content="Cybersecurity and ML engineer portfolio featuring security case studies, publications, certifications, and experience across healthcare, IoT, and cloud systems." />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:title" content="Azhad Shahzad Shaik | Secure Software, Cybersecurity, and ML Portfolio" />
+    <meta property="og:description" content="Portfolio of Azhad Shahzad Shaik featuring secure backend systems, cybersecurity delivery, healthcare integrations, and ML-driven engineering work." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/profile-hero.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Azhad Shahzad Shaik | Engineering Portfolio" />
+    <meta name="twitter:description" content="Secure software, cybersecurity, and ML-adjacent engineering work across healthcare, connected systems, and production-ready delivery." />
+    <meta name="twitter:image" content="assets/profile-hero.jpg" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net; img-src 'self' data: https:; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
     />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "name": "Azhad Shahzad Shaik",
+            "jobTitle": "Cybersecurity Engineer",
+            "email": "mailto:shaikazhadshahzad@gmail.com",
+            "image": "assets/profile-hero.jpg",
+            "sameAs": ["https://github.com/s-shahzad"],
+            "knowsAbout": [
+              "Cybersecurity",
+              "Secure Software Engineering",
+              "Backend APIs",
+              "Healthcare Data Integration",
+              "Machine Learning Detection"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "name": "Azhad Shahzad Shaik Portfolio",
+            "description": "Portfolio showcasing secure backend delivery, cybersecurity projects, and ML-adjacent engineering work."
+          }
+        ]
+      }
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preload" as="image" href="assets/profile-hero.jpg" />
     <link rel="icon" href="assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="shortcut icon" href="assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="styles.css?v=20260227-85" />
+    <link rel="stylesheet" href="styles.css?v=20260302-87" />
   </head>
   <body>
     <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -34,6 +71,7 @@
             <span class="brand-logo-fallback" aria-hidden="true">AS</span>
           </button>
           <ul class="nav-links">
+            <li><a href="#about">About</a></li>
             <li><a href="#featured">Featured Work</a></li>
             <li><a href="#publications">Publications</a></li>
             <li><a href="#certifications">Certifications</a></li>
@@ -62,6 +100,7 @@
         <div id="mobile-menu" class="mobile-menu" hidden>
           <button id="mobileSearchTrigger" class="mobile-menu-search" type="button">Search</button>
           <button id="mobileThemeToggleBtn" class="mobile-theme-toggle" type="button" aria-pressed="false">Toggle theme</button>
+          <a href="#about">About</a>
           <a href="#featured">Featured Work</a>
           <a href="#publications">Publications</a>
           <a href="#certifications">Certifications</a>
@@ -73,14 +112,33 @@
 
         <div class="hero-content">
           <div class="hero-text">
+            <p class="hero-eyebrow">Open to full-time roles in software, cybersecurity, and ML-adjacent engineering.</p>
             <h1>Azhad Shahzad Shaik</h1>
-            <p class="subtitle">Cybersecurity Engineer | Secure Software | ML-Driven Detection</p>
-            <p class="subtitle">I build secure APIs and data pipelines for healthcare and connected systems.</p>
-            <p class="subtitle">Hands-on in threat analysis, risk remediation, and incident-ready engineering.</p>
-            <p class="availability">Open to full-time Software, Cybersecurity, and ML Engineering roles.</p>
+            <p class="hero-lead">I build secure backend systems, production-ready integrations, and defensible data workflows for teams that need software shipped with security built in.</p>
+            <p class="subtitle">Experience across healthcare interoperability, enterprise risk analysis, and connected systems engineering.</p>
+            <p class="availability">Strong fit for backend, security engineering, platform, and technical product teams that value execution and clarity.</p>
+            <div class="hero-trust" aria-label="Portfolio trust signals">
+              <div class="hero-trust-item">
+                <strong>2</strong>
+                <span>Publications</span>
+              </div>
+              <div class="hero-trust-item">
+                <strong>6</strong>
+                <span>Certifications</span>
+              </div>
+              <div class="hero-trust-item">
+                <strong>Security+</strong>
+                <span>Verified credential</span>
+              </div>
+              <div class="hero-trust-item">
+                <strong>24-48h</strong>
+                <span>Typical reply window</span>
+              </div>
+            </div>
             <div class="cta-row">
               <a class="btn primary" href="#featured">View Case Studies</a>
               <a class="btn ghost" href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>View Resume</a>
+              <a class="btn ghost" href="#contact">Contact Me</a>
             </div>
           </div>
           <div class="hero-photo">
@@ -100,18 +158,93 @@
 
     <main id="mainContent" tabindex="-1">
       <div id="search-status" class="search-status" aria-live="polite" hidden></div>
+      <section id="about" class="section alt reveal">
+        <div class="container">
+          <div class="section-head">
+            <h2>About</h2>
+            <p>A concise view of how I work, what I build, and where I add value on engineering teams.</p>
+          </div>
+          <div class="about-grid">
+            <div class="about-panel">
+              <p>I build secure, production-ready software with a focus on backend APIs, resilient data workflows, and practical security controls.</p>
+              <p>My experience spans healthcare interoperability, connected systems, and enterprise risk analysis, where I turn ambiguous technical problems into stable implementations and clear remediation paths.</p>
+              <ul class="about-list" aria-label="Core strengths">
+                <li>Move from risk discovery to concrete execution plans quickly.</li>
+                <li>Ship backend and integration work with security built into the delivery process.</li>
+                <li>Work well across engineering, product, and operations with clear communication.</li>
+              </ul>
+            </div>
+            <div class="about-kpis" aria-label="Professional summary">
+              <div class="about-stat">
+                <span class="about-stat-value">3+</span>
+                <span class="about-stat-label">Core lanes</span>
+                <p>Software engineering, cybersecurity, and ML/data execution.</p>
+              </div>
+              <div class="about-stat">
+                <span class="about-stat-value">1</span>
+                <span class="about-stat-label">Delivery style</span>
+                <p>Execution-first, detail-aware, and comfortable in production-minded environments.</p>
+              </div>
+              <div class="about-stat">
+                <span class="about-stat-value">1</span>
+                <span class="about-stat-label">Hiring fit</span>
+                <p>Strong fit for teams hiring across software, cybersecurity, or ML-adjacent engineering roles.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="why-hire-me" class="section reveal">
+        <div class="container">
+          <div class="section-head">
+            <h2>Why Hire Me</h2>
+            <p>What teams get when they need a builder who can balance delivery speed, technical depth, and security discipline.</p>
+          </div>
+          <div class="value-grid">
+            <article class="value-card">
+              <span class="value-badge">Secure Delivery</span>
+              <h3>Backend work that ships cleanly</h3>
+              <p>I focus on APIs, data paths, and system behavior that are stable in production, not just correct in demos.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-badge">Risk To Action</span>
+              <h3>Technical findings translated into execution</h3>
+              <p>I can turn security and reliability gaps into clear remediation steps that product and engineering teams can actually execute.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-badge">Cross-Domain</span>
+              <h3>Useful across security, backend, and data work</h3>
+              <p>My background bridges cybersecurity, healthcare integration, and ML-adjacent workflows, which helps when systems cut across multiple teams.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-badge">Team Fit</span>
+              <h3>Clear communication under real constraints</h3>
+              <p>I work well in practical environments where requirements shift, tradeoffs matter, and progress still has to be measurable.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="featured" class="section reveal">
         <div class="container">
           <div class="section-head">
             <h2>Featured Work</h2>
-            <p>Security and ML case studies selected for technical depth and measurable impact.</p>
+            <p>Security, backend, and healthcare case studies with clearer business outcomes and role-aligned filtering.</p>
             <p class="response-time" id="featuredApiStatus" hidden></p>
+          </div>
+          <div class="featured-filters" role="group" aria-label="Featured project filters">
+            <button class="btn ghost small is-active" type="button" data-featured-filter="all">All</button>
+            <button class="btn ghost small" type="button" data-featured-filter="security">Security</button>
+            <button class="btn ghost small" type="button" data-featured-filter="backend">Backend</button>
+            <button class="btn ghost small" type="button" data-featured-filter="ml">ML</button>
+            <button class="btn ghost small" type="button" data-featured-filter="healthcare">Healthcare</button>
           </div>
           <div class="featured-carousel">
             <div class="swiper featured-swiper">
               <div class="swiper-wrapper" id="featuredProjectsWrapper">
                 <div class="swiper-slide">
-                  <article class="project-card featured-case">
+                  <article class="project-card featured-case" data-category="security ml">
                     <div class="flip-card">
                       <div class="flip-inner">
                         <div class="flip-front">
@@ -123,19 +256,21 @@
                             <span class="chip">IoT</span>
                             <span class="chip">EVCS</span>
                           </div>
+                          <p class="featured-proof">1 peer-reviewed IEEE publication tied to an ML-driven intrusion-detection concept for EV charging threats.</p>
                         </div>
                         <div class="flip-back">
                           <p><strong>Problem:</strong> DoS risk in EV charging networks.</p>
                           <p><strong>Action:</strong> Built an ML-based intrusion detection approach for EVCS traffic.</p>
                           <p><strong>Impact:</strong> Strengthened detection readiness for connected infrastructure.</p>
-                          <a class="text-link" href="https://ieeexplore.ieee.org/document/11275540" target="_blank" rel="noopener noreferrer">View case study</a>
+                          <p class="featured-outcome"><strong>Result:</strong> Converted the work into a formal IEEE publication and a reusable security framing for connected charging systems.</p>
+                          <a class="text-link" href="case-studies/evcs-dos-detection.html">View case study</a>
                         </div>
                       </div>
                     </div>
                   </article>
                 </div>
                 <div class="swiper-slide">
-                  <article class="project-card featured-case">
+                  <article class="project-card featured-case" data-category="security">
                     <div class="flip-card">
                       <div class="flip-inner">
                         <div class="flip-front">
@@ -147,11 +282,13 @@
                             <span class="chip">IR</span>
                             <span class="chip">SOC</span>
                           </div>
+                          <p class="featured-proof">Produced a remediation-ready risk view that made security findings easier to prioritize and communicate.</p>
                         </div>
                         <div class="flip-back">
                           <p><strong>Problem:</strong> Limited visibility into security maturity and risk exposure.</p>
                           <p><strong>Action:</strong> Mapped findings to NIST risk categories and incident patterns.</p>
                           <p><strong>Impact:</strong> Delivered prioritized remediation guidance tied to business impact.</p>
+                          <p class="featured-outcome"><strong>Result:</strong> Faster triage conversations and clearer handoff from technical findings to stakeholder-ready remediation planning.</p>
                           <a class="text-link" href="case-studies/enterprise-risk-threat-analysis.html">View case study</a>
                         </div>
                       </div>
@@ -159,7 +296,7 @@
                   </article>
                 </div>
                 <div class="swiper-slide">
-                  <article class="project-card featured-case">
+                  <article class="project-card featured-case" data-category="backend healthcare">
                     <div class="flip-card">
                       <div class="flip-inner">
                         <div class="flip-front">
@@ -171,11 +308,13 @@
                             <span class="chip">Data QA</span>
                             <span class="chip">Healthcare</span>
                           </div>
+                          <p class="featured-proof">Bridged 2 healthcare standards into a more repeatable integration workflow for clinical delivery teams.</p>
                         </div>
                         <div class="flip-back">
                           <p><strong>Problem:</strong> Interoperability gaps across clinical data systems.</p>
                           <p><strong>Action:</strong> Validated and mapped HL7 messages into FHIR resources.</p>
                           <p><strong>Impact:</strong> Improved deployment-ready data exchange and compliance.</p>
+                          <p class="featured-outcome"><strong>Result:</strong> Reduced integration friction by standardizing mappings, validation checks, and delivery-ready handoff patterns.</p>
                           <a class="text-link" href="case-studies/hl7-fhir-integration.html">View case study</a>
                         </div>
                       </div>
@@ -437,7 +576,7 @@
         <div class="container">
           <div class="section-head">
             <h2>Open to Roles &amp; Collaboration</h2>
-            <p>Discuss software, cybersecurity, and ML engineering opportunities.</p>
+            <p>Best for interviews, full-time opportunities, contract work, and technical collaboration.</p>
           </div>
           <div class="contact-card">
             <div class="contact-links">
@@ -445,7 +584,21 @@
               <div class="contact-link-item"><span class="contact-label">GitHub</span><a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a></div>
             </div>
             <p class="response-time">Responding within 24-48 hours.</p>
-            <p class="contact-helper">Email is the fastest way to reach me for interviews, projects, and collaboration.</p>
+            <div class="contact-meta">
+              <p class="contact-helper">Email is the fastest way to reach me for interviews, project work, and collaboration. GitHub is available for code review and technical context before a call.</p>
+              <div class="contact-fit" aria-label="Best contact fit">
+                <span>Interviews</span>
+                <span>Full-time roles</span>
+                <span>Contract work</span>
+                <span>Technical collaboration</span>
+              </div>
+              <div class="contact-actions" aria-label="Contact shortcuts">
+                <a class="btn ghost small" href="mailto:shaikazhadshahzad@gmail.com">Email Directly</a>
+                <a class="btn ghost small" href="assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Resume PDF</a>
+                <a class="btn ghost small" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+              </div>
+              <p class="response-time contact-api-status" id="contactApiStatus" aria-live="polite"></p>
+            </div>
             <form class="contact-form" id="contactForm" novalidate>
               <div class="form-row">
                 <label class="contact-field">
@@ -700,7 +853,7 @@
     <!-- Dev viewport badge (dev-only) -->
     <!-- Dev viewport badge (dev-only) -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
-    <script src="script.js?v=20260226-76" defer></script>
+    <script src="script.js?v=20260302-78" defer></script>
     <script src="chatbot-upgrade.js?v=20260226-02" defer></script>
   </body>
 </html>

@@ -6,6 +6,7 @@
   --muted: #a8b3c4;
   --border: rgba(255, 255, 255, 0.12);
   --accent: #dbe8ff;
+  --accent-soft: rgba(143, 180, 245, 0.08);
   --success: #8af3d0;
 }
 
@@ -27,7 +28,7 @@ body {
 }
 
 .page {
-  width: min(920px, calc(100% - 2rem));
+  width: min(980px, calc(100% - 2rem));
   margin: 2rem auto 2.4rem;
 }
 
@@ -52,7 +53,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 16px;
   background: linear-gradient(160deg, var(--panel), var(--panel-soft));
-  padding: 1.1rem;
+  padding: 1.35rem;
 }
 
 h1,
@@ -65,11 +66,31 @@ h1 {
   font-size: clamp(1.5rem, 3vw, 2.2rem);
 }
 
+h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
 h2 {
   margin-top: 1.1rem;
   font-size: 1.05rem;
   color: var(--accent);
   letter-spacing: 0.01em;
+}
+
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: #c6d8f5;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lede {
+  margin: 0.5rem 0 0;
+  color: #eef4ff;
+  font-size: 1.02rem;
 }
 
 p {
@@ -83,6 +104,27 @@ ul {
 
 li + li {
   margin-top: 0.35rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.summary-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: var(--accent-soft);
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 1rem;
+  color: #eef5ff;
+  margin-bottom: 0.15rem;
 }
 
 .kpis {
@@ -114,7 +156,33 @@ li + li {
   color: var(--muted);
 }
 
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  text-decoration: none;
+  background: var(--accent-soft);
+}
+
+.button-link:hover,
+.button-link:focus-visible {
+  border-color: rgba(166, 205, 255, 0.4);
+}
+
 @media (max-width: 760px) {
+  .summary-grid,
   .kpis {
     grid-template-columns: 1fr;
   }

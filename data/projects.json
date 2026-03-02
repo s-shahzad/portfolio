@@ -1,18 +1,21 @@
 {
-  "updated_at": "2026-02-26T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
   "featured": [
     {
       "id": "evcs-dos-ml-ieee",
       "badge": "IEEE",
       "title": "ML-based DoS Detection for EV Charging Infrastructure",
       "tags": ["ML", "IDS", "IoT", "EVCS"],
+      "categories": ["security", "ml"],
       "problem": "DoS risk in EV charging networks.",
       "action": "Built an ML-based intrusion detection approach for EVCS traffic.",
       "impact": "Strengthened detection readiness for connected infrastructure.",
+      "proof": "1 peer-reviewed IEEE publication tied to an ML-driven intrusion-detection concept for EV charging threats.",
+      "result": "Converted the work into a formal IEEE publication and a reusable security framing for connected charging systems.",
       "link": {
-        "href": "https://ieeexplore.ieee.org/document/11275540",
+        "href": "case-studies/evcs-dos-detection.html",
         "label": "View case study",
-        "external": true
+        "external": false
       }
     },
     {
@@ -20,9 +23,12 @@
       "badge": "SOC / Threat Analysis",
       "title": "Enterprise Risk & Threat Analysis (Internship)",
       "tags": ["NIST", "Risk", "IR", "SOC"],
+      "categories": ["security"],
       "problem": "Limited visibility into security maturity and risk exposure.",
       "action": "Mapped findings to NIST risk categories and incident patterns.",
       "impact": "Delivered prioritized remediation guidance tied to business impact.",
+      "proof": "Produced a remediation-ready risk view that made security findings easier to prioritize and communicate.",
+      "result": "Faster triage conversations and clearer handoff from technical findings to stakeholder-ready remediation planning.",
       "link": {
         "href": "case-studies/enterprise-risk-threat-analysis.html",
         "label": "View case study",
@@ -34,9 +40,12 @@
       "badge": "Healthcare Data",
       "title": "HL7 -> FHIR Data Integration for Clinical Systems",
       "tags": ["HL7", "FHIR", "Data QA", "Healthcare"],
+      "categories": ["backend", "healthcare"],
       "problem": "Interoperability gaps across clinical data systems.",
       "action": "Validated and mapped HL7 messages into FHIR resources.",
       "impact": "Improved deployment-ready data exchange and compliance.",
+      "proof": "Bridged 2 healthcare standards into a more repeatable integration workflow for clinical delivery teams.",
+      "result": "Reduced integration friction by standardizing mappings, validation checks, and delivery-ready handoff patterns.",
       "link": {
         "href": "case-studies/hl7-fhir-integration.html",
         "label": "View case study",
