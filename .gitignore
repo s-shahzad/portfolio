@@ -17,6 +17,7 @@ contact_messages/*.jsonl
 
 # Local scans/debug outputs
 mobile-scan/
+mobile-contact-*.png
 styles.css.accidental-truncated-backup-*
 
 # Backup/monitor outputs
