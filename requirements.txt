@@ -1,0 +1,2 @@
+# Runtime dependencies for hosted deployments.
+# This portfolio server currently uses only Python's standard library.

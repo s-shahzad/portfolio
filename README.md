@@ -108,6 +108,45 @@ Production deploy entrypoint:
 
 Operational procedures are documented in `RUNBOOK.md`.
 
+## Deploy to Render
+
+This repo can be deployed as a long-running Python web service on Render without rewriting the app into serverless functions.
+
+The repo now includes a Render blueprint file:
+
+- `render.yaml`
+
+Fastest path:
+
+1. Push this repo to GitHub.
+2. In Render, create a new Blueprint or Web Service from the repo.
+3. Let Render use the included `render.yaml`.
+4. In Render, set these required secret environment variables before going live:
+
+- `PORTFOLIO_ADMIN_TOKEN_HASH`
+- `PORTFOLIO_SMTP_USERNAME`
+- `PORTFOLIO_SMTP_PASSWORD`
+- `PORTFOLIO_SMTP_FROM`
+- `PORTFOLIO_SMTP_TO`
+
+Recommended:
+
+- Keep `PORTFOLIO_ADMIN_REQUIRE_TOKEN=true`
+- Keep `PORTFOLIO_SMTP_PROVIDER=gmail` unless you intentionally switch providers
+- Verify `/api/health` after deploy
+
+Render start command is configured as:
+
+```text
+python server.py --host 0.0.0.0 --port $PORT
+```
+
+Important limitation:
+
+- Contact submissions and admin audit logs are stored on the service filesystem by `server.py`.
+- That works for initial deployment, but it is not durable storage on typical hosted instances.
+- For production-grade persistence, move contact/admin storage to managed durable storage before relying on hosted restarts or rebuilds.
+
 ## Backup and Restore
 
 Manual backup:
