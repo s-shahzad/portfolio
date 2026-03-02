@@ -247,6 +247,54 @@
       }
     };
 
+    const scrollTargetWithMobileOffset = (target, { smooth = false } = {}) => {
+      if (!(target instanceof Element)) return;
+
+      const motion = smooth && !prefersReducedMotion ? "smooth" : "auto";
+      if (mobileNavQuery.matches && nav) {
+        const anchor = target.id === "contact" ? (target.querySelector(".section-head") || target) : target;
+        const extraTopGap = target.id === "contact" ? 24 : 12;
+        const navOffset = Math.ceil(nav.getBoundingClientRect().height) + extraTopGap;
+        const desiredTop = window.scrollY + anchor.getBoundingClientRect().top - navOffset;
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+        // If top-alignment is impossible near page end, bias the anchor lower in viewport.
+        let nextTop = desiredTop;
+        if (desiredTop > maxScroll) {
+          // Keep some viewport room when target is close to page end.
+          nextTop = Math.max(0, maxScroll - Math.round(window.innerHeight * 0.24));
+        }
+
+        window.scrollTo({
+          top: Math.max(0, Math.min(nextTop, maxScroll)),
+          behavior: motion,
+        });
+        return;
+      }
+
+      target.scrollIntoView({
+        behavior: motion,
+        block: "start",
+      });
+    };
+
+    const syncHashOffset = ({ smooth = false } = {}) => {
+      const hash = window.location.hash;
+      if (!hash || hash === "#") return;
+      const target = document.querySelector(hash);
+      if (!target) return;
+      scrollTargetWithMobileOffset(target, { smooth });
+    };
+
+    const scheduleHashOffsetResync = () => {
+      if (!mobileNavQuery.matches) return;
+      const retryDelays = [180, 620];
+      retryDelays.forEach((delay) => {
+        window.setTimeout(() => {
+          syncHashOffset({ smooth: false });
+        }, delay);
+      });
+    };
     syncMobileSearchPlacement();
     syncMobileMenuOverlayMetrics();
 
@@ -260,9 +308,14 @@
 
     if (typeof mobileNavQuery.addEventListener === "function") {
       mobileNavQuery.addEventListener("change", syncMobileSearchPlacement);
+      mobileNavQuery.addEventListener("change", () => syncHashOffset({ smooth: false }));
     } else if (typeof mobileNavQuery.addListener === "function") {
       mobileNavQuery.addListener(syncMobileSearchPlacement);
+      mobileNavQuery.addListener(() => syncHashOffset({ smooth: false }));
     }
+
+    window.addEventListener("hashchange", () => syncHashOffset({ smooth: true }));
+    window.setTimeout(() => syncHashOffset({ smooth: false }), 0);
 
     if (navToggle && mobileMenu) {
       navToggle.addEventListener("click", () => {
@@ -306,12 +359,12 @@
         const target = document.querySelector(href);
         if (!target) return;
         event.preventDefault();
-        target.scrollIntoView({
-          behavior: prefersReducedMotion ? "auto" : "smooth",
-          block: "start",
-        });
         history.replaceState(null, "", href);
         closeMobileMenu();
+        window.requestAnimationFrame(() => {
+          scrollTargetWithMobileOffset(target, { smooth: true });
+          scheduleHashOffsetResync();
+        });
         if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
           lastFocusedElement.focus();
         }
