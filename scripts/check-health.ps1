@@ -11,6 +11,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+$scriptPath = $PSCommandPath
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptRoot
 
@@ -24,11 +25,55 @@ $resolvedState = if ([System.IO.Path]::IsPathRooted($StateFile)) { $StateFile } 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $resolvedLog) | Out-Null
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $resolvedState) | Out-Null
 
+function Test-ShouldHideConsole {
+    $processArgs = [System.Environment]::GetCommandLineArgs()
+    if (-not ($processArgs | Where-Object { $_ -ieq '-File' })) {
+        return $false
+    }
+
+    $resolvedScriptPath = [System.IO.Path]::GetFullPath($script:scriptPath)
+    return [bool]($processArgs | Where-Object { $_ -eq $resolvedScriptPath -or $_ -eq $script:scriptPath })
+}
+
+function Hide-ConsoleWindow {
+    if (-not ('PortfolioHealthMonitor.ConsoleWindow' -as [type])) {
+        Add-Type -Namespace PortfolioHealthMonitor -Name ConsoleWindow -MemberDefinition @'
+[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+public static extern System.IntPtr GetConsoleWindow();
+
+[System.Runtime.InteropServices.DllImport("user32.dll")]
+public static extern bool ShowWindow(System.IntPtr hWnd, int nCmdShow);
+'@
+    }
+
+    $windowHandle = [PortfolioHealthMonitor.ConsoleWindow]::GetConsoleWindow()
+    if ($windowHandle -ne [System.IntPtr]::Zero) {
+        [PortfolioHealthMonitor.ConsoleWindow]::ShowWindow($windowHandle, 0) | Out-Null
+    }
+}
+
 function Write-LogLine {
     param([string]$Level, [string]$Message)
     $line = "{0} [{1}] {2}" -f ((Get-Date).ToString('s')), $Level, $Message
     Add-Content -Path $resolvedLog -Value $line
     Write-Host $line
+}
+
+function Test-LoopbackListenerAvailable {
+    param([string]$Url)
+
+    try {
+        $uri = [System.Uri]$Url
+    } catch {
+        return $true
+    }
+
+    if ($uri.Host -notin @('localhost', '127.0.0.1', '::1')) {
+        return $true
+    }
+
+    $listeners = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties().GetActiveTcpListeners()
+    return ($listeners.Port -contains $uri.Port)
 }
 
 function Get-State {
@@ -47,7 +92,19 @@ function Save-State {
     $State | ConvertTo-Json | Set-Content -Path $resolvedState -Encoding UTF8
 }
 
+if (Test-ShouldHideConsole) {
+    try {
+        Hide-ConsoleWindow
+    } catch {
+    }
+}
+
 $state = Get-State
+
+if (-not (Test-LoopbackListenerAvailable -Url $HealthUrl)) {
+    Write-LogLine -Level 'INFO' -Message "Skipping health check ($HealthUrl): nothing is listening on port $(([System.Uri]$HealthUrl).Port)"
+    exit 0
+}
 
 try {
     $response = Invoke-RestMethod -Uri $HealthUrl -TimeoutSec $TimeoutSec

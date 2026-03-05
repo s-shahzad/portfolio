@@ -1,2 +1,8 @@
 # Runtime dependencies for hosted deployments.
-# This portfolio server currently uses only Python's standard library.
+# Core portfolio routes use Python standard library.
+# EVCS Threat Lab endpoints require the libraries below.
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.5.0
+openpyxl>=3.1.2
+xgboost>=2.1.0

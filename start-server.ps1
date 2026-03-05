@@ -13,9 +13,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$serverPath = Join-Path $scriptRoot 'server.py'
+$serverPath = Join-Path $scriptRoot 'src\server.py'
 if (-not (Test-Path $serverPath)) {
-    throw "server.py not found in $scriptRoot"
+    throw "src\\server.py not found in $scriptRoot"
 }
 
 function Resolve-PythonExecutable {
@@ -128,7 +128,7 @@ if ($StopExisting) {
     }
 }
 
-$arguments = @('server.py', '--host', $BindHost, '--port', [string]$Port)
+$arguments = @('src/server.py', '--host', $BindHost, '--port', [string]$Port)
 $localUrl = "http://127.0.0.1:$Port"
 $lanIp = Get-PrimaryIPv4
 $lanUrl = if ($lanIp) { "http://$lanIp`:$Port" } else { $null }
@@ -172,3 +172,6 @@ if ($lanUrl) { Write-Host "LAN URL:   $lanUrl" }
 Write-Host "Press Ctrl+C to stop."
 & $pythonExe @arguments
 exit $LASTEXITCODE
+
+
+

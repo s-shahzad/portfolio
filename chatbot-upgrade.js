@@ -7,7 +7,7 @@
   const BOT_LABEL = "Portfolio Assistant";
   const EMAIL = "shaikazhadshahzad@gmail.com";
   const GITHUB_URL = "https://github.com/s-shahzad";
-  const RESUME_URL = "assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf";
+  const RESUME_URL = "reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf";
   const DEFAULT_PROMPTS = [
     "Show me your best cybersecurity projects",
     "What skills do you use for security and ML?",
@@ -1172,3 +1172,4 @@
     upgradeChatbot();
   }
 })();
+

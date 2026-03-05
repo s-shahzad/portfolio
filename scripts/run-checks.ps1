@@ -46,15 +46,16 @@ function Invoke-CheckedCommand {
 $pythonExe = Resolve-PythonExecutable -ExplicitPath $PythonPath
 Write-Host "Python: $pythonExe"
 
-Invoke-CheckedCommand -Label 'Python compile check' -FilePath $pythonExe -Arguments @('-m', 'py_compile', 'server.py')
+Invoke-CheckedCommand -Label 'Python compile check' -FilePath $pythonExe -Arguments @('-m', 'py_compile', 'src/server.py')
 Invoke-CheckedCommand -Label 'JS syntax check (script.js)' -FilePath 'node' -Arguments @('--check', 'script.js')
 Invoke-CheckedCommand -Label 'JS syntax check (chatbot-upgrade.js)' -FilePath 'node' -Arguments @('--check', 'chatbot-upgrade.js')
-Invoke-CheckedCommand -Label 'Static HTML sanity' -FilePath $pythonExe -Arguments @('scripts/static_sanity.py')
-Invoke-CheckedCommand -Label 'Accessibility/performance sanity' -FilePath $pythonExe -Arguments @('scripts/accessibility_perf_sanity.py')
-Invoke-CheckedCommand -Label 'API smoke tests' -FilePath $pythonExe -Arguments @('scripts/api_smoke_test.py', '--port', [string]$SmokePort)
+Invoke-CheckedCommand -Label 'Static HTML sanity' -FilePath $pythonExe -Arguments @('src/scripts/static_sanity.py')
+Invoke-CheckedCommand -Label 'Accessibility/performance sanity' -FilePath $pythonExe -Arguments @('src/scripts/accessibility_perf_sanity.py')
+Invoke-CheckedCommand -Label 'API smoke tests' -FilePath $pythonExe -Arguments @('src/scripts/api_smoke_test.py', '--port', [string]$SmokePort)
 
-if (Test-Path 'tests') {
-    Invoke-CheckedCommand -Label 'Pytest integration tests' -FilePath $pythonExe -Arguments @('-m', 'pytest', '-q')
+if (Test-Path 'src/tests') {
+    Invoke-CheckedCommand -Label 'Pytest integration tests' -FilePath $pythonExe -Arguments @('-m', 'pytest', '-q', 'src/tests')
 }
 
 Write-Host 'All checks passed.'
+

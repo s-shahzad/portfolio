@@ -12,9 +12,9 @@ $ErrorActionPreference = 'Stop'
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptRoot
-$serverPath = Join-Path $repoRoot 'server.py'
+$serverPath = Join-Path $repoRoot 'src\server.py'
 if (-not (Test-Path $serverPath)) {
-    throw "server.py not found in $repoRoot"
+    throw "src\\server.py not found in $repoRoot"
 }
 
 function Resolve-PythonExecutable {
@@ -83,3 +83,6 @@ $pythonExe = Resolve-PythonExecutable -ExplicitPath $PythonPath
 Set-Location $repoRoot
 & $pythonExe $serverPath --host $BindHost --port $Port
 exit $LASTEXITCODE
+
+
+
