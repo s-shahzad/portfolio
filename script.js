@@ -40,7 +40,21 @@
   let currentSwiperMode = null;
   let swiperResizeWatcherAttached = false;
   let swiperVisibilityHandlerAttached = false;
+  const collapseSearchPanel = ({ returnFocus = false } = {}) => {
+    if (!searchRoot || !navSearchBtn || !navSearchPanel) return;
 
+    if (!navSearchPanel.hidden && searchInput && document.activeElement === searchInput) {
+      searchInput.blur();
+    }
+
+    navSearchPanel.hidden = true;
+    searchRoot.classList.remove("is-open");
+    searchRoot.setAttribute("aria-expanded", "false");
+    navSearchBtn.setAttribute("aria-expanded", "false");
+    navSearchBtn.setAttribute("aria-label", "Open search");
+
+    if (returnFocus) navSearchBtn.focus();
+  };
   const initAnalytics = () => {
     const host = window.location.hostname;
     if (host === "localhost" || host === "127.0.0.1") return;
@@ -109,6 +123,7 @@
     navToggle.setAttribute("aria-label", "Open menu");
     mobileMenu.hidden = true;
     document.body.classList.remove("menu-open");
+    collapseSearchPanel();
   };
 
   const syncMobileMenuOverlayMetrics = () => {
@@ -122,6 +137,7 @@
   const openMobileMenu = () => {
     if (!navToggle || !mobileMenu) return;
     lastFocusedElement = document.activeElement;
+    collapseSearchPanel();
     syncMobileMenuOverlayMetrics();
     navToggle.setAttribute("aria-expanded", "true");
     navToggle.setAttribute("aria-label", "Close menu");
@@ -144,6 +160,7 @@
           mobileMenu.insertBefore(searchRoot, firstItem || null);
         }
       } else {
+        collapseSearchPanel();
         if (!nav.contains(searchRoot)) {
           nav.insertBefore(searchRoot, navToggle);
         }
@@ -1097,6 +1114,7 @@
       root.classList.toggle("is-open", open);
       root.setAttribute("aria-expanded", open ? "true" : "false");
       navBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      navBtn.setAttribute("aria-label", open ? "Close search" : "Open search");
     };
 
     const openPanel = () => {
@@ -1115,13 +1133,7 @@
     };
 
     const closePanel = ({ returnFocus = false } = {}) => {
-      if (!panel.hidden && document.activeElement === input) {
-        input.blur();
-      }
-      syncState(false);
-      if (returnFocus) {
-        navBtn.focus();
-      }
+      collapseSearchPanel({ returnFocus });
     };
 
     navBtn.addEventListener("click", (event) => {
@@ -1285,3 +1297,4 @@
     deferredSections.forEach((section) => deferredObserver.observe(section));
   }
 })();
+
