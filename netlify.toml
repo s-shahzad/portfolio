@@ -1,0 +1,15 @@
+[build]
+  publish = "."
+  command = "echo \"No build step required\""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[redirects]]
+  from = "/portfolio/*"
+  to = "/:splat"
+  status = 301
