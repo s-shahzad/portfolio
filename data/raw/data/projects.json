@@ -6,6 +6,21 @@
       "title": "NIDS Workspace (In Progress)",
       "summary": "Building a network intrusion-detection workspace with dataset ingestion, model training, and prediction workflows for practical security testing.",
       "status": "In progress",
+      "tech_stack": [
+        "Python",
+        "FastAPI",
+        "Scikit-learn",
+        "Pandas",
+        "Docker"
+      ],
+      "current_milestone": "Dataset ingestion and baseline model evaluation.",
+      "expected_completion": "June 2026",
+      "proof_image": {
+        "src": "assets/images/proof-nids-workspace.svg",
+        "alt": "NIDS workspace diagram showing ingest, feature engineering, model training, and detection output.",
+        "width": 640,
+        "height": 320
+      },
       "categories": [
         "security",
         "ml",
@@ -15,7 +30,13 @@
     {
       "id": "enterprise-risk-threat-analysis",
       "title": "Enterprise Risk & Threat Analysis",
-      "summary": "Mapped findings to NIST categories and delivered prioritized remediation guidance for stakeholders.",
+      "summary": "Mapped findings to 5 NIST CSF functions and delivered prioritized remediation guidance for stakeholders.",
+      "proof_image": {
+        "src": "assets/images/proof-enterprise-risk.svg",
+        "alt": "Enterprise risk workflow from findings to NIST mapping and remediation.",
+        "width": 640,
+        "height": 320
+      },
       "categories": [
         "security"
       ],
@@ -28,7 +49,13 @@
     {
       "id": "hl7-fhir-clinical-integration",
       "title": "HL7 to FHIR Clinical Integration",
-      "summary": "Standardized HL7 to FHIR mappings and validation checks to reduce clinical integration friction.",
+      "summary": "Standardized 2 healthcare standards (HL7 and FHIR) with validation checks across 3 pipeline stages.",
+      "proof_image": {
+        "src": "assets/images/proof-hl7-fhir.svg",
+        "alt": "HL7 to FHIR mapping pipeline diagram.",
+        "width": 640,
+        "height": 320
+      },
       "categories": [
         "backend",
         "healthcare"

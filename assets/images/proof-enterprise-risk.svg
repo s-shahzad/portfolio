@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="640" height="320" viewBox="0 0 640 320" role="img" aria-labelledby="title desc">
+  <title id="title">Enterprise Risk Workflow</title>
+  <desc id="desc">Security findings are mapped to NIST categories and prioritized into remediation actions.</desc>
+  <rect width="640" height="320" rx="16" fill="#101826"/>
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#ecf4ff" text-anchor="middle">
+    <circle cx="120" cy="160" r="56" fill="#1d2d46" stroke="#8dc0ff"/>
+    <text x="120" y="165">Findings</text>
+    <circle cx="320" cy="160" r="56" fill="#1d2d46" stroke="#8dc0ff"/>
+    <text x="320" y="165">NIST Map</text>
+    <circle cx="520" cy="160" r="56" fill="#1d2d46" stroke="#8dc0ff"/>
+    <text x="520" y="165">Remediate</text>
+  </g>
+  <g stroke="#9fd0ff" stroke-width="3" fill="none">
+    <path d="M176 160 H264"/>
+    <path d="M376 160 H464"/>
+  </g>
+  <text x="24" y="34" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#d8e8ff">Risk Prioritization Snapshot</text>
+</svg>

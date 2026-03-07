@@ -20,14 +20,6 @@
   const featuredFilterButtons = Array.from(document.querySelectorAll(".featured-filters [data-featured-filter]"));
   const featuredProjectsWrapper = document.getElementById("featuredProjectsWrapper");
   const featuredApiStatus = document.getElementById("featuredApiStatus");
-  const contactForm = document.getElementById("contactForm");
-  const contactNameInput = document.getElementById("contactName");
-  const contactEmailInput = document.getElementById("contactEmail");
-  const contactMessageInput = document.getElementById("contactMessage");
-  const contactWebsiteInput = document.getElementById("contactWebsite");
-  const contactSubmit = document.getElementById("contactSubmit");
-  const contactFormStatus = document.getElementById("contactFormStatus");
-  const contactApiStatus = document.getElementById("contactApiStatus");
 
   let lastFocusedElement = null;
   let currentSearchQuery = "";
@@ -553,25 +545,52 @@
     if (!featuredProjectsWrapper || !Array.isArray(items) || !items.length) return false;
     featuredProjectsWrapper.innerHTML = items
       .map((item) => {
-        const title = escapeHtml(item?.title || "Untitled Project");
+        const rawTitle = item?.title || "Untitled Project";
+        const title = escapeHtml(rawTitle);
         const summarySource = item?.summary || item?.result || item?.impact || item?.action || item?.problem || "";
         const summary = escapeHtml(summarySource);
         const status = escapeHtml(item?.status || "");
         const categories = Array.isArray(item?.categories) ? item.categories.map((value) => String(value).trim()).filter(Boolean) : [];
         const categoryAttr = categories.length ? ` data-category="${escapeHtml(categories.join(" "))}"` : "";
+
+        const techStack = Array.isArray(item?.tech_stack)
+          ? item.tech_stack.map((entry) => String(entry).trim()).filter(Boolean)
+          : [];
+        const milestone = escapeHtml(item?.current_milestone || "");
+        const expectedCompletion = escapeHtml(item?.expected_completion || "");
+        const detailItems = [];
+        if (techStack.length) detailItems.push(`<li><strong>Tech Stack:</strong> ${escapeHtml(techStack.join(", "))}</li>`);
+        if (milestone) detailItems.push(`<li><strong>Current Milestone:</strong> ${milestone}</li>`);
+        if (expectedCompletion) detailItems.push(`<li><strong>Expected Completion:</strong> ${expectedCompletion}</li>`);
+        const detailMarkup = detailItems.length ? `<ul class="featured-meta">${detailItems.join("")}</ul>` : "";
+
+        const proofSrcRaw = typeof item?.proof_image?.src === "string" ? item.proof_image.src.trim() : "";
+        const proofSrc = escapeHtml(proofSrcRaw);
+        const proofAlt = escapeHtml(item?.proof_image?.alt || `${rawTitle} proof visual`);
+        const proofWidth = Number(item?.proof_image?.width);
+        const proofHeight = Number(item?.proof_image?.height);
+        const imageWidth = Number.isFinite(proofWidth) && proofWidth > 0 ? Math.round(proofWidth) : 640;
+        const imageHeight = Number.isFinite(proofHeight) && proofHeight > 0 ? Math.round(proofHeight) : 320;
+        const proofMarkup = proofSrc
+          ? `<figure class="featured-proof"><img class="featured-proof-image" src="${proofSrc}" alt="${proofAlt}" width="${imageWidth}" height="${imageHeight}" loading="lazy" decoding="async" fetchpriority="low" /></figure>`
+          : "";
+
         const href = escapeHtml(item?.link?.href || "");
         const linkLabel = escapeHtml(item?.link?.label || "View project");
         const linkAttrs = item?.link?.external ? ' target="_blank" rel="noopener noreferrer"' : "";
         const linkMarkup = href && href !== "#"
           ? `<a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>`
-          : status
-            ? `<p class="featured-note">Status: ${status}</p>`
-            : "";
+          : "";
+        const statusMarkup = status ? `<p class="featured-note">Status: ${status}</p>` : "";
+
         return `
                 <div class="swiper-slide">
                   <article class="project-card featured-case"${categoryAttr}>
                     <h3>${title}</h3>
+                    ${proofMarkup}
                     ${summary ? `<p>${summary}</p>` : ""}
+                    ${detailMarkup}
+                    ${statusMarkup}
                     ${linkMarkup}
                   </article>
                 </div>`;
@@ -1261,103 +1280,6 @@
       jumpToFirstSearchResult();
     }
   };
-
-  const setupContactForm = () => {
-    if (!contactForm || !contactNameInput || !contactEmailInput || !contactMessageInput || !contactSubmit || !contactFormStatus) {
-      return;
-    }
-
-    const fallbackEmailLink = document.querySelector('.contact-link[href^="mailto:"]');
-    const fallbackEmail = fallbackEmailLink?.textContent?.trim() || "shaikazhadshahzad@gmail.com";
-
-    const setFormStatus = (text, state = "") => {
-      contactFormStatus.textContent = text;
-      if (state) contactFormStatus.dataset.state = state;
-      else delete contactFormStatus.dataset.state;
-    };
-
-    const setApiStatus = (text, state = "") => {
-      if (!contactApiStatus) return;
-      contactApiStatus.textContent = text;
-      if (state) contactApiStatus.dataset.state = state;
-      else delete contactApiStatus.dataset.state;
-    };
-
-    const checkApiStatus = async () => {
-      if (!contactApiStatus) return;
-      if (window.location.protocol === "file:") {
-        setApiStatus("Python API: offline (file preview)", "offline");
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/health", { headers: { Accept: "application/json" } });
-        if (!response.ok) throw new Error(String(response.status));
-        setApiStatus("Python API: online", "online");
-      } catch {
-        setApiStatus("Python API: offline (static mode)", "offline");
-      }
-    };
-
-    void checkApiStatus();
-
-    contactForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!contactForm.reportValidity()) return;
-
-      const payload = {
-        name: contactNameInput.value.trim(),
-        email: contactEmailInput.value.trim(),
-        message: contactMessageInput.value.trim(),
-        website: contactWebsiteInput?.value ?? "",
-        source: window.location.href,
-      };
-
-      if (!payload.name || !payload.email || !payload.message) {
-        setFormStatus("Please complete all fields before sending.", "error");
-        return;
-      }
-
-      contactSubmit.disabled = true;
-      setFormStatus("Sending to local Python API...", "pending");
-
-      let apiResponded = false;
-
-      try {
-        if (window.location.protocol === "file:") {
-          throw new Error("Open the portfolio through a local server.");
-        }
-
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        apiResponded = true;
-        const data = await response.json().catch(() => null);
-        if (!response.ok || !data?.ok) {
-          throw new Error(data?.error || `Request failed (${response.status})`);
-        }
-
-        contactForm.reset();
-        setApiStatus("Python API: online", "online");
-        const successMessage = typeof data?.message === "string" && data.message.trim()
-          ? `${data.message.trim()} I usually reply within 24-48 hours.`
-          : "Thanks, your message was sent successfully. I usually reply within 24-48 hours.";
-        setFormStatus(successMessage, "success");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Unable to reach the Python API.";
-        if (apiResponded) setApiStatus("Python API: online", "online");
-        else setApiStatus("Python API: offline", "offline");
-        const prefix = apiResponded ? "Submission blocked: " : "Python API unavailable: ";
-        setFormStatus(`${prefix}${message} Use the email link above (${fallbackEmail}).`, "error");
-      } finally {
-        contactSubmit.disabled = false;
-      }
-    });
-  };
-
   const bootstrapApp = async () => {
     setupThemeToggle();
     setupNavigation();
@@ -1369,7 +1291,6 @@
     setupCopyCitation();
     setupSearch();
     setupHeaderSearchPanel();
-    setupContactForm();
     setupCertFilters();
     setupFeaturedFilters();
     await loadFeaturedProjectsFromApi();

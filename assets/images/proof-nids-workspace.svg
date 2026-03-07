@@ -1,0 +1,21 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="640" height="320" viewBox="0 0 640 320" role="img" aria-labelledby="title desc">
+  <title id="title">NIDS Workspace Flow</title>
+  <desc id="desc">Dataset ingestion to feature engineering, model training, and detection output.</desc>
+  <rect width="640" height="320" rx="16" fill="#0d1626"/>
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="16" fill="#e8f1ff" text-anchor="middle">
+    <rect x="40" y="112" width="130" height="64" rx="10" fill="#163154" stroke="#7db6ff"/>
+    <text x="105" y="150">Ingestion</text>
+    <rect x="200" y="112" width="130" height="64" rx="10" fill="#163154" stroke="#7db6ff"/>
+    <text x="265" y="150">Features</text>
+    <rect x="360" y="112" width="130" height="64" rx="10" fill="#163154" stroke="#7db6ff"/>
+    <text x="425" y="150">Training</text>
+    <rect x="520" y="112" width="80" height="64" rx="10" fill="#163154" stroke="#7db6ff"/>
+    <text x="560" y="150">NIDS</text>
+  </g>
+  <g stroke="#9fd0ff" stroke-width="3" fill="none">
+    <path d="M170 144 H200"/>
+    <path d="M330 144 H360"/>
+    <path d="M490 144 H520"/>
+  </g>
+  <text x="24" y="34" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#d8e8ff">NIDS Workspace Architecture Snapshot</text>
+</svg>
