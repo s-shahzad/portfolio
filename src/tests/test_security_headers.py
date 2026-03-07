@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import os
@@ -109,3 +109,21 @@ def test_hsts_when_enabled_and_forwarded_https() -> None:
         assert status == 200
         assert headers.get("strict-transport-security", "").startswith("max-age=")
 
+
+def test_blocked_static_paths_return_not_found() -> None:
+    with run_server() as base_url:
+        blocked_paths = [
+            "/src/server.py",
+            "/contact_messages/messages.db",
+            "/logs/admin_audit.jsonl",
+            "/archives/portfolio_related/portfolio-app/index.html",
+            "/.git/config",
+            "/package-lock.json",
+        ]
+
+        for blocked_path in blocked_paths:
+            get_status, _, _ = _request("GET", f"{base_url}{blocked_path}")
+            assert get_status == 404
+
+            head_status, _, _ = _request("HEAD", f"{base_url}{blocked_path}")
+            assert head_status == 404

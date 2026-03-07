@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -86,20 +86,13 @@
             <div id="nav-search-panel" class="nav-search-panel" hidden>
               <input id="site-search" type="search" placeholder="Search..." aria-label="Search site" />
               <button id="site-search-clear" class="search-clear" type="button" aria-label="Clear search">Clear</button>
-              <div id="site-search-suggestions" class="search-suggestions" role="listbox" hidden></div>
             </div>
           </div>
-          <button class="theme-toggle" id="themeToggleBtn" type="button" aria-label="Switch theme" aria-pressed="false">
-            <span class="theme-toggle__glyph" aria-hidden="true">D</span>
-            <span class="theme-toggle__text">Theme</span>
-          </button>
           <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
             <span></span><span></span><span></span>
           </button>
         </nav>
         <div id="mobile-menu" class="mobile-menu" hidden>
-          <button id="mobileSearchTrigger" class="mobile-menu-search" type="button">Search</button>
-          <button id="mobileThemeToggleBtn" class="mobile-theme-toggle" type="button" aria-pressed="false">Toggle theme</button>
           <a href="#about">About</a>
           <a href="#featured">Featured Work</a>
           <a href="#publications">Publications</a>
@@ -245,10 +238,7 @@
               <div class="swiper-wrapper" id="featuredProjectsWrapper">
                 <div class="swiper-slide">
                   <article class="project-card featured-case" data-category="security ml">
-                    <div class="flip-card">
-                      <div class="flip-inner">
-                        <div class="flip-front">
-                          <div class="chip">IEEE</div>
+                    <div class="chip">IEEE</div>
                           <h3>ML-based DoS Detection for EV Charging Infrastructure</h3>
                           <div class="chip-row">
                             <span class="chip">ML</span>
@@ -257,24 +247,16 @@
                             <span class="chip">EVCS</span>
                           </div>
                           <p class="featured-proof">1 peer-reviewed IEEE publication tied to an ML-driven intrusion-detection concept for EV charging threats.</p>
-                        </div>
-                        <div class="flip-back">
                           <p><strong>Problem:</strong> DoS risk in EV charging networks.</p>
                           <p><strong>Action:</strong> Built an ML-based intrusion detection approach for EVCS traffic.</p>
                           <p><strong>Impact:</strong> Strengthened detection readiness for connected infrastructure.</p>
                           <p class="featured-outcome"><strong>Result:</strong> Converted the work into a formal IEEE publication and a reusable security framing for connected charging systems.</p>
                           <a class="text-link" href="case-studies/evcs-dos-detection.html">View case study</a>
-                        </div>
-                      </div>
-                    </div>
                   </article>
                 </div>
                 <div class="swiper-slide">
                   <article class="project-card featured-case" data-category="security ml backend">
-                    <div class="flip-card">
-                      <div class="flip-inner">
-                        <div class="flip-front">
-                          <div class="chip">Interactive Demo</div>
+                    <div class="chip">Interactive Demo</div>
                           <h3>EVCS DoS NIDS Threat Lab (Web + ML)</h3>
                           <div class="chip-row">
                             <span class="chip">EVCS</span>
@@ -283,24 +265,16 @@
                             <span class="chip">Web</span>
                           </div>
                           <p class="featured-proof">Live train-and-predict workflow with reusable model IDs and confusion-matrix metrics.</p>
-                        </div>
-                        <div class="flip-back">
                           <p><strong>Problem:</strong> Static project demos do not show live threat-detection behavior across mixed data formats.</p>
                           <p><strong>Action:</strong> Built a browser-based EVCS lab that ingests CSV/JSON/XML/XLSX/ZIP and trains multiple ML models.</p>
                           <p><strong>Impact:</strong> Transforms EVCS research into an interactive, portfolio-ready security application.</p>
                           <p class="featured-outcome"><strong>Result:</strong> Reusable web lab for EVCS DoS/NIDS threat detection and model comparison.</p>
                           <a class="text-link" href="case-studies/evcs-threat-lab.html">Open interactive EVCS lab</a>
-                        </div>
-                      </div>
-                    </div>
                   </article>
                 </div>
                 <div class="swiper-slide">
                   <article class="project-card featured-case" data-category="security">
-                    <div class="flip-card">
-                      <div class="flip-inner">
-                        <div class="flip-front">
-                          <div class="chip">SOC / Threat Analysis</div>
+                    <div class="chip">SOC / Threat Analysis</div>
                           <h3>Enterprise Risk &amp; Threat Analysis (Internship)</h3>
                           <div class="chip-row">
                             <span class="chip">NIST</span>
@@ -309,24 +283,16 @@
                             <span class="chip">SOC</span>
                           </div>
                           <p class="featured-proof">Produced a remediation-ready risk view that made security findings easier to prioritize and communicate.</p>
-                        </div>
-                        <div class="flip-back">
                           <p><strong>Problem:</strong> Limited visibility into security maturity and risk exposure.</p>
                           <p><strong>Action:</strong> Mapped findings to NIST risk categories and incident patterns.</p>
                           <p><strong>Impact:</strong> Delivered prioritized remediation guidance tied to business impact.</p>
                           <p class="featured-outcome"><strong>Result:</strong> Faster triage conversations and clearer handoff from technical findings to stakeholder-ready remediation planning.</p>
                           <a class="text-link" href="case-studies/enterprise-risk-threat-analysis.html">View case study</a>
-                        </div>
-                      </div>
-                    </div>
                   </article>
                 </div>
                 <div class="swiper-slide">
                   <article class="project-card featured-case" data-category="backend healthcare">
-                    <div class="flip-card">
-                      <div class="flip-inner">
-                        <div class="flip-front">
-                          <div class="chip">Healthcare Data</div>
+                    <div class="chip">Healthcare Data</div>
                           <h3>HL7 -> FHIR Data Integration for Clinical Systems</h3>
                           <div class="chip-row">
                             <span class="chip">HL7</span>
@@ -335,16 +301,11 @@
                             <span class="chip">Healthcare</span>
                           </div>
                           <p class="featured-proof">Bridged 2 healthcare standards into a more repeatable integration workflow for clinical delivery teams.</p>
-                        </div>
-                        <div class="flip-back">
                           <p><strong>Problem:</strong> Interoperability gaps across clinical data systems.</p>
                           <p><strong>Action:</strong> Validated and mapped HL7 messages into FHIR resources.</p>
                           <p><strong>Impact:</strong> Improved deployment-ready data exchange and compliance.</p>
                           <p class="featured-outcome"><strong>Result:</strong> Reduced integration friction by standardizing mappings, validation checks, and delivery-ready handoff patterns.</p>
                           <a class="text-link" href="case-studies/hl7-fhir-integration.html">View case study</a>
-                        </div>
-                      </div>
-                    </div>
                   </article>
                 </div>
               </div>
@@ -640,7 +601,7 @@
                 <span>Message</span>
                 <textarea id="contactMessage" name="message" rows="4" placeholder="Tell me about the role, project, or collaboration..." required></textarea>
               </label>
-              <div class="contact-honeypot" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+              <div class="contact-honeypot" aria-hidden="true">
                 <label>
                   <span>Website</span>
                   <input id="contactWebsite" name="website" type="text" tabindex="-1" autocomplete="off" />
@@ -697,190 +658,15 @@
       </div>
     </div>
 
-    <div id="viewportDebugBadge" class="viewport-debug" hidden aria-hidden="true"></div>
-
-    <button id="uiDebugResetBtn" class="ui-debug-reset" type="button" hidden aria-label="Reset UI debug state">Reset UI debug</button>
-
     <footer class="footer">
       <div class="container"><p>&copy; 2026 Azhad Shahzad Shaik. All rights reserved.</p></div>
     </footer>
-
-    <script>
-      (() => {
-        const THEME_KEY = "portfolio_theme";
-        const THEME_FAB_POS_PREFIX = "portfolio_theme_fab_pos:";
-        const badge = document.getElementById("viewportDebugBadge");
-        const resetBtn = document.getElementById("uiDebugResetBtn");
-        if (!badge) return;
-
-        const host = window.location.hostname || "";
-        const isPrivateHost = host === "localhost"
-          || host === "127.0.0.1"
-          || host === "::1"
-          || /^10\./.test(host)
-          || /^192\.168\./.test(host)
-          || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host);
-        const params = new URLSearchParams(window.location.search);
-        const forced = params.get("debugViewport");
-        const enabled = forced === "1" || (forced != null && forced !== "0") || window.location.protocol === "file:" || isPrivateHost;
-        if (!enabled) return;
-
-        const getBp = (w) => {
-          if (w <= 480) return "phone-xs";
-          if (w <= 768) return "phone";
-          if (w <= 1024) return "tablet";
-          if (w <= 1280) return "laptop";
-          return "desktop";
-        };
-        const setBadgeVisualState = (kind) => {
-          badge.classList.remove("is-copied", "is-copy-fail");
-          if (kind === "copied") badge.classList.add("is-copied");
-          if (kind === "error") badge.classList.add("is-copy-fail");
-        };
-        const setResetBtnState = (kind) => {
-          if (!resetBtn) return;
-          resetBtn.classList.remove("is-done", "is-error");
-          if (kind === "done") resetBtn.classList.add("is-done");
-          if (kind === "error") resetBtn.classList.add("is-error");
-        };
-        const fallbackCopyText = (value) => {
-          const ta = document.createElement("textarea");
-          ta.value = value;
-          ta.setAttribute("readonly", "");
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          ta.style.pointerEvents = "none";
-          document.body.appendChild(ta);
-          ta.focus(); ta.select();
-          let ok = false;
-          try { ok = document.execCommand("copy"); } catch { ok = false; }
-          ta.remove();
-          return ok;
-        };
-        const applyPreferredThemeNow = () => {
-          document.documentElement.setAttribute("data-theme", "dark");
-        };
-        const clearStoredUiDebugState = () => {
-          try { localStorage.removeItem(THEME_KEY); } catch {}
-          try {
-            for (let i = localStorage.length - 1; i >= 0; i -= 1) {
-              const key = localStorage.key(i);
-              if (key && key.startsWith(THEME_FAB_POS_PREFIX)) localStorage.removeItem(key);
-            }
-          } catch {}
-          applyPreferredThemeNow();
-        };
-
-        let restoreTimer = 0, resetBtnTimer = 0, lastViewportText = "", ignoreClickUntil = 0;
-        const press = { active: false, pointerId: null, startX: 0, startY: 0, timerId: 0 };
-
-        const restoreBadgeText = () => {
-          if (!lastViewportText) return;
-          badge.textContent = lastViewportText;
-          setBadgeVisualState("");
-          badge.title = "Tap to copy viewport info. Long-press to reset UI debug state";
-        };
-        const flashBadge = (message, kind) => {
-          window.clearTimeout(restoreTimer);
-          badge.textContent = message;
-          setBadgeVisualState(kind);
-          badge.title = kind === "copied" ? "Copied" : "Copy failed";
-          restoreTimer = window.setTimeout(restoreBadgeText, 950);
-        };
-        const flashResetBtn = (message, kind) => {
-          if (!resetBtn) return;
-          window.clearTimeout(resetBtnTimer);
-          const original = resetBtn.dataset.baseLabel || "Reset UI debug";
-          resetBtn.textContent = message;
-          setResetBtnState(kind);
-          resetBtnTimer = window.setTimeout(() => { resetBtn.textContent = original; setResetBtnState(""); }, 1050);
-        };
-        const copyViewportInfo = async () => {
-          const value = lastViewportText || badge.textContent.trim();
-          if (!value) return;
-          let copied = false;
-          try {
-            if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(value); copied = true; }
-            else { copied = fallbackCopyText(value); }
-          } catch { copied = fallbackCopyText(value); }
-          flashBadge(copied ? "Copied viewport info" : "Copy failed", copied ? "copied" : "error");
-        };
-        const resetUiDebug = (source) => {
-          clearStoredUiDebugState();
-          flashBadge(source === "longpress" ? "UI debug reset" : "UI debug state reset", "copied");
-          flashResetBtn("Reset", "done");
-        };
-        const cancelLongPress = () => {
-          press.active = false;
-          if (press.timerId) { window.clearTimeout(press.timerId); press.timerId = 0; }
-        };
-
-        badge.addEventListener("pointerdown", (event) => {
-          if (event.button != null && event.button !== 0) return;
-          cancelLongPress();
-          press.active = true; press.pointerId = event.pointerId ?? null;
-          press.startX = event.clientX; press.startY = event.clientY;
-          press.timerId = window.setTimeout(() => {
-            if (!press.active) return;
-            ignoreClickUntil = (window.performance?.now?.() ?? Date.now()) + 420;
-            cancelLongPress();
-            resetUiDebug("longpress");
-          }, 560);
-        });
-        badge.addEventListener("pointermove", (event) => {
-          if (!press.active) return;
-          if (press.pointerId !== null && event.pointerId !== press.pointerId) return;
-          if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) > 8) cancelLongPress();
-        });
-        badge.addEventListener("pointerup", cancelLongPress);
-        badge.addEventListener("pointercancel", cancelLongPress);
-        badge.addEventListener("pointerleave", cancelLongPress);
-        badge.addEventListener("lostpointercapture", cancelLongPress);
-
-        const render = () => {
-          const w = Math.round(window.innerWidth || document.documentElement.clientWidth || 0);
-          const h = Math.round(window.innerHeight || document.documentElement.clientHeight || 0);
-          const bp = getBp(w);
-          const orientation = w >= h ? "land" : "port";
-          const dpr = Number(window.devicePixelRatio || 1).toFixed(2).replace(/\.00$/, "");
-          lastViewportText = `${w}x${h} ${bp} ${orientation} dpr:${dpr}`;
-          if (!badge.classList.contains("is-copied") && !badge.classList.contains("is-copy-fail")) badge.textContent = lastViewportText;
-          badge.dataset.bp = bp; badge.dataset.viewportText = lastViewportText;
-          badge.hidden = false; badge.setAttribute("aria-hidden", "false"); badge.classList.add("is-visible");
-        };
-
-        badge.setAttribute("role", "button");
-        badge.tabIndex = 0;
-        badge.setAttribute("aria-label", "Viewport debug info. Tap to copy viewport info. Long-press to reset UI debug state");
-        badge.title = "Tap to copy viewport info. Long-press to reset UI debug state";
-        badge.addEventListener("click", (event) => {
-          if ((window.performance?.now?.() ?? Date.now()) < ignoreClickUntil) { event.preventDefault(); return; }
-          void copyViewportInfo();
-        });
-        badge.addEventListener("keydown", (event) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          void copyViewportInfo();
-        });
-
-        if (resetBtn) {
-          resetBtn.hidden = false;
-          resetBtn.classList.add("is-visible");
-          resetBtn.dataset.baseLabel = resetBtn.dataset.baseLabel || resetBtn.textContent || "Reset UI debug";
-          resetBtn.title = "Clear saved theme and floating-toggle positions";
-          resetBtn.addEventListener("click", () => { resetUiDebug("button"); });
-        }
-
-        render();
-        window.addEventListener("resize", render, { passive: true });
-        window.addEventListener("orientationchange", render);
-      })();
-    </script>
-    <!-- Dev viewport badge (dev-only) -->
-    <!-- Dev viewport badge (dev-only) -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     <script src="script.js?v=20260302-78" defer></script>
     <script src="chatbot-upgrade.js?v=20260226-02" defer></script>
   </body>
 </html>
+
+
+
 

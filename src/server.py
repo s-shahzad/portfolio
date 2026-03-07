@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import base64
@@ -25,7 +25,7 @@ from http.cookies import CookieError, SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Lock
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -54,6 +54,45 @@ EVCS_MAX_FILES = 12
 EVCS_MAX_ARCHIVE_MEMBERS = 40
 EVCS_MAX_SAMPLE_ROWS = 250000
 EVCS_MODEL_CACHE_TTL_SECONDS = 2 * 60 * 60
+
+BLOCKED_STATIC_PREFIXES = (
+    "/archives",
+    "/backups",
+    "/config",
+    "/contact_messages",
+    "/data",
+    "/docs",
+    "/logs",
+    "/notebooks",
+    "/ops",
+    "/scripts",
+    "/src",
+    "/tests",
+    "/.git",
+    "/.github",
+    "/.githooks",
+    "/.pytest_cache",
+)
+
+BLOCKED_STATIC_ROOT_FILES = {
+    ".gitattributes",
+    ".gitignore",
+    "agents.md",
+    "deploy-staging.ps1",
+    "deploy.ps1",
+    "package-lock.json",
+    "portfolio.env.local.ps1",
+    "portfolio.env.local.ps1.example",
+    "portfolio.env.staging.ps1.example",
+    "readme.md",
+    "render.env.example",
+    "render.yaml",
+    "requirements-dev.txt",
+    "requirements.txt",
+    "runbook.md",
+    "security.md",
+    "start-server.ps1",
+}
 
 SMTP_PROVIDER_PRESETS = {
     "gmail": {"host": "smtp.gmail.com", "port": 587, "use_ssl": False, "use_starttls": True},
@@ -810,11 +849,6 @@ def _evcs_prepare_target(
     mapping = {label: idx for idx, label in enumerate(unique_values)}
     encoded = labels.map(mapping).astype(int)
     return encoded, [str(item) for item in unique_values], False, None
-
-
-def _evcs_make_binary_target(series, positive_labels: list[str] | None, pd):
-    y, _, _, _ = _evcs_prepare_target(series, positive_labels=positive_labels, pd=pd, force_binary=True)
-    return y
 
 
 def _evcs_prepare_numeric_features(
@@ -1739,6 +1773,41 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         )
         return path.endswith(static_exts)
 
+    def _normalize_route_path(self, route: str) -> str:
+        raw = unquote(str(route or "/"))
+        path = raw.split("?", 1)[0].split("#", 1)[0]
+        segments: list[str] = []
+        for part in path.split("/"):
+            item = str(part).strip()
+            if not item or item == ".":
+                continue
+            if item == "..":
+                return "/__blocked__"
+            segments.append(item)
+        if not segments:
+            return "/"
+        return "/" + "/".join(segments)
+
+    def _is_blocked_static_path(self, route: str) -> bool:
+        normalized = self._normalize_route_path(route).lower()
+        if normalized == "/":
+            return False
+
+        segments = [segment for segment in normalized.split("/") if segment]
+        if any(segment.startswith(".") for segment in segments):
+            return True
+
+        if len(segments) == 1 and segments[0] in BLOCKED_STATIC_ROOT_FILES:
+            return True
+
+        for prefix in BLOCKED_STATIC_PREFIXES:
+            if normalized == prefix or normalized.startswith(f"{prefix}/"):
+                return True
+
+        return False
+
+    def _deny_static_path(self):
+        self.send_error(HTTPStatus.NOT_FOUND, "Route not found")
     def _default_csp_value(self) -> str:
         # Keep inline scripts/styles permitted because this portfolio uses inline bootstraps.
         return (
@@ -1782,6 +1851,18 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
 
         super().end_headers()
 
+    def list_directory(self, path):
+        self.send_error(HTTPStatus.NOT_FOUND, "Route not found")
+        return None
+
+    def do_HEAD(self):
+        route = urlparse(self.path).path
+        if route == "/admin.html":
+            if not self._authorize_admin_api():
+                return
+        if self._is_blocked_static_path(route):
+            return self._deny_static_path()
+        return super().do_HEAD()
     def do_GET(self):
         parsed = urlparse(self.path)
         route = parsed.path
@@ -1834,6 +1915,8 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
             if not self._authorize_admin_api():
                 return
             return super().do_GET()
+        if self._is_blocked_static_path(route):
+            return self._deny_static_path()
         return super().do_GET()
 
     def do_POST(self):
@@ -2019,7 +2102,12 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
         try:
             dataset, ingest_summary = _evcs_load_uploaded_dataset(files_payload, pd)
             target = _evcs_select_target_column(dataset, requested=target_column)
-            y = _evcs_make_binary_target(dataset[target], positive_labels, pd)
+            y, class_labels, is_binary, _ = _evcs_prepare_target(
+                dataset[target],
+                positive_labels=positive_labels,
+                pd=pd,
+                force_binary=False,
+            )
             X, fill_values = _evcs_prepare_numeric_features(
                 dataset,
                 drop_columns=[target, "Attack", "attack", "Label", "label", "target", "Target", "Class", "class", "y"],
@@ -2034,6 +2122,8 @@ class PortfolioHandler(SimpleHTTPRequestHandler):
                 sample_rows=sample_rows,
                 modules=modules,
                 feature_fill_values=fill_values,
+                class_labels=class_labels,
+                is_binary=is_binary,
             )
         except ValueError as exc:
             return self._send_json({"ok": False, "error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
@@ -2664,4 +2754,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
 

@@ -3,13 +3,6 @@
   const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
   const INTERACTIVE_GUARD = "a, button, summary, input, textarea, select, label";
 
-  const TIMING = {
-    slideDelay: 4500,
-    slideSpeed: 500,
-    autoFlipDelay: 4500,
-    autoFlipBackDelay: 3500,
-  };
-
   const nav = document.querySelector(".nav");
   const navToggle = document.querySelector(".nav-toggle");
   const mobileMenu = document.getElementById("mobile-menu");
@@ -22,25 +15,12 @@
   const searchRoot = document.querySelector(".nav-search");
   const navSearchBtn = document.getElementById("nav-search-btn");
   const navSearchPanel = document.getElementById("nav-search-panel");
-  const searchExpand = searchRoot?.querySelector(".search-expand") || null;
   const searchInput = document.getElementById("site-search");
-  const searchSubmitButton = document.querySelector(".search-submit") || navSearchBtn;
-  const mobileSearchTrigger = document.getElementById("mobileSearchTrigger");
-  const themeToggleBtn = document.getElementById("themeToggleBtn");
-  const mobileThemeToggleBtn = document.getElementById("mobileThemeToggleBtn");
-  const searchSuggestions = document.getElementById("site-search-suggestions");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
   const featuredFilterButtons = Array.from(document.querySelectorAll(".featured-filters [data-featured-filter]"));
   const featuredProjectsWrapper = document.getElementById("featuredProjectsWrapper");
   const featuredApiStatus = document.getElementById("featuredApiStatus");
-  const chatbot = document.getElementById("chatbot");
-  const chatbotToggle = document.getElementById("chatbotToggle");
-  const chatbotPanel = document.getElementById("chatbotPanel");
-  const chatbotClose = document.getElementById("chatbotClose");
-  const chatbotBody = document.getElementById("chatbotBody");
-  const chatbotForm = document.getElementById("chatbotForm");
-  const chatbotInput = document.getElementById("chatbotInput");
   const contactForm = document.getElementById("contactForm");
   const contactNameInput = document.getElementById("contactName");
   const contactEmailInput = document.getElementById("contactEmail");
@@ -143,7 +123,6 @@
     navToggle.setAttribute("aria-expanded", "false");
     navToggle.setAttribute("aria-label", "Open menu");
     mobileMenu.hidden = true;
-    mobileMenu.classList.remove("show-search");
     document.body.classList.remove("menu-open");
   };
 
@@ -167,72 +146,9 @@
     if (firstFocusable) firstFocusable.focus();
   };
 
-  const THEME_STORAGE_KEY = "portfolio_theme";
-
-  const getSystemTheme = () => {
-    try {
-      return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-    } catch {
-      return "dark";
-    }
-  };
-
-  const readSavedTheme = () => {
-    try {
-      const value = window.localStorage.getItem(THEME_STORAGE_KEY);
-      return value === "light" || value === "dark" ? value : null;
-    } catch {
-      return null;
-    }
-  };
-
-  const writeSavedTheme = (theme) => {
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // Ignore storage failures in private browsing / restricted modes.
-    }
-  };
-
-  const applyTheme = (theme) => {
-    const resolved = theme === "light" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", resolved);
-    const nextLabel = resolved === "light" ? "Switch to dark" : "Switch to light";
-    [themeToggleBtn, mobileThemeToggleBtn].forEach((btn) => {
-      if (!btn) return;
-      btn.setAttribute("aria-pressed", String(resolved === "light"));
-      btn.setAttribute("aria-label", nextLabel);
-      if (btn === themeToggleBtn) {
-        const text = btn.querySelector(".theme-toggle__text");
-        const glyph = btn.querySelector(".theme-toggle__glyph");
-        if (text) text.textContent = resolved === "light" ? "Light" : "Dark";
-        if (glyph) glyph.textContent = resolved === "light" ? "L" : "D";
-      } else {
-        btn.textContent = resolved === "light" ? "Theme: Light" : "Theme: Dark";
-      }
-    });
-    return resolved;
-  };
-
   const setupThemeToggle = () => {
-    try {
-      window.localStorage.removeItem(THEME_STORAGE_KEY);
-    } catch {
-      // Ignore storage failures in restricted modes.
-    }
-
-    applyTheme("dark");
-
-    [themeToggleBtn, mobileThemeToggleBtn].forEach((btn) => {
-      if (!btn) return;
-      btn.hidden = true;
-      btn.disabled = true;
-      btn.tabIndex = -1;
-      btn.setAttribute("aria-hidden", "true");
-      btn.style.display = "none";
-    });
+    document.documentElement.setAttribute("data-theme", "dark");
   };
-
   const setupNavigation = () => {
     const syncMobileSearchPlacement = () => {
       if (!nav || !mobileMenu || !navToggle || !searchRoot) return;
@@ -246,7 +162,6 @@
         if (!nav.contains(searchRoot)) {
           nav.insertBefore(searchRoot, navToggle);
         }
-        mobileMenu.classList.remove("show-search");
       }
     };
 
@@ -351,26 +266,6 @@
         }
       });
     });
-
-    if (mobileSearchTrigger && searchSubmitButton && searchInput) {
-      mobileSearchTrigger.addEventListener("click", () => {
-        if (mobileNavQuery.matches && mobileMenu.contains(searchRoot)) {
-          mobileMenu.classList.add("show-search");
-        } else {
-          closeMobileMenu();
-          if (searchRoot) {
-            searchRoot.scrollIntoView({
-              behavior: prefersReducedMotion ? "auto" : "smooth",
-              block: "center",
-            });
-          }
-        }
-        searchSubmitButton.click();
-        window.setTimeout(() => {
-          searchInput.focus();
-        }, 120);
-      });
-    }
 
     const onScrollState = () => {
       if (!nav) return;
@@ -602,318 +497,40 @@
     });
   };
 
-  const buildSummaryFront = (card, source, section) => {
-    const front = document.createElement("div");
-    front.className = "flip-front summary-front";
-
-    if (!["education", "skills", "experience"].includes(section)) {
-      const badge = document.createElement("span");
-      badge.className = "chip";
-      badge.textContent =
-        source.querySelector(".chip")?.textContent?.trim() ||
-        ({ publications: "Publication", certifications: "Certification", education: "Education", experience: "Experience", skills: "Skills" }[section] || "Details");
-      front.appendChild(badge);
-    }
-
-    const titleText =
-      source.querySelector("h3")?.textContent?.trim() ||
-      source.querySelector(".exp-top h3")?.textContent?.trim() ||
-      `details card ${card.dataset.cardId || ""}`;
-    const title = document.createElement("h3");
-    title.textContent = titleText;
-    if (section === "education") {
-      front.appendChild(title);
-
-      const programText = source.querySelector(".edu-content p")?.textContent?.trim();
-      if (programText) {
-        const focus = document.createElement("p");
-        focus.className = "front-focus-area";
-        focus.textContent = programText;
-        front.appendChild(focus);
-      }
-
-      return front;
-    }
-
-    front.appendChild(title);
-
-    const chipRow = document.createElement("div");
-    chipRow.className = "chip-row";
-    const chips = Array.from(source.querySelectorAll(".chip-row .chip, .skills .skill, .meta-badge"))
-      .map((n) => n.textContent?.trim())
-      .filter(Boolean);
-
-    if (!chips.length) {
-      const fallback = [
-        source.querySelector(".edu-date")?.textContent?.trim(),
-        source.querySelector(".exp-date")?.textContent?.trim(),
-        source.querySelector(".exp-loc")?.textContent?.trim(),
-      ].filter(Boolean);
-      fallback.forEach((v) => chips.push(v));
-    }
-
-    chips.slice(0, 4).forEach((value) => {
-      const chip = document.createElement("span");
-      chip.className = "chip";
-      chip.textContent = value;
-      chipRow.appendChild(chip);
-    });
-
-    if (!chipRow.childElementCount) {
-      const chip = document.createElement("span");
-      chip.className = "chip";
-      chip.textContent = section || "card";
-      chipRow.appendChild(chip);
-    }
-    front.appendChild(chipRow);
-    return front;
-  };
-
-  const createFlipBack = (card, source, section) => {
-    const back = document.createElement("div");
-    back.className = "flip-back";
-    const addLine = (label, value) => {
-      if (!value) return;
-      const p = document.createElement("p");
-      const strong = document.createElement("strong");
-      strong.textContent = `${label}:`;
-      const span = document.createElement("span");
-      span.className = "flip-value";
-      span.textContent = value;
-
-      p.appendChild(strong);
-      p.appendChild(span);
-      back.appendChild(p);
-    };
-
-    if (section === "publications") {
-      addLine("Contribution", source.querySelector("p")?.textContent?.trim());
-      const venueYear = Array.from(source.querySelectorAll(".meta-badge"))
-        .map((n) => n.textContent?.trim())
-        .filter(Boolean)
-        .slice(0, 2)
-        .join(" | ");
-      addLine("Venue + Year", venueYear);
-      const authorsLine = Array.from(source.querySelectorAll("details p"))
-        .map((p) => p.textContent?.trim())
-        .find((text) => /^Authors:/i.test(text || ""));
-      addLine("Authors", authorsLine?.replace(/^Authors:\s*/i, ""));
-      const doiHref = source.querySelector(".pub-actions a[href*='doi.org']")?.getAttribute("href");
-      addLine("DOI", doiHref);
-      const read = source.querySelector(".text-link")?.cloneNode(true);
-      if (read) {
-        const row = document.createElement("div");
-        row.className = "flip-link-row";
-        row.appendChild(read);
-        back.appendChild(row);
-      }
-    } else if (section === "certifications") {
-      addLine("Validates", source.querySelector("p")?.textContent?.trim());
-      const verify = source.querySelector(".text-link")?.cloneNode(true);
-      if (verify) {
-        const row = document.createElement("div");
-        row.className = "flip-link-row";
-        row.appendChild(verify);
-        back.appendChild(row);
-      }
-    } else if (card.classList.contains("skill-group")) {
-      addLine("Usage Context", source.querySelector("h3")?.textContent?.trim());
-      addLine("Tools / Technologies", Array.from(source.querySelectorAll(".skill")).map((n) => n.textContent?.trim()).filter(Boolean).join(", "));
-    } else if (card.classList.contains("edu-item")) {
-      const universityEl = source.querySelector("h3");
-      const dateEl = source.querySelector(".edu-date");
-      const ps = source.querySelectorAll(".edu-content p");
-      const programEl = ps.length > 0 ? ps[0] : null;
-      const locationEl = ps.length > 1 ? ps[1] : null;
-
-      if (locationEl) addLine("Location", locationEl.textContent);
-      if (dateEl) addLine("Graduation", dateEl.textContent);
-    } else if (card.classList.contains("exp-item")) {
-      addLine("Action", source.querySelector(".exp-points li")?.textContent?.trim());
-      addLine("Impact", source.querySelector(".exp-impact")?.textContent?.replace(/^Impact:\s*/i, "").trim());
-    } else {
-      Array.from(source.querySelectorAll("p")).slice(0, 3).forEach((p) => addLine("Detail", p.textContent?.trim()));
-      const link = source.querySelector(".text-link")?.cloneNode(true);
-      if (link) {
-        const row = document.createElement("div");
-        row.className = "flip-link-row";
-        row.appendChild(link);
-        back.appendChild(row);
-      }
-    }
-
-    return back;
-  };
-
-  const setFlipped = (card, flipped, byUser = false) => {
-    card.classList.toggle("is-flipped", flipped);
-    if (card.hasAttribute("aria-pressed")) {
-      card.setAttribute("aria-pressed", String(flipped));
-    }
-    if (byUser) {
-      card.dataset.userLocked = flipped ? "1" : "0";
-    }
-  };
+  const setFlipped = () => {};
 
   const closeCurrentFlip = () => {
-    if (!currentOpenFlip) return;
-    setFlipped(currentOpenFlip, false, true);
     currentOpenFlip = null;
   };
 
   const setupFlipCards = () => {
+    cardRegistry.length = 0;
     let idCounter = 0;
     const targets = document.querySelectorAll(".project-card, .skill-group, .edu-item, .exp-item");
 
     targets.forEach((card) => {
-      if (card.classList.contains("flip-enhanced")) return;
-
       idCounter += 1;
-      card.dataset.cardId = `card-${idCounter}`;
-      card.dataset.userLocked = "0";
-      const sectionId = card.closest("section")?.id || "";
-
-      if (sectionId === "featured") {
-        cardRegistry.push({
-          id: card.dataset.cardId,
-          element: card,
-          section: sectionId,
-          categories: (card.getAttribute("data-category") || "").split(" ").filter(Boolean),
-          text: normalizeText(card.textContent || ""),
-        });
-        return;
-      }
-
-      card.classList.add("flip-enhanced", "flip-card");
-
-      const source = card.cloneNode(true);
-      const sourceText = normalizeText(source.textContent || "");
-      const allowManualFlip = true;
-      card.dataset.manualFlip = allowManualFlip ? "1" : "0";
+      const cardId = `card-${idCounter}`;
+      card.dataset.cardId = cardId;
+      card.classList.remove("flip-enhanced", "is-flipped");
+      delete card.dataset.userLocked;
+      delete card.dataset.manualFlip;
       card.removeAttribute("role");
       card.removeAttribute("tabindex");
       card.removeAttribute("aria-pressed");
       card.removeAttribute("aria-label");
 
-      if (allowManualFlip) {
-        card.setAttribute("role", "button");
-        card.setAttribute("tabindex", "0");
-        card.setAttribute("aria-pressed", "false");
-      }
-      card.textContent = "";
-
-      const inner = document.createElement("div");
-      inner.className = "flip-inner";
-      const front = buildSummaryFront(card, source, sectionId);
-      const back = createFlipBack(card, source, sectionId);
-      inner.appendChild(front);
-      inner.appendChild(back);
-      card.appendChild(inner);
-
       cardRegistry.push({
-        id: card.dataset.cardId,
+        id: cardId,
         element: card,
         section: card.closest("section")?.id || "",
         categories: (card.getAttribute("data-category") || "").split(" ").filter(Boolean),
-        text: sourceText,
+        text: normalizeText(card.textContent || ""),
       });
-
-      const isActiveSlideCard = () => {
-        const slide = card.closest(".swiper-slide");
-        return !slide || slide.classList.contains("swiper-slide-active");
-      };
-
-      const toggleCard = () => {
-        if (card.dataset.manualFlip !== "1") return;
-        if (prefersReducedMotion) return;
-        const applyFlipState = (targetCard = card) => {
-          if (!targetCard) return;
-          if (targetCard !== card) {
-            setFlipped(card, false, true);
-          }
-          const cardToToggle = targetCard;
-          const nextState = !cardToToggle.classList.contains("is-flipped");
-          if (nextState) {
-            if (currentOpenFlip && currentOpenFlip !== cardToToggle) {
-              setFlipped(currentOpenFlip, false, true);
-            }
-            setFlipped(cardToToggle, true, true);
-            currentOpenFlip = cardToToggle;
-          } else {
-            setFlipped(cardToToggle, false, true);
-            if (currentOpenFlip === cardToToggle) currentOpenFlip = null;
-          }
-        };
-
-        if (isActiveSlideCard()) {
-          applyFlipState(card);
-          return;
-        }
-
-        if (sectionId !== "education") return;
-
-        const swiperEl = card.closest(".swiper");
-        const swiper = swiperEl && "swiper" in swiperEl ? swiperEl.swiper : null;
-        const clickedSlide = card.closest(".swiper-slide");
-        if (!swiper || !clickedSlide) return;
-
-        const cardId = card.dataset.cardId;
-        const realIndex = Number(clickedSlide.getAttribute("data-swiper-slide-index"));
-        const slideIndex = Array.from(swiper.slides || []).indexOf(clickedSlide);
-
-        const flipWhenCentered = () => {
-          const activeSlide = swiper.slides?.[swiper.activeIndex];
-          if (!activeSlide) return;
-          const activeCard = cardId
-            ? activeSlide.querySelector(`[data-card-id="${cardId}"]`)
-            : activeSlide.querySelector(".flip-card");
-          applyFlipState(activeCard || card);
-        };
-
-        swiper.once("slideChangeTransitionEnd", flipWhenCentered);
-        if (swiper.params?.loop && Number.isFinite(realIndex)) {
-          swiper.slideToLoop(realIndex);
-          return;
-        }
-        if (slideIndex >= 0) {
-          swiper.slideTo(slideIndex);
-          return;
-        }
-
-        flipWhenCentered();
-      };
-
-      if (allowManualFlip) {
-        card.addEventListener("click", (event) => {
-          if (event.target.closest(INTERACTIVE_GUARD)) return;
-          toggleCard();
-        });
-
-        card.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            toggleCard();
-          }
-          if (event.key === "Escape") {
-            event.preventDefault();
-            setFlipped(card, false, true);
-            if (currentOpenFlip === card) currentOpenFlip = null;
-          }
-        });
-      }
     });
 
-    document.addEventListener("click", (event) => {
-      if (!currentOpenFlip) return;
-      if (currentOpenFlip.contains(event.target)) return;
-      closeCurrentFlip();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeCurrentFlip();
-    });
+    currentOpenFlip = null;
   };
-
   const setupCopyCitation = () => {
     document.addEventListener("click", async (event) => {
       const button = event.target.closest(".copy-citation, .copy-citation-back");
@@ -966,23 +583,15 @@
         return `
                 <div class="swiper-slide">
                   <article class="project-card featured-case"${categoryAttr}>
-                    <div class="flip-card">
-                      <div class="flip-inner">
-                        <div class="flip-front">
-                          <div class="chip">${badge}</div>
-                          <h3>${title}</h3>
-                          <div class="chip-row">${tags}</div>
-                          ${proof}
-                        </div>
-                        <div class="flip-back">
-                          <p><strong>Problem:</strong> ${problem}</p>
-                          <p><strong>Action:</strong> ${action}</p>
-                          <p><strong>Impact:</strong> ${impact}</p>
-                          ${result}
-                          <a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>
-                        </div>
-                      </div>
-                    </div>
+                    <div class="chip">${badge}</div>
+                    <h3>${title}</h3>
+                    <div class="chip-row">${tags}</div>
+                    ${proof}
+                    <p><strong>Problem:</strong> ${problem}</p>
+                    <p><strong>Action:</strong> ${action}</p>
+                    <p><strong>Impact:</strong> ${impact}</p>
+                    ${result}
+                    <a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>
                   </article>
                 </div>`;
       })
@@ -1622,7 +1231,13 @@
     if (count > 0) {
       searchStatus.textContent = `Showing ${count} result${count === 1 ? "" : "s"} for "${query}"`;
     } else {
-      searchStatus.innerHTML = `No results for "${query}". <button type="button" class="search-inline-clear" data-search-clear>Clear search</button>`;
+      searchStatus.textContent = `No results for "${query}". `;
+      const clearButton = document.createElement("button");
+      clearButton.type = "button";
+      clearButton.className = "search-inline-clear";
+      clearButton.setAttribute("data-search-clear", "");
+      clearButton.textContent = "Clear search";
+      searchStatus.appendChild(clearButton);
     }
   };
 
@@ -1721,226 +1336,6 @@
         applySearchAndFilters();
       });
     });
-  };
-
-  const setupPremiumSearch = () => {
-    if (!searchRoot || !searchExpand || !searchInput || !searchSubmitButton || !searchSuggestions) return;
-
-    let suggestions = [];
-    let activeSuggestionIndex = -1;
-    let hoverOpen = false;
-    let focusOpen = false;
-
-    const collectSuggestionSource = () => {
-      const seen = new Set();
-      const values = [];
-      const nodes = document.querySelectorAll("h3, .chip-row .chip, .skills .skill, .meta-badge");
-      nodes.forEach((node) => {
-        const text = (node.textContent || "").replace(/\s+/g, " ").trim();
-        if (!text) return;
-        const key = text.toLowerCase();
-        if (seen.has(key)) return;
-        seen.add(key);
-        values.push(text);
-      });
-      return values;
-    };
-
-    let sourceValues = collectSuggestionSource();
-
-    const closeSuggestions = () => {
-      suggestions = [];
-      activeSuggestionIndex = -1;
-      searchSuggestions.hidden = true;
-      searchSuggestions.innerHTML = "";
-    };
-
-    const setActiveSuggestion = (nextIndex) => {
-      const options = Array.from(searchSuggestions.querySelectorAll(".search-suggestion"));
-      if (!options.length) return;
-      activeSuggestionIndex = nextIndex;
-      options.forEach((option, index) => {
-        option.classList.toggle("is-active", index === activeSuggestionIndex);
-        option.setAttribute("aria-selected", index === activeSuggestionIndex ? "true" : "false");
-      });
-    };
-
-    const applySuggestion = (value) => {
-      searchInput.value = value;
-      syncSearchState();
-      closeSuggestions();
-      searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-    };
-
-    const renderSuggestions = () => {
-      const query = (searchInput.value || "").toLowerCase().trim();
-      if (query.length < 2) {
-        closeSuggestions();
-        return;
-      }
-
-      const starts = [];
-      const contains = [];
-      sourceValues.forEach((item) => {
-        const hay = item.toLowerCase();
-        if (!hay.includes(query)) return;
-        if (hay.startsWith(query)) starts.push(item);
-        else contains.push(item);
-      });
-
-      suggestions = starts.concat(contains).slice(0, 8);
-      if (!suggestions.length) {
-        closeSuggestions();
-        return;
-      }
-
-      searchSuggestions.innerHTML = "";
-      suggestions.forEach((item, index) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "search-suggestion";
-        button.setAttribute("role", "option");
-        button.setAttribute("aria-selected", "false");
-        button.textContent = item;
-        button.addEventListener("mousedown", (event) => {
-          event.preventDefault();
-        });
-        button.addEventListener("click", () => {
-          applySuggestion(item);
-          searchInput.focus();
-        });
-        searchSuggestions.appendChild(button);
-        if (index === 0) {
-          button.classList.add("is-active");
-          button.setAttribute("aria-selected", "true");
-        }
-      });
-
-      activeSuggestionIndex = 0;
-      searchSuggestions.hidden = false;
-    };
-
-    const shouldStayOpen = () => hoverOpen || focusOpen || !!searchInput.value;
-
-    const syncSearchState = () => {
-      const hasValue = !!searchInput.value;
-      const isOpen = shouldStayOpen();
-      searchExpand.classList.toggle("is-open", isOpen);
-      searchExpand.classList.toggle("has-value", hasValue);
-      searchRoot.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      searchSubmitButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    };
-
-    const collapseIfEmptyAndIdle = () => {
-      if (searchInput.value) return;
-      if (focusOpen || hoverOpen) return;
-      closeSuggestions();
-      syncSearchState();
-    };
-
-    searchExpand.addEventListener("mouseenter", () => {
-      hoverOpen = true;
-      syncSearchState();
-    });
-
-    searchExpand.addEventListener("mouseleave", () => {
-      hoverOpen = false;
-      collapseIfEmptyAndIdle();
-    });
-
-    searchRoot.addEventListener("click", () => {
-      hoverOpen = true;
-      syncSearchState();
-    });
-
-    searchSubmitButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      hoverOpen = true;
-      syncSearchState();
-      searchInput.focus();
-    });
-
-    searchInput.addEventListener("focus", () => {
-      focusOpen = true;
-      sourceValues = collectSuggestionSource();
-      syncSearchState();
-      renderSuggestions();
-    });
-
-    searchInput.addEventListener("blur", () => {
-      focusOpen = false;
-      window.setTimeout(() => {
-        if (document.activeElement !== searchInput) {
-          closeSuggestions();
-          collapseIfEmptyAndIdle();
-        }
-      }, 120);
-    });
-
-    searchInput.addEventListener("input", () => {
-      syncSearchState();
-      renderSuggestions();
-    });
-
-    searchInput.addEventListener("keydown", (event) => {
-      const options = Array.from(searchSuggestions.querySelectorAll(".search-suggestion"));
-      if (event.key === "ArrowDown" && options.length) {
-        event.preventDefault();
-        const next = activeSuggestionIndex < options.length - 1 ? activeSuggestionIndex + 1 : 0;
-        setActiveSuggestion(next);
-        return;
-      }
-      if (event.key === "ArrowUp" && options.length) {
-        event.preventDefault();
-        const next = activeSuggestionIndex > 0 ? activeSuggestionIndex - 1 : options.length - 1;
-        setActiveSuggestion(next);
-        return;
-      }
-      if (event.key === "Enter" && options.length && activeSuggestionIndex >= 0) {
-        event.preventDefault();
-        const selected = suggestions[activeSuggestionIndex];
-        if (selected) applySuggestion(selected);
-        return;
-      }
-      if (event.key === "Escape") {
-        closeSuggestions();
-        if (!searchInput.value) {
-          hoverOpen = false;
-          focusOpen = false;
-          syncSearchState();
-          return;
-        }
-        searchInput.value = "";
-        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-        hoverOpen = true;
-        focusOpen = true;
-        syncSearchState();
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      if (target.closest(".premium-search, .nav-search")) return;
-      hoverOpen = false;
-      closeSuggestions();
-      collapseIfEmptyAndIdle();
-    });
-
-    if (searchClearButton) {
-      searchClearButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        searchInput.value = "";
-        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-        closeSuggestions();
-        hoverOpen = false;
-        focusOpen = false;
-        syncSearchState();
-      });
-    }
-
-    syncSearchState();
   };
 
   const setupHeaderSearchPanel = () => {
@@ -2181,95 +1576,6 @@
     });
   };
 
-  const setupChatbot = () => {
-    if (!chatbot || !chatbotToggle || !chatbotPanel || !chatbotClose || !chatbotBody || !chatbotForm || !chatbotInput) return;
-
-    const appendMessage = (role, text) => {
-      const row = document.createElement("div");
-      row.className = `chatbot-row ${role}`;
-      const bubble = document.createElement("div");
-      bubble.className = "chatbot-msg";
-      bubble.textContent = text;
-      row.appendChild(bubble);
-      chatbotBody.appendChild(row);
-      chatbotBody.scrollTop = chatbotBody.scrollHeight;
-    };
-
-    const openChatbot = () => {
-      chatbotPanel.hidden = false;
-      chatbotToggle.setAttribute("aria-expanded", "true");
-      chatbotInput.focus();
-    };
-
-    const closeChatbot = () => {
-      chatbotPanel.hidden = true;
-      chatbotToggle.setAttribute("aria-expanded", "false");
-    };
-
-    const getReply = (message) => {
-      const q = normalizeText(message);
-
-      if (q.includes("contact") || q.includes("email") || q.includes("hire")) {
-        return "I am open to software, cybersecurity, and ML engineering roles. Reach me at shaikazhadshahzad@gmail.com or use the Contact section.";
-      }
-      if (q.includes("about") || q.includes("background")) {
-        return "I build secure APIs, resilient data pipelines, and ML-assisted detection workflows across healthcare, connected systems, and security-focused software.";
-      }
-      if (q.includes("why hire") || q.includes("why should") || q.includes("strength")) {
-        return "You will see the strongest fit in secure backend delivery, risk-aware engineering, healthcare integration, and teams that need clear execution under real constraints.";
-      }
-      if (q.includes("resume") || q.includes("cv")) {
-        return "Use the Download Resume button in the hero section.";
-      }
-      if (q.includes("project") || q.includes("featured")) {
-        return "Start with Featured Work for high-impact security and ML case studies.";
-      }
-      if (q.includes("skill") || q.includes("technology") || q.includes("tool")) {
-        return "Skills include cybersecurity, threat analysis, Python, AWS, and data/ML workflows.";
-      }
-      if (q.includes("education") || q.includes("degree")) {
-        return "Education includes M.S. in Cyber/Computer Forensics and Counterterrorism plus B.Tech in ECE.";
-      }
-      if (q.includes("experience") || q.includes("work")) {
-        return "Experience spans cybersecurity engineering, risk analysis, healthcare data integration, and telecom operations.";
-      }
-      if (q.includes("certification") || q.includes("comptia") || q.includes("hackerrank")) {
-        return "Certifications include Security+, Fortinet NSE, and HackerRank credentials.";
-      }
-      if (q.includes("github") || q.includes("code")) {
-        return "GitHub: github.com/s-shahzad";
-      }
-      return "I can help with background, projects, skills, certifications, education, experience, contact, and resume.";
-    };
-
-    chatbotToggle.addEventListener("click", () => {
-      if (chatbotPanel.hidden) openChatbot();
-      else closeChatbot();
-    });
-
-    chatbotClose.addEventListener("click", closeChatbot);
-
-    document.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      if (chatbot.contains(target)) return;
-      if (!chatbotPanel.hidden) closeChatbot();
-    });
-
-    chatbotForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const text = chatbotInput.value.trim();
-      if (!text) return;
-      appendMessage("user", text);
-      chatbotInput.value = "";
-      window.setTimeout(() => {
-        appendMessage("bot", getReply(text));
-      }, 180);
-    });
-
-    appendMessage("bot", "Hi, I am your portfolio assistant. Ask about projects, impact, skills, resume, or contact.");
-  };
-
   const bootstrapApp = async () => {
     setupThemeToggle();
     setupNavigation();
@@ -2279,11 +1585,9 @@
     setupReveal();
     setupEducationLogoFallbacks();
     setupCopyCitation();
-    setupPremiumSearch();
     setupSearch();
     setupHeaderSearchPanel();
     setupContactForm();
-    setupChatbot();
     setupCertFilters();
     setupFeaturedFilters();
     await loadFeaturedProjectsFromApi();
@@ -2321,3 +1625,8 @@
     deferredSections.forEach((section) => deferredObserver.observe(section));
   }
 })();
+
+
+
+
+

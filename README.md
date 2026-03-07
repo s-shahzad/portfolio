@@ -1,9 +1,9 @@
-﻿# Portfolio Project
+# Portfolio Project
 
 Local portfolio site with:
 
 - Static frontend (`index.html`, `admin.html`, `cyber-demo.html`)
-- Python API backend (`server.py`)
+- Python API backend (`src/server.py`)
 - Contact submission storage in SQLite
 - Admin dashboard APIs
 
@@ -63,7 +63,7 @@ Generate hash only (manual flow):
 python scripts\generate_admin_token_hash.py --json
 ```
 
-`server.py` supports these admin modes:
+`src/server.py` supports these admin modes:
 
 - `localhost_only`
 - `token`
@@ -79,7 +79,7 @@ python scripts\generate_admin_token_hash.py --json
 
 This runs:
 
-- Python compile check (`server.py`)
+- Python compile check (`src/server.py`)
 - JavaScript syntax checks (`script.js`, `chatbot-upgrade.js`)
 - Static HTML sanity checks
 - Accessibility/performance sanity checks
@@ -138,12 +138,12 @@ Recommended:
 Render start command is configured as:
 
 ```text
-python server.py --host 0.0.0.0 --port $PORT
+python src/server.py --host 0.0.0.0 --port $PORT
 ```
 
 Important limitation:
 
-- Contact submissions and admin audit logs are stored on the service filesystem by `server.py`.
+- Contact submissions and admin audit logs are stored on the service filesystem by `src/server.py`.
 - That works for initial deployment, but it is not durable storage on typical hosted instances.
 - For production-grade persistence, move contact/admin storage to managed durable storage before relying on hosted restarts or rebuilds.
 
@@ -210,3 +210,4 @@ If branch protection is unavailable on your GitHub plan for a private repo, use:
 ## Security
 
 Security guidance and reporting details are in `SECURITY.md`.
+
