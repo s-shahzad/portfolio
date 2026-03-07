@@ -2637,7 +2637,7 @@ body::-webkit-scrollbar {
   position: relative;
   overflow: hidden;
   padding: 0.05rem 0;
-  max-height: 390px;
+  max-height: none;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -2658,7 +2658,7 @@ body::-webkit-scrollbar {
 .featured-swiper .featured-case {
   position: relative;
   min-height: 220px;
-  overflow: hidden;
+  overflow: auto;
   border-color: #3f5678;
   background: linear-gradient(155deg, #0f1a2a, #101827 58%, #0c1420 100%);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.34);
@@ -2722,7 +2722,7 @@ body::-webkit-scrollbar {
 
 @media (max-width: 1024px) {
   .featured-swiper {
-    max-height: 370px;
+    max-height: none;
   }
 
   .featured-swiper .featured-case {

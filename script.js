@@ -46,7 +46,6 @@
 
   const cardRegistry = [];
   const swiperRegistry = [];
-  const autoFlipState = new WeakMap();
   const mobileSwiperQuery = window.matchMedia("(max-width: 520px)");
   const tabletSwiperQuery = window.matchMedia("(max-width: 900px)");
   const mobileNavQuery = window.matchMedia("(max-width: 768px)");
@@ -495,7 +494,7 @@
     });
   };
 
-  const setupFlipCards = () => {
+  const setupCardRegistry = () => {
     cardRegistry.length = 0;
     let idCounter = 0;
     const targets = document.querySelectorAll(".project-card, .skill-group, .edu-item, .exp-item");
@@ -504,7 +503,6 @@
       idCounter += 1;
       const cardId = `card-${idCounter}`;
       card.dataset.cardId = cardId;
-      card.classList.remove("flip-enhanced", "is-flipped");
       card.removeAttribute("role");
       card.removeAttribute("tabindex");
       card.removeAttribute("aria-pressed");
@@ -521,7 +519,7 @@
   };
   const setupCopyCitation = () => {
     document.addEventListener("click", async (event) => {
-      const button = event.target.closest(".copy-citation, .copy-citation-back");
+      const button = event.target.closest(".copy-citation");
       if (!button) return;
       const text = button.getAttribute("data-citation") || "";
       const previous = button.textContent;
@@ -809,17 +807,6 @@
     return activeSlide.querySelector("[data-card-id], .skill-group, .edu-item, .exp-item, .project-card");
   };
 
-  const clearAutoFlipTimers = (swiper) => {
-    const state = autoFlipState.get(swiper);
-    if (!state) return;
-    window.clearTimeout(state.flipTimer);
-    window.clearTimeout(state.backTimer);
-  };
-
-  const scheduleAutoFlip = (swiper) => {
-    clearAutoFlipTimers(swiper);
-  };
-
   const updateSpotlight = (swiper) => {
     const allCards = Array.from(swiper.el.querySelectorAll("[data-card-id], .skill-group, .edu-item, .exp-item, .project-card"));
     const useNativeSlideStateStyles = Boolean(swiper.__useNativeSlideStateStyles);
@@ -838,7 +825,6 @@
 
     });
 
-    scheduleAutoFlip(swiper);
   };
 
   const getSwiperMode = () => {
@@ -850,7 +836,6 @@
   const destroySwipers = () => {
     swiperRegistry.forEach(({ swiper }) => {
       try {
-        clearAutoFlipTimers(swiper);
         swiper.destroy(true, true);
       } catch {
         // no-op
@@ -1388,7 +1373,7 @@
     setupCertFilters();
     setupFeaturedFilters();
     await loadFeaturedProjectsFromApi();
-    setupFlipCards();
+    setupCardRegistry();
     setupFeaturedCarousel();
     applySearchAndFilters();
   };
