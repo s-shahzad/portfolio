@@ -1230,7 +1230,8 @@
     const hostname = window.location.hostname.toLowerCase();
     if (hostname === "localhost" || hostname === "127.0.0.1") return;
 
-    const canonicalUrl = `${window.location.origin}${window.location.pathname}`;
+    const normalizedPath = window.location.pathname.replace(/\/index\.html$/i, "/");
+    const canonicalUrl = `${window.location.origin}${normalizedPath}`;
     const canonicalEl = document.querySelector('link[rel="canonical"]');
     if (canonicalEl instanceof HTMLLinkElement) canonicalEl.href = canonicalUrl;
 
