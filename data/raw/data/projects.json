@@ -1,75 +1,24 @@
 {
-  "updated_at": "2026-03-04T00:00:00Z",
+  "updated_at": "2026-03-07T00:00:00Z",
   "featured": [
     {
-      "id": "evcs-dos-ml-ieee",
-      "badge": "IEEE",
-      "title": "ML-based DoS Detection for EV Charging Infrastructure",
-      "tags": [
-        "ML",
-        "IDS",
-        "IoT",
-        "EVCS"
-      ],
-      "categories": [
-        "security",
-        "ml"
-      ],
-      "problem": "DoS risk in EV charging networks.",
-      "action": "Built an ML-based intrusion detection approach for EVCS traffic.",
-      "impact": "Strengthened detection readiness for connected infrastructure.",
-      "proof": "1 peer-reviewed IEEE publication tied to an ML-driven intrusion-detection concept for EV charging threats.",
-      "result": "Converted the work into a formal IEEE publication and a reusable security framing for connected charging systems.",
-      "link": {
-        "href": "case-studies/evcs-dos-detection.html",
-        "label": "View case study",
-        "external": false
-      }
-    },
-    {
-      "id": "evcs-threat-lab-web",
-      "badge": "Interactive Demo",
-      "title": "EVCS DoS NIDS Threat Lab (Web + ML)",
-      "tags": [
-        "EVCS",
-        "NIDS",
-        "ML",
-        "Web"
-      ],
+      "id": "nids-workspace-in-progress",
+      "title": "NIDS Workspace (In Progress)",
+      "summary": "Building a network intrusion-detection workspace with dataset ingestion, model training, and prediction workflows for practical security testing.",
+      "status": "In progress",
       "categories": [
         "security",
         "ml",
         "backend"
-      ],
-      "problem": "Static project demos do not show live threat-detection behavior across mixed data formats.",
-      "action": "Built a browser-based EVCS lab that ingests CSV/JSON/XML/XLSX/ZIP, trains multiple ML algorithms, and exposes prediction APIs.",
-      "impact": "Turns the EVCS research project into a hands-on, interview-ready application with measurable model outputs.",
-      "proof": "Live train-and-predict workflow with reusable model IDs and confusion-matrix metrics.",
-      "result": "Reusable portfolio demo for EVCS DoS/NIDS scenarios with multi-format ingestion and model comparison.",
-      "link": {
-        "href": "case-studies/evcs-threat-lab.html",
-        "label": "Open interactive EVCS lab",
-        "external": false
-      }
+      ]
     },
     {
       "id": "enterprise-risk-threat-analysis",
-      "badge": "SOC / Threat Analysis",
-      "title": "Enterprise Risk & Threat Analysis (Internship)",
-      "tags": [
-        "NIST",
-        "Risk",
-        "IR",
-        "SOC"
-      ],
+      "title": "Enterprise Risk & Threat Analysis",
+      "summary": "Mapped findings to NIST categories and delivered prioritized remediation guidance for stakeholders.",
       "categories": [
         "security"
       ],
-      "problem": "Limited visibility into security maturity and risk exposure.",
-      "action": "Mapped findings to NIST risk categories and incident patterns.",
-      "impact": "Delivered prioritized remediation guidance tied to business impact.",
-      "proof": "Produced a remediation-ready risk view that made security findings easier to prioritize and communicate.",
-      "result": "Faster triage conversations and clearer handoff from technical findings to stakeholder-ready remediation planning.",
       "link": {
         "href": "case-studies/enterprise-risk-threat-analysis.html",
         "label": "View case study",
@@ -78,23 +27,12 @@
     },
     {
       "id": "hl7-fhir-clinical-integration",
-      "badge": "Healthcare Data",
-      "title": "HL7 -> FHIR Data Integration for Clinical Systems",
-      "tags": [
-        "HL7",
-        "FHIR",
-        "Data QA",
-        "Healthcare"
-      ],
+      "title": "HL7 to FHIR Clinical Integration",
+      "summary": "Standardized HL7 to FHIR mappings and validation checks to reduce clinical integration friction.",
       "categories": [
         "backend",
         "healthcare"
       ],
-      "problem": "Interoperability gaps across clinical data systems.",
-      "action": "Validated and mapped HL7 messages into FHIR resources.",
-      "impact": "Improved deployment-ready data exchange and compliance.",
-      "proof": "Bridged 2 healthcare standards into a more repeatable integration workflow for clinical delivery teams.",
-      "result": "Reduced integration friction by standardizing mappings, validation checks, and delivery-ready handoff patterns.",
       "link": {
         "href": "case-studies/hl7-fhir-integration.html",
         "label": "View case study",

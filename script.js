@@ -1,7 +1,6 @@
 (() => {
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-  const INTERACTIVE_GUARD = "a, button, summary, input, textarea, select, label";
 
   const nav = document.querySelector(".nav");
   const navToggle = document.querySelector(".nav-toggle");
@@ -31,7 +30,6 @@
   const contactApiStatus = document.getElementById("contactApiStatus");
 
   let lastFocusedElement = null;
-  let currentOpenFlip = null;
   let currentSearchQuery = "";
   let certFilter = "all";
   let featuredFilter = "all";
@@ -497,12 +495,6 @@
     });
   };
 
-  const setFlipped = () => {};
-
-  const closeCurrentFlip = () => {
-    currentOpenFlip = null;
-  };
-
   const setupFlipCards = () => {
     cardRegistry.length = 0;
     let idCounter = 0;
@@ -513,8 +505,6 @@
       const cardId = `card-${idCounter}`;
       card.dataset.cardId = cardId;
       card.classList.remove("flip-enhanced", "is-flipped");
-      delete card.dataset.userLocked;
-      delete card.dataset.manualFlip;
       card.removeAttribute("role");
       card.removeAttribute("tabindex");
       card.removeAttribute("aria-pressed");
@@ -528,8 +518,6 @@
         text: normalizeText(card.textContent || ""),
       });
     });
-
-    currentOpenFlip = null;
   };
   const setupCopyCitation = () => {
     document.addEventListener("click", async (event) => {
@@ -567,31 +555,26 @@
     if (!featuredProjectsWrapper || !Array.isArray(items) || !items.length) return false;
     featuredProjectsWrapper.innerHTML = items
       .map((item) => {
-        const badge = escapeHtml(item?.badge || "Project");
         const title = escapeHtml(item?.title || "Untitled Project");
-        const tags = Array.isArray(item?.tags) ? item.tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("") : "";
+        const summarySource = item?.summary || item?.result || item?.impact || item?.action || item?.problem || "";
+        const summary = escapeHtml(summarySource);
+        const status = escapeHtml(item?.status || "");
         const categories = Array.isArray(item?.categories) ? item.categories.map((value) => String(value).trim()).filter(Boolean) : [];
         const categoryAttr = categories.length ? ` data-category="${escapeHtml(categories.join(" "))}"` : "";
-        const problem = escapeHtml(item?.problem || "N/A");
-        const action = escapeHtml(item?.action || "N/A");
-        const impact = escapeHtml(item?.impact || "N/A");
-        const proof = item?.proof ? `<p class="featured-proof">${escapeHtml(item.proof)}</p>` : "";
-        const result = item?.result ? `<p class="featured-outcome"><strong>Result:</strong> ${escapeHtml(item.result)}</p>` : "";
-        const href = escapeHtml(item?.link?.href || "#");
-        const linkLabel = escapeHtml(item?.link?.label || "View case study");
+        const href = escapeHtml(item?.link?.href || "");
+        const linkLabel = escapeHtml(item?.link?.label || "View project");
         const linkAttrs = item?.link?.external ? ' target="_blank" rel="noopener noreferrer"' : "";
+        const linkMarkup = href && href !== "#"
+          ? `<a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>`
+          : status
+            ? `<p class="featured-note">Status: ${status}</p>`
+            : "";
         return `
                 <div class="swiper-slide">
                   <article class="project-card featured-case"${categoryAttr}>
-                    <div class="chip">${badge}</div>
                     <h3>${title}</h3>
-                    <div class="chip-row">${tags}</div>
-                    ${proof}
-                    <p><strong>Problem:</strong> ${problem}</p>
-                    <p><strong>Action:</strong> ${action}</p>
-                    <p><strong>Impact:</strong> ${impact}</p>
-                    ${result}
-                    <a class="text-link" href="${href}"${linkAttrs}>${linkLabel}</a>
+                    ${summary ? `<p>${summary}</p>` : ""}
+                    ${linkMarkup}
                   </article>
                 </div>`;
       })
@@ -626,66 +609,9 @@
       featuredCarousel = null;
       return null;
     }
-    const slideCount = Array.from(
-      featuredRoot.querySelectorAll(".swiper-slide")
-    ).filter((slide) => !slide.classList.contains("swiper-slide-duplicate")).length;
+    const slideCount = Array.from(featuredRoot.querySelectorAll(".swiper-slide"))
+      .filter((slide) => !slide.classList.contains("swiper-slide-duplicate")).length;
     const canLoop = slideCount >= 3;
-
-    const delay = 4500;
-    const flipDelay = 2200;
-    const backVisible = 2600;
-    const flipTimers = { flip: 0, unflip: 0 };
-    let manualLockedCard = null;
-
-    const clearFlipTimers = () => {
-      window.clearTimeout(flipTimers.flip);
-      window.clearTimeout(flipTimers.unflip);
-      flipTimers.flip = 0;
-      flipTimers.unflip = 0;
-    };
-
-    const clearAllFlips = () => {
-      featuredRoot.querySelectorAll(".flip-card.is-flipped").forEach((card) => {
-        setFlipped(card, false, false);
-      });
-    };
-
-    const getActiveFlipCard = (swiper) => {
-      const activeSlide = swiper.slides[swiper.activeIndex];
-      return activeSlide ? activeSlide.querySelector(".flip-card") : null;
-    };
-
-    const initFeaturedFlipA11y = () => {
-      const cards = Array.from(featuredRoot.querySelectorAll(".flip-card"));
-      cards.forEach((card) => {
-        if (!card.hasAttribute("role")) card.setAttribute("role", "button");
-        if (!card.hasAttribute("tabindex")) card.setAttribute("tabindex", "0");
-        if (!card.hasAttribute("aria-pressed")) card.setAttribute("aria-pressed", "false");
-      });
-    };
-
-    const scheduleActiveFlip = (swiper) => {
-      clearFlipTimers();
-      if (prefersReducedMotion) {
-        clearAllFlips();
-        return;
-      }
-
-      const activeFlip = getActiveFlipCard(swiper);
-      if (!activeFlip || manualLockedCard === activeFlip) return;
-
-      flipTimers.flip = window.setTimeout(() => {
-        const currentActive = getActiveFlipCard(swiper);
-        if (!currentActive || currentActive !== activeFlip || manualLockedCard === activeFlip) return;
-        setFlipped(activeFlip, true, false);
-      }, flipDelay);
-
-      flipTimers.unflip = window.setTimeout(() => {
-        const currentActive = getActiveFlipCard(swiper);
-        if (!currentActive || currentActive !== activeFlip || manualLockedCard === activeFlip) return;
-        setFlipped(activeFlip, false, false);
-      }, flipDelay + backVisible);
-    };
 
     const swiper = new window.Swiper(featuredRoot, {
       effect: "coverflow",
@@ -705,7 +631,7 @@
       autoplay: prefersReducedMotion
         ? false
         : {
-            delay,
+            delay: 4500,
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
           },
@@ -715,68 +641,9 @@
         768: { coverflowEffect: { rotate: 0, stretch: 56, depth: 170, modifier: 1, slideShadows: false } },
         1100: { coverflowEffect: { rotate: 0, stretch: 70, depth: 200, modifier: 1, slideShadows: false } },
       },
-      on: {
-        init() {
-          initFeaturedFlipA11y();
-          scheduleActiveFlip(this);
-        },
-        slideChangeTransitionStart() {
-          clearFlipTimers();
-          clearAllFlips();
-          manualLockedCard = null;
-        },
-        slideChangeTransitionEnd() {
-          scheduleActiveFlip(this);
-        }
-      },
     });
 
     bindWheelNavigation(featuredRoot, swiper);
-
-    featuredRoot.addEventListener("click", (event) => {
-      if (prefersReducedMotion) return;
-      if (event.target.closest("a")) return;
-
-      const clickedSlide = event.target.closest(".swiper-slide");
-      if (clickedSlide && !clickedSlide.classList.contains("swiper-slide-active")) {
-        const realIndex = Number(clickedSlide.getAttribute("data-swiper-slide-index"));
-        if (swiper.params?.loop && Number.isFinite(realIndex)) {
-          swiper.slideToLoop(realIndex);
-          return;
-        }
-        const slideIndex = Array.from(swiper.slides || []).indexOf(clickedSlide);
-        if (slideIndex >= 0) {
-          swiper.slideTo(slideIndex);
-          return;
-        }
-      }
-
-      const clickedFlip = event.target.closest(".flip-card");
-      if (!clickedFlip) return;
-      const activeFlip = getActiveFlipCard(swiper);
-      if (!activeFlip || clickedFlip !== activeFlip) return;
-      const nextState = !clickedFlip.classList.contains("is-flipped");
-      setFlipped(clickedFlip, nextState, true);
-      manualLockedCard = clickedFlip;
-      clearFlipTimers();
-    });
-
-    featuredRoot.addEventListener("keydown", (event) => {
-      if (prefersReducedMotion) return;
-      if (event.key !== "Enter" && event.key !== " ") return;
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      const clickedFlip = target.closest(".flip-card");
-      if (!clickedFlip) return;
-      if (event.target.closest("a, button")) return;
-      const activeFlip = getActiveFlipCard(swiper);
-      if (!activeFlip || clickedFlip !== activeFlip) return;
-      event.preventDefault();
-      const nextState = !clickedFlip.classList.contains("is-flipped");
-      setFlipped(clickedFlip, nextState, true);
-      manualLockedCard = clickedFlip;
-      clearFlipTimers();
-    });
 
     const pauseAutoplay = () => {
       if (swiper.autoplay) swiper.autoplay.stop();
@@ -933,54 +800,6 @@
       { passive: true }
     );
 
-    if (key === "education") {
-      row.addEventListener("click", (event) => {
-        if (prefersReducedMotion) return;
-        if (event.target.closest(INTERACTIVE_GUARD)) return;
-
-        const clickedCard = event.target.closest(".flip-card");
-        if (!clickedCard) return;
-        const clickedSlide = clickedCard.closest(".swiper-slide");
-        if (!clickedSlide || !clickedSlide.classList.contains("swiper-slide-duplicate")) return;
-
-        const cardId = clickedCard.getAttribute("data-card-id");
-        const realIndex = Number(clickedSlide.getAttribute("data-swiper-slide-index"));
-        const slideIndex = Array.from(swiper.slides || []).indexOf(clickedSlide);
-
-        const flipActiveCard = () => {
-          const activeSlide = swiper.slides && swiper.slides[swiper.activeIndex];
-          if (!activeSlide) return;
-          const activeCard = cardId
-            ? activeSlide.querySelector(`[data-card-id="${cardId}"]`)
-            : activeSlide.querySelector(".flip-card");
-          const targetCard = activeCard || clickedCard;
-          const nextState = !targetCard.classList.contains("is-flipped");
-
-          if (nextState) {
-            if (currentOpenFlip && currentOpenFlip !== targetCard) {
-              setFlipped(currentOpenFlip, false, true);
-            }
-            setFlipped(targetCard, true, true);
-            currentOpenFlip = targetCard;
-          } else {
-            setFlipped(targetCard, false, true);
-            if (currentOpenFlip === targetCard) currentOpenFlip = null;
-          }
-        };
-
-        swiper.once("slideChangeTransitionEnd", flipActiveCard);
-        if (swiper.params && swiper.params.loop && Number.isFinite(realIndex)) {
-          swiper.slideToLoop(realIndex);
-          return;
-        }
-        if (slideIndex >= 0) {
-          swiper.slideTo(slideIndex);
-          return;
-        }
-        flipActiveCard();
-      });
-    }
-
     return swiper;
   };
 
@@ -997,26 +816,8 @@
     window.clearTimeout(state.backTimer);
   };
 
-  const scheduleAutoFlip = (swiper, activeCard) => {
+  const scheduleAutoFlip = (swiper) => {
     clearAutoFlipTimers(swiper);
-    if (prefersReducedMotion) return;
-    if (!activeCard || !activeCard.classList.contains("flip-card") || activeCard.dataset.userLocked === "1") return;
-
-    const state = { flipTimer: 0, backTimer: 0 };
-
-    state.flipTimer = window.setTimeout(() => {
-      const current = getActiveCard(swiper);
-      if (!current || current !== activeCard || activeCard.dataset.userLocked === "1") return;
-      setFlipped(activeCard, true, false);
-    }, 2200);
-
-    state.backTimer = window.setTimeout(() => {
-      const current = getActiveCard(swiper);
-      if (!current || current !== activeCard || activeCard.dataset.userLocked === "1") return;
-      setFlipped(activeCard, false, false);
-    }, 2200 + 2600);
-
-    autoFlipState.set(swiper, state);
   };
 
   const updateSpotlight = (swiper) => {
@@ -1035,13 +836,9 @@
         else card.classList.add("card-dim");
       }
 
-      if (spotlight && card !== spotlight) {
-        setFlipped(card, false, false);
-        card.dataset.userLocked = "0";
-      }
     });
 
-    scheduleAutoFlip(swiper, spotlight);
+    scheduleAutoFlip(swiper);
   };
 
   const getSwiperMode = () => {
@@ -1625,6 +1422,7 @@
     deferredSections.forEach((section) => deferredObserver.observe(section));
   }
 })();
+
 
 
 
