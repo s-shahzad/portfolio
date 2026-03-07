@@ -17,14 +17,10 @@
   const searchInput = document.getElementById("site-search");
   const searchClearButton = document.getElementById("site-search-clear");
   const searchStatus = document.getElementById("search-status");
-  const featuredFilterButtons = Array.from(document.querySelectorAll(".featured-filters [data-featured-filter]"));
   const featuredProjectsWrapper = document.getElementById("featuredProjectsWrapper");
-  const featuredApiStatus = document.getElementById("featuredApiStatus");
 
   let lastFocusedElement = null;
   let currentSearchQuery = "";
-  let certFilter = "all";
-  let featuredFilter = "all";
   let featuredCarousel = null;
 
   const normalizeText = (value) => value.toLowerCase().replace(/\s+/g, " ").trim();
@@ -526,21 +522,6 @@
       }, 1400);
     });
   };
-
-  const setFeaturedApiStatus = (message, state = "") => {
-    if (!featuredApiStatus) return;
-    if (!message) {
-      featuredApiStatus.hidden = true;
-      featuredApiStatus.textContent = "";
-      delete featuredApiStatus.dataset.state;
-      return;
-    }
-    featuredApiStatus.hidden = false;
-    featuredApiStatus.textContent = message;
-    if (state) featuredApiStatus.dataset.state = state;
-    else delete featuredApiStatus.dataset.state;
-  };
-
   const renderFeaturedProjectsFromApi = (items) => {
     if (!featuredProjectsWrapper || !Array.isArray(items) || !items.length) return false;
     featuredProjectsWrapper.innerHTML = items
@@ -602,7 +583,6 @@
   const loadFeaturedProjectsFromApi = async () => {
     if (!featuredProjectsWrapper) return false;
     if (window.location.protocol === "file:") {
-      setFeaturedApiStatus("");
       return false;
     }
     try {
@@ -612,10 +592,8 @@
       const items = Array.isArray(data?.featured) ? data.featured : [];
       if (!items.length) throw new Error("No featured projects in API response");
       renderFeaturedProjectsFromApi(items);
-      setFeaturedApiStatus("");
       return true;
     } catch {
-      setFeaturedApiStatus("");
       return false;
     }
   };
@@ -1054,9 +1032,7 @@
 
     cardRegistry.forEach((entry) => {
       const matchesSearch = !currentSearchQuery || entry.text.includes(currentSearchQuery);
-      const matchesCert = entry.section !== "certifications" || certFilter === "all" || entry.categories.includes(certFilter);
-      const matchesFeatured = entry.section !== "featured" || featuredFilter === "all" || entry.categories.includes(featuredFilter);
-      const visible = matchesSearch && matchesCert && matchesFeatured;
+      const visible = matchesSearch;
 
       applyCardVisibilityById(entry.id, visible);
 
@@ -1082,11 +1058,7 @@
   const jumpToFirstSearchResult = () => {
     if (!currentSearchQuery) return;
 
-    const firstMatch = cardRegistry.find((entry) => {
-      const matchesSearch = entry.text.includes(currentSearchQuery);
-      const matchesCert = entry.section !== "certifications" || certFilter === "all" || entry.categories.includes(certFilter);
-      return matchesSearch && matchesCert;
-    });
+    const firstMatch = cardRegistry.find((entry) => entry.text.includes(currentSearchQuery));
 
     if (!firstMatch || !firstMatch.element) return;
 
@@ -1112,33 +1084,6 @@
       firstMatch.element.classList.remove("search-focus");
     }, 900);
   };
-
-  const setupCertFilters = () => {
-    const filterButtons = document.querySelectorAll(".cert-filters [data-filter]");
-
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        filterButtons.forEach((b) => b.classList.remove("is-active"));
-        button.classList.add("is-active");
-        certFilter = button.getAttribute("data-filter") || "all";
-        applySearchAndFilters();
-      });
-    });
-  };
-
-  const setupFeaturedFilters = () => {
-    if (!featuredFilterButtons.length) return;
-
-    featuredFilterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        featuredFilterButtons.forEach((item) => item.classList.remove("is-active"));
-        button.classList.add("is-active");
-        featuredFilter = button.getAttribute("data-featured-filter") || "all";
-        applySearchAndFilters();
-      });
-    });
-  };
-
   const setupHeaderSearchPanel = () => {
     const navBtn = navSearchBtn;
     const panel = navSearchPanel;
@@ -1304,8 +1249,6 @@
     setupCopyCitation();
     setupSearch();
     setupHeaderSearchPanel();
-    setupCertFilters();
-    setupFeaturedFilters();
     await loadFeaturedProjectsFromApi();
     setupCardRegistry();
     setupFeaturedCarousel();
