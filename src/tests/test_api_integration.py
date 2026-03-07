@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import base64
 import json
@@ -228,3 +228,27 @@ def test_evcs_train_and_predict_or_dependency_message() -> None:
         assert payload_predict["ok"] is True
         assert int(payload_predict["prediction"]["rows_scored"]) > 0
 
+
+
+def test_homepage_serves_core_sections() -> None:
+    with run_server() as base_url:
+        status, body = _request("GET", f"{base_url}/")
+        assert status == 200
+        assert "<!doctype html>" in body.lower()
+        assert 'id="featured"' in body
+        assert 'id="contact"' in body
+
+
+def test_projects_api_contains_nids_featured_item() -> None:
+    with run_server() as base_url:
+        status, body = _request("GET", f"{base_url}/api/projects")
+        assert status == 200
+        payload = json.loads(body)
+        assert payload["ok"] is True
+        assert int(payload["counts"]["featured"]) >= 1
+        featured_ids = {
+            str(item.get("id", "")).strip()
+            for item in payload.get("featured", [])
+            if isinstance(item, dict)
+        }
+        assert "nids-workspace-in-progress" in featured_ids

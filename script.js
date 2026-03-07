@@ -602,7 +602,7 @@
   const loadFeaturedProjectsFromApi = async () => {
     if (!featuredProjectsWrapper) return false;
     if (window.location.protocol === "file:") {
-      setFeaturedApiStatus("Using embedded featured projects (file preview).", "offline");
+      setFeaturedApiStatus("");
       return false;
     }
     try {
@@ -612,10 +612,10 @@
       const items = Array.isArray(data?.featured) ? data.featured : [];
       if (!items.length) throw new Error("No featured projects in API response");
       renderFeaturedProjectsFromApi(items);
-      setFeaturedApiStatus("Featured projects loaded from Python API.", "online");
+      setFeaturedApiStatus("");
       return true;
     } catch {
-      setFeaturedApiStatus("Using embedded featured projects (API unavailable).", "offline");
+      setFeaturedApiStatus("");
       return false;
     }
   };
@@ -1280,10 +1280,23 @@
       jumpToFirstSearchResult();
     }
   };
+  const syncCanonicalMetadata = () => {
+    if (window.location.protocol === "file:") return;
+    const hostname = window.location.hostname.toLowerCase();
+    if (hostname === "localhost" || hostname === "127.0.0.1") return;
+
+    const canonicalUrl = `${window.location.origin}${window.location.pathname}`;
+    const canonicalEl = document.querySelector('link[rel="canonical"]');
+    if (canonicalEl instanceof HTMLLinkElement) canonicalEl.href = canonicalUrl;
+
+    const ogUrlEl = document.querySelector('meta[property="og:url"]');
+    if (ogUrlEl instanceof HTMLMetaElement) ogUrlEl.content = canonicalUrl;
+  };
   const bootstrapApp = async () => {
     setupThemeToggle();
     setupNavigation();
     initAnalytics();
+    syncCanonicalMetadata();
     setupSlideClickToCenter();
     setupBrandBadge();
     setupReveal();
@@ -1328,9 +1341,3 @@
     deferredSections.forEach((section) => deferredObserver.observe(section));
   }
 })();
-
-
-
-
-
-
