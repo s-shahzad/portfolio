@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /reports/
+
+Sitemap: https://azhadshahzadshaik.netlify.app/sitemap.xml

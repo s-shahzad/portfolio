@@ -46,6 +46,44 @@
             "@type": "WebSite",
             "name": "Azhad Shahzad Shaik Portfolio",
             "description": "Portfolio showcasing secure backend delivery, cybersecurity projects, and ML-adjacent engineering work."
+          },
+          {
+            "@type": "ScholarlyArticle",
+            "name": "Plugged-in and Protected: Leveraging Machine Learning to Secure IoT-Based Electric Vehicle Charging Stations from Denial-of-Service Threats",
+            "author": [
+              {"@type": "Person", "name": "Azhad Shahzad Shaik"},
+              {"@type": "Person", "name": "Meghana Gutla"},
+              {"@type": "Person", "name": "Athma Phanindhra Raju Kagitala"},
+              {"@type": "Person", "name": "Sajal Bhatia"}
+            ],
+            "datePublished": "2025-11-23",
+            "identifier": "doi:10.1109/GCAIoT68269.2025.11275540",
+            "url": "https://doi.org/10.1109/GCAIoT68269.2025.11275540",
+            "publisher": {"@type": "Organization", "name": "IEEE"},
+            "isPartOf": {
+              "@type": "PublicationVolume",
+              "name": "2025 IEEE Global Conference on Artificial Intelligence and Internet of Things (GCAIoT)"
+            }
+          },
+          {
+            "@type": "ScholarlyArticle",
+            "name": "Remote monitoring system of heart conditions for elderly persons with ECG machine using IoT platform",
+            "author": [
+              {"@type": "Person", "name": "Singh Ngangbam Phalguni"},
+              {"@type": "Person", "name": "Aditya Kanakamalla"},
+              {"@type": "Person", "name": "Azhad Shahzad Shaik"},
+              {"@type": "Person", "name": "Sai Guntupalli Divya"},
+              {"@type": "Person", "name": "Shruti Suman"}
+            ],
+            "datePublished": "2022-01-01",
+            "identifier": "doi:10.52547/jist.15692.10.37.11",
+            "url": "https://doi.org/10.52547/jist.15692.10.37.11",
+            "publisher": {"@type": "Organization", "name": "JIST (Journal of Information Systems and Telecommunication)"},
+            "isPartOf": {
+              "@type": "PublicationVolume",
+              "name": "JIST Vol 10, Issue 1, Pages 11-19",
+              "issn": "2322-1437"
+            }
           }
         ]
       }
@@ -78,9 +116,9 @@
           <ul class="nav-links">
             <li><a href="#about">About</a></li>
             <li><a href="#featured">Featured Work</a></li>
+            <li><a href="#experience">Experience</a></li>
             <li><a href="#publications">Publications</a></li>
             <li><a href="#certifications">Certifications</a></li>
-            <li><a href="#experience">Experience</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -100,9 +138,9 @@
         <div id="mobile-menu" class="mobile-menu" hidden>
           <a href="#about">About</a>
           <a href="#featured">Featured Work</a>
+          <a href="#experience">Experience</a>
           <a href="#publications">Publications</a>
           <a href="#certifications">Certifications</a>
-          <a href="#experience">Experience</a>
           <a href="#education">Education</a>
           <a href="#skills">Skills</a>
           <a href="#contact">Contact</a>
@@ -110,10 +148,10 @@
 
         <div class="hero-content">
           <div class="hero-text">
-            <p class="hero-eyebrow">Actively interviewing for Backend Engineer and Security Engineer roles.</p>
+            <p class="hero-eyebrow">Actively interviewing for Backend Engineer and Security Engineer roles &middot; Available Hartford, CT / Remote</p>
             <h1>Azhad Shahzad Shaik</h1>
-            <p class="hero-role">Backend Engineer | Security Engineer</p>
-            <p class="hero-lead">I build production APIs, secure data pipelines, and practical threat-detection workflows that are ready for real environments.</p>
+            <p class="hero-role">Backend &amp; Security Engineer</p>
+            <p class="hero-lead">M.S. Computer Forensics. IEEE first-author. CompTIA Security+. Currently shipping HL7&rarr;FHIR pipelines at Solstice, and developing <strong>Vector</strong> &mdash; a local-first AI cyber control platform integrating telemetry, NIDS, and bounded agent orchestration.</p>
             <div class="cta-row">
               <a class="btn primary" href="#featured">View Case Studies</a>
               <a class="btn ghost" href="reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>View Resume</a>
@@ -145,10 +183,12 @@
           </div>
           <div class="about-grid">
             <div class="about-panel">
-              <p>I build secure backend systems and practical data workflows for production teams.</p>
+              <p>I build secure backend systems and practical data workflows for production teams. Background spans telecom (Vodafone Idea, 3500+ site OSS&rarr;SRAN migration), healthcare data engineering (Solstice, HL7&rarr;FHIR), and security/risk engineering (Infosysnow, iQ4).</p>
               <ul class="about-list" aria-label="Core strengths">
                 <li>Backend APIs and integrations with security controls.</li>
-                <li>Healthcare interoperability and data quality workflows.</li>
+                <li>Healthcare interoperability and data quality workflows (HL7, FHIR, EDI 837/835).</li>
+                <li>Hybrid intrusion detection &mdash; signature, anomaly, and ML scoring (Universal NIDS).</li>
+                <li>Local-first AI tooling &mdash; multi-provider routing, agent orchestration (Vector platform).</li>
                 <li>Clear delivery across engineering, product, and operations.</li>
               </ul>
             </div>
@@ -188,18 +228,32 @@
               <div class="swiper-wrapper" id="featuredProjectsWrapper">
                 <div class="swiper-slide">
                   <article class="project-card featured-case" data-category="security ml backend">
-                    <h3>NIDS Workspace (In Progress)</h3>
+                    <h3>Universal NIDS &mdash; Hybrid Intrusion Detection</h3>
                     <figure class="featured-proof">
                       <img class="featured-proof-image" src="assets/images/proof-nids-workspace.svg" alt="NIDS workspace diagram showing ingest, features, training, and detection output" width="640" height="320" loading="lazy" decoding="async" fetchpriority="low" />
                     </figure>
-                    <p>Implementing the NIDS workflow end-to-end (data ingestion, feature engineering, model training, and detection scoring) for practical security testing.</p>
+                    <p>Hybrid intrusion detection combining signature logic, anomaly detection, ML scoring, and fusion reasoning. <strong>87K flows analyzed &middot; 0 false alerts in 6-hour soak &middot; 79% test coverage.</strong></p>
                     <ul class="featured-meta">
                       <li><strong>Tech Stack:</strong> Python, FastAPI, Scikit-learn, Pandas, Docker</li>
-                      <li><strong>Current Milestone:</strong> Implementing workflow stages: ingestion, feature engineering, baseline model training, and evaluation.</li>
-                      <li><strong>Expected Completion:</strong> June 2026.</li>
+                      <li><strong>Detection Model:</strong> Signature + anomaly + supervised ML + fusion confirmation</li>
+                      <li><strong>Validation:</strong> 6-hour live soak with 0 false alerts at 87,000 flows; 79% test coverage</li>
                     </ul>
-                    <p class="featured-note">Status: In progress (workflow implementation).</p>
-                    <a class="text-link" href="http://127.0.0.1:8788/" target="_blank" rel="noopener noreferrer">Open NIDS web page</a>
+                    <a class="text-link" href="projects/nids/">View NIDS case study</a>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="project-card featured-case" data-category="security ml backend ai">
+                    <h3>Vector &mdash; Local-first AI Cyber Control Platform</h3>
+                    <figure class="featured-proof">
+                      <img class="featured-proof-image" src="assets/images/proof-nids-workspace.svg" alt="Vector platform architecture diagram" width="640" height="320" loading="lazy" decoding="async" fetchpriority="low" />
+                    </figure>
+                    <p>Local-first AI cyber control system integrating telemetry, NIDS correlation, operator workflows, and bounded agent orchestration. Multi-provider AI router with FastAPI runtime &mdash; falls back across Ollama, Gemini, OpenAI, Grok, and NVIDIA endpoints.</p>
+                    <ul class="featured-meta">
+                      <li><strong>Tech Stack:</strong> Python, FastAPI, Ollama, Multi-provider AI</li>
+                      <li><strong>Architecture:</strong> Local-first &middot; Agent-bounded &middot; Telemetry-integrated</li>
+                      <li><strong>Status:</strong> Active development &middot; Private repository</li>
+                    </ul>
+                    <p class="featured-note">Long-term commercial project &mdash; case study available on request.</p>
                   </article>
                 </div>
                 <div class="swiper-slide">
@@ -228,6 +282,37 @@
         </div>
       </section>
 
+      <section id="experience" class="section alt reveal">
+        <div class="container">
+          <div class="section-head">
+            <h2>Experience</h2>
+            <p>Recent roles with measurable outcomes.</p>
+            <p class="resume-line">Full work history in resume &middot; <a href="reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>View Resume</a></p>
+          </div>
+          <div class="exp-list">
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Solstice Solutions, Inc.</h3><p class="exp-role">Jr. Data Analyst</p><p class="exp-loc">Hartford, CT</p></div><div class="exp-date">Oct 2025 - Present</div></div>
+              <ul class="exp-points"><li>Mapped 2 healthcare standards (HL7 and FHIR) across ingest, transform, and export workflows.</li><li>Added validation checks across 3 pipeline stages to improve data quality and handoff reliability.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Infosysnow Inc.</h3><p class="exp-role">Cyber Security Engineer</p><p class="exp-loc">Remote</p></div><div class="exp-date">Aug 2025 - Oct 2025</div></div>
+              <ul class="exp-points"><li>Executed 3 control streams: hardening, anomaly triage, and remediation tracking.</li><li>Delivered prioritized remediation actions for faster security issue closure.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>iQ4</h3><p class="exp-role">IT Risk Analyst Intern</p><p class="exp-loc">Remote</p></div><div class="exp-date">May 2024 - Aug 2024</div></div>
+              <ul class="exp-points"><li>Assessed controls across 3 domains: governance, operations, and incident workflows.</li><li>Mapped findings to 5 NIST CSF functions for prioritized remediation planning.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Sprinto Technology Private Limited</h3><p class="exp-role">Associate Software Engineer</p><p class="exp-loc">India</p></div><div class="exp-date">Apr 2023 - Dec 2023</div></div>
+              <ul class="exp-points"><li>Supported backend delivery across 3 phases: implementation, testing, and release.</li><li>Resolved defects and feature gaps in compliance-focused SaaS workflows.</li></ul>
+            </article>
+            <article class="exp-item">
+              <div class="exp-top"><div><h3>Vodafone Idea Ltd.</h3><p class="exp-role">Graduate Engineering Trainee &rarr; Network Engineer (Operations)</p><p class="exp-loc">Hyderabad, India</p></div><div class="exp-date">Nov 2021 - Apr 2023</div></div>
+              <ul class="exp-points"><li>Configured and validated 2G/3G/4G network sites across 3 radio generations.</li><li>Supported OSS to SRAN migration for 3500+ sites during 4G modernization.</li></ul>
+            </article>
+          </div>
+        </div>
+      </section>
       <section id="publications" class="section reveal">
         <div class="container">
           <div class="section-head">
@@ -362,20 +447,24 @@
             <div class="skill-group">
               <h3>Core Security</h3>
               <div class="skills">
-                <div class="skill">Threat Modeling</div><div class="skill">Risk Assessment</div><div class="skill">Vulnerability Analysis</div><div class="skill">Incident Response</div>
+                <div class="skill">Threat Modeling</div><div class="skill">Risk Assessment</div><div class="skill">Vulnerability Analysis</div><div class="skill">Incident Response</div><div class="skill">NIST CSF</div><div class="skill">SIEM</div><div class="skill">Pen Testing</div><div class="skill">Network Security</div>
               </div>
             </div>
             <div class="skill-group">
-              <h3>Data &amp; ML</h3>
-              <div class="skills"><div class="skill">Python</div><div class="skill">Data Validation</div><div class="skill">ML-based Detection</div></div>
+              <h3>Backend &amp; Data</h3>
+              <div class="skills"><div class="skill">Python</div><div class="skill">FastAPI</div><div class="skill">SQL</div><div class="skill">Pandas</div><div class="skill">Data Validation</div><div class="skill">HL7</div><div class="skill">FHIR</div><div class="skill">EDI 837/835</div></div>
             </div>
             <div class="skill-group">
-              <h3>Cloud</h3>
-              <div class="skills"><div class="skill">AWS</div></div>
+              <h3>ML &amp; Detection</h3>
+              <div class="skills"><div class="skill">Scikit-learn</div><div class="skill">ML-based Detection</div><div class="skill">Anomaly Detection</div><div class="skill">Hybrid IDS</div><div class="skill">Multi-provider AI Routing</div></div>
+            </div>
+            <div class="skill-group">
+              <h3>Cloud &amp; Infrastructure</h3>
+              <div class="skills"><div class="skill">AWS</div><div class="skill">Azure</div><div class="skill">Docker</div></div>
             </div>
             <div class="skill-group">
               <h3>Tools</h3>
-              <div class="skills"><div class="skill">Wireshark</div><div class="skill">Nmap</div><div class="skill">Linux</div><div class="skill">PowerShell</div><div class="skill">TCP/IP</div></div>
+              <div class="skills"><div class="skill">Wireshark</div><div class="skill">Nmap</div><div class="skill">Snort</div><div class="skill">Gitleaks</div><div class="skill">Linux/Bash</div><div class="skill">PowerShell</div><div class="skill">Git</div><div class="skill">TCP/IP</div><div class="skill">Tableau</div><div class="skill">Power BI</div></div>
             </div>
           </div>
         </div>
@@ -412,37 +501,6 @@
               </div>
               <div class="edu-date">May 2021</div>
             </div>
-          </div>
-        </div>
-      </section>
-      <section id="experience" class="section alt reveal">
-        <div class="container">
-          <div class="section-head">
-            <h2>Experience</h2>
-            <p>Recent roles with measurable outcomes.</p>
-            <p class="resume-line">Full work history in resume &middot; <a href="reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>View Resume</a></p>
-          </div>
-          <div class="exp-list">
-            <article class="exp-item">
-              <div class="exp-top"><div><h3>Solstice Solutions, Inc.</h3><p class="exp-role">Jr. Data Analyst</p><p class="exp-loc">Hartford, CT</p></div><div class="exp-date">Oct 2025 - Present</div></div>
-              <ul class="exp-points"><li>Mapped 2 healthcare standards (HL7 and FHIR) across ingest, transform, and export workflows.</li><li>Added validation checks across 3 pipeline stages to improve data quality and handoff reliability.</li></ul>
-            </article>
-            <article class="exp-item">
-              <div class="exp-top"><div><h3>Infosysnow Inc.</h3><p class="exp-role">Cyber Security Engineer</p><p class="exp-loc">Remote</p></div><div class="exp-date">Aug 2025 - Oct 2025</div></div>
-              <ul class="exp-points"><li>Executed 3 control streams: hardening, anomaly triage, and remediation tracking.</li><li>Delivered prioritized remediation actions for faster security issue closure.</li></ul>
-            </article>
-            <article class="exp-item">
-              <div class="exp-top"><div><h3>iQ4</h3><p class="exp-role">IT Risk Analyst Intern</p><p class="exp-loc">Remote</p></div><div class="exp-date">May 2024 - Aug 2024</div></div>
-              <ul class="exp-points"><li>Assessed controls across 3 domains: governance, operations, and incident workflows.</li><li>Mapped findings to 5 NIST CSF functions for prioritized remediation planning.</li></ul>
-            </article>
-            <article class="exp-item">
-              <div class="exp-top"><div><h3>Sprinto Technology Private Limited</h3><p class="exp-role">Associate Software Engineer</p><p class="exp-loc">India</p></div><div class="exp-date">Apr 2023 - Dec 2023</div></div>
-              <ul class="exp-points"><li>Supported backend delivery across 3 phases: implementation, testing, and release.</li><li>Resolved defects and feature gaps in compliance-focused SaaS workflows.</li></ul>
-            </article>
-            <article class="exp-item">
-              <div class="exp-top"><div><h3>Vodafone Idea Ltd.</h3><p class="exp-role">Graduate Engineering Trainee -> Network Engineer (Operations)</p><p class="exp-loc">Hyderabad, India</p></div><div class="exp-date">Nov 2021 - Apr 2023</div></div>
-              <ul class="exp-points"><li>Configured and validated 2G/3G/4G network sites across 3 radio generations.</li><li>Supported OSS to SRAN migration for 3500+ sites during 4G modernization.</li></ul>
-            </article>
           </div>
         </div>
       </section>
