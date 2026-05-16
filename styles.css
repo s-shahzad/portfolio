@@ -3230,3 +3230,299 @@ body::-webkit-scrollbar {
   .credentials-strip .credential-sep { display: none; }
   .credentials-strip .credential { display: block; }
 }
+
+/* =================================================================
+   PORTFOLIO DESIGN POLISH (2026-05-16) — push from 8/10 to 10/10
+   ================================================================= */
+
+/* Expanded palette with status colors + gradient tokens */
+:root {
+  --status-active: #5CD2FF;
+  --status-verified: #8af3d0;
+  --status-published: #ffd166;
+  --status-attention: #fb7185;
+  --gradient-cyan: linear-gradient(135deg, #5CD2FF 0%, #8af3d0 100%);
+  --gradient-amber: linear-gradient(135deg, #ffd166 0%, #fb923c 100%);
+}
+
+/* Heading typography refinement — modern, tighter, bolder */
+h1 {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+h3 {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  letter-spacing: -0.005em;
+  font-weight: 600;
+}
+
+/* Section pattern background — subtle dot grid for "alt" sections */
+.section {
+  position: relative;
+  isolation: isolate;
+}
+.section.alt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle at 1px 1px, rgba(151, 182, 229, 0.05) 1px, transparent 0);
+  background-size: 32px 32px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Section header underline accent */
+.section-head h2 {
+  position: relative;
+  display: inline-block;
+  margin-bottom: var(--space-4);
+}
+.section-head h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 56px;
+  height: 3px;
+  background: var(--gradient-cyan);
+  border-radius: 2px;
+}
+.section-head p {
+  margin-top: var(--space-5);
+  color: var(--muted);
+}
+
+/* Card hover micro-interactions */
+.project-card {
+  transition:
+    transform 0.25s ease-out,
+    box-shadow 0.25s ease-out,
+    border-color 0.25s ease-out;
+}
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2), 0 0 0 1px rgba(92, 210, 255, 0.18);
+}
+.project-card.featured-case:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2), 0 0 36px rgba(92, 210, 255, 0.15);
+}
+
+/* Featured proof image — subtle zoom on card hover */
+.featured-proof {
+  overflow: hidden;
+  border-radius: 12px;
+}
+.featured-proof-image {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.project-card:hover .featured-proof-image {
+  transform: scale(1.05);
+}
+
+/* Experience timeline — vertical accent line + dots */
+.exp-list {
+  position: relative;
+  padding-left: 36px;
+}
+.exp-list::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--success) 60%, transparent 100%);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+.exp-item {
+  position: relative;
+  padding-left: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+.exp-item::before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 4px rgba(92, 210, 255, 0.1);
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.exp-item:hover::before {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px rgba(92, 210, 255, 0.18);
+}
+.exp-item:first-child::before {
+  background: var(--accent);
+  box-shadow:
+    0 0 0 4px rgba(92, 210, 255, 0.22),
+    0 0 18px rgba(92, 210, 255, 0.35);
+}
+
+/* Buttons — gradient primary, lift on hover */
+.btn {
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.18s ease-out,
+    background-color 0.15s ease-out,
+    border-color 0.15s ease-out;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn.primary {
+  background: var(--gradient-cyan);
+  color: var(--bg);
+  font-weight: 600;
+  border: none;
+}
+.btn.primary:hover {
+  box-shadow: 0 6px 24px rgba(92, 210, 255, 0.32);
+}
+.btn.ghost {
+  border: 1px solid var(--border-strong);
+}
+.btn.ghost:hover {
+  border-color: var(--accent);
+  background: rgba(92, 210, 255, 0.06);
+}
+
+/* Chip styling — refined pill with category coloring */
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(92, 210, 255, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(92, 210, 255, 0.22);
+  margin-bottom: var(--space-3);
+}
+
+/* Section-specific chip color coding for visual hierarchy */
+#publications .project-card .chip {
+  background: rgba(138, 243, 208, 0.1);
+  color: var(--status-verified);
+  border-color: rgba(138, 243, 208, 0.22);
+}
+#certifications .project-card .chip {
+  background: rgba(255, 209, 102, 0.1);
+  color: var(--status-published);
+  border-color: rgba(255, 209, 102, 0.22);
+}
+
+/* Skill chip hover */
+.skill {
+  background: rgba(151, 182, 229, 0.08);
+  border: 1px solid var(--border);
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+}
+.skill:hover {
+  background: rgba(92, 210, 255, 0.12);
+  border-color: rgba(92, 210, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Meta-badge spacing fix — let publication ISSN/DOI breathe */
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: var(--space-3);
+}
+.meta-badge {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+  background: rgba(151, 182, 229, 0.07);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+}
+
+/* Selection color — branded */
+::selection {
+  background: rgba(92, 210, 255, 0.35);
+  color: var(--text);
+}
+
+/* Focus-visible — stronger ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Webkit scrollbar polish (Chrome / Edge / Safari) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* Education item subtle hover */
+.edu-item {
+  transition: transform 0.2s, background-color 0.2s;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+}
+.edu-item:hover {
+  background: rgba(151, 182, 229, 0.04);
+  transform: translateX(4px);
+}
+
+/* Footer subtle gradient line at top */
+.footer {
+  position: relative;
+  margin-top: var(--space-12);
+  padding: var(--space-6) 0;
+  border-top: 1px solid var(--border);
+}
+.footer::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: var(--gradient-cyan);
+}
+
+/* Reduced motion respect for all new animations */
+@media (prefers-reduced-motion: reduce) {
+  .project-card,
+  .featured-proof-image,
+  .btn,
+  .skill,
+  .edu-item,
+  .exp-item::before {
+    transition: none !important;
+  }
+  .project-card:hover,
+  .project-card.featured-case:hover,
+  .btn:hover,
+  .skill:hover,
+  .edu-item:hover {
+    transform: none !important;
+  }
+}
