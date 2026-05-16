@@ -91,7 +91,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CN94DG5LY"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
-    <link rel="preload" as="image" href="assets/screenshots/assets/profile-hero.jpg" />
+    <link rel="preload" as="image" href="assets/screenshots/assets/profile-hero.webp" type="image/webp" />
     <link rel="icon" href="assets/screenshots/assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="shortcut icon" href="assets/screenshots/assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -159,7 +159,10 @@
             </div>
           </div>
           <div class="hero-photo">
-            <img class="profile-photo" src="assets/screenshots/assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" width="1200" height="1200" loading="eager" decoding="async" fetchpriority="high" />
+            <picture>
+              <source srcset="assets/screenshots/assets/profile-hero.webp" type="image/webp" />
+              <img class="profile-photo" src="assets/screenshots/assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" width="1200" height="1200" loading="eager" decoding="async" fetchpriority="high" />
+            </picture>
           </div>
           <div class="hero-card">
             <p class="card-title">Focus Area</p>
