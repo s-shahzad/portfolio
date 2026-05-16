@@ -57,7 +57,7 @@
   --ink-soft: #1d222c;
   --paper: #ede7d5;
   --paper-soft: #c5bda9;
-  --paper-faint: #a59c87;     /* bumped from #837c6c — 6.0:1 vs ink-base (was 4.4:1, failing AA) */
+  --paper-faint: #b8af99;     /* 7.5:1 vs ink-base — comfortable AA margin */
   --paper-ghost: #4a4538;
 
   --hairline: #2e3340;
@@ -1264,6 +1264,9 @@ details > p { padding: 1rem 0 0; }
   font-size: clamp(1rem, 1.4vw, 1.1rem);
   color: var(--paper);
   font-weight: 500;
+  overflow-wrap: anywhere;       /* long URLs (cal.com/...) wrap on narrow viewports */
+  word-break: break-word;
+  min-width: 0;
 }
 a.contact-link { border-bottom: 1px solid var(--hairline-strong); padding-bottom: 2px; }
 a.contact-link:hover { color: var(--signal); border-color: var(--signal); }
