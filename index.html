@@ -511,15 +511,17 @@
         <div class="container">
           <div class="section-head">
             <h2>Contact</h2>
-            <p>Email is the fastest way to reach me for Backend Engineer and Security Engineer opportunities.</p>
+            <p>Email or book a 15-minute call for Backend Engineer and Security Engineer opportunities.</p>
           </div>
           <div class="contact-card contact-card-simple">
             <div class="contact-links">
               <div class="contact-link-item"><span class="contact-label">Email</span><a class="contact-link" href="mailto:azhadshahzads@gmail.com">azhadshahzads@gmail.com</a></div>
+              <div class="contact-link-item"><span class="contact-label">Schedule</span><a class="contact-link" href="https://cal.com/azhad-shahzad-shaik-vjekoo" target="_blank" rel="noopener noreferrer">cal.com/azhad-shahzad-shaik-vjekoo</a></div>
               <div class="contact-link-item"><span class="contact-label">GitHub</span><a class="contact-link" href="https://github.com/s-shahzad" target="_blank" rel="noopener noreferrer">github.com/s-shahzad</a></div>
             </div>
             <div class="contact-actions" aria-label="Contact shortcut">
               <a class="btn primary" href="mailto:azhadshahzads@gmail.com">Email Me</a>
+              <a class="btn ghost" href="https://cal.com/azhad-shahzad-shaik-vjekoo" target="_blank" rel="noopener noreferrer">Book 15-min Call</a>
             </div>
           </div>
         </div>
@@ -572,6 +574,30 @@
     </footer>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     <script src="script.js?v=20260307-03" defer></script>
-    <script src="chatbot-upgrade.js?v=20260226-02" defer></script>
+    <script>
+      // Lazy-load chatbot (43KB) — defer until first user interaction or 5s idle.
+      // Saves 43KB from initial paint without breaking the chatbot for users who interact.
+      (function () {
+        var loaded = false;
+        function loadChatbot() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.src = 'chatbot-upgrade.js?v=20260226-02';
+          s.defer = true;
+          document.head.appendChild(s);
+        }
+        var triggers = ['scroll', 'click', 'keydown', 'touchstart', 'mousemove'];
+        triggers.forEach(function (evt) {
+          window.addEventListener(evt, loadChatbot, { once: true, passive: true });
+        });
+        // Fallback: idle-load after 5s even without interaction
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadChatbot, { timeout: 5000 });
+        } else {
+          setTimeout(loadChatbot, 5000);
+        }
+      })();
+    </script>
   </body>
 </html>
