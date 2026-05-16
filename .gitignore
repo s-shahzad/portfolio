@@ -20,6 +20,8 @@ mobile-scan/
 mobile-contact-*.png
 styles.css.accidental-truncated-backup-*
 .audit/
+node_modules/
+package-lock.json
 
 # Backup/monitor outputs
 backups/
