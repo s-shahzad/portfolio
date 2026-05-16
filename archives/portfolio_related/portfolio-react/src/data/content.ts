@@ -335,7 +335,7 @@ export const EXPERIENCE: ExperienceItem[] = [
 export const CONTACT = {
   heading: "Let's Build",
   subtitle: "Let's talk about security & ML roles.",
-  email: "shaikazhadshahzad@gmail.com",
+  email: "azhadshahzads@gmail.com",
   githubLabel: "github.com/s-shahzad",
   githubLink: "https://github.com/s-shahzad",
   response: "Responding within 24-48 hours.",
