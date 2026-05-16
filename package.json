@@ -1,0 +1,27 @@
+{
+  "name": "s-shahzad-portfolio",
+  "version": "2026.05.16",
+  "description": "Azhad Shahzad Shaik portfolio — backend and security engineering work.",
+  "private": true,
+  "homepage": "https://azhadshahzadshaik.netlify.app/",
+  "author": "Azhad Shahzad Shaik <azhadshahzads@gmail.com>",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/s-shahzad/portfolio.git"
+  },
+  "scripts": {
+    "build:css": "npx --yes esbuild styles.css --bundle --minify --outfile=styles.min.css",
+    "build:js": "npx --yes esbuild script.js --minify --outfile=script.min.js && npx --yes esbuild chatbot-upgrade.js --minify --outfile=chatbot-upgrade.min.js",
+    "build": "npm run build:css && npm run build:js",
+    "image:webp": "python -c \"from PIL import Image; img = Image.open('assets/screenshots/assets/profile-hero.jpg'); img.convert('RGB').save('assets/screenshots/assets/profile-hero.webp', 'WebP', quality=80, method=6)\"",
+    "image:mobile": "python -c \"from PIL import Image; img = Image.open('assets/screenshots/assets/profile-hero.jpg'); img.thumbnail((500,500)); img.convert('RGB').save('assets/screenshots/assets/profile-hero-mobile.webp', 'WebP', quality=80, method=6)\"",
+    "images": "npm run image:webp && npm run image:mobile"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

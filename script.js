@@ -1298,3 +1298,31 @@
   }
 })();
 
+
+// === Portfolio audit additions: scroll-spy for nav (2026-05-16) ===
+(function () {
+  'use strict';
+  var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  if (!navLinks.length) return;
+  var sections = [];
+  navLinks.forEach(function (link) {
+    var id = link.getAttribute('href').slice(1);
+    var section = document.getElementById(id);
+    if (section) sections.push({ id: id, section: section, link: link });
+  });
+  if (!sections.length || !('IntersectionObserver' in window)) return;
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var match = sections.find(function (s) { return s.section === entry.target; });
+      if (!match) return;
+      if (entry.isIntersecting) {
+        // Remove .is-current from all, add to this one
+        sections.forEach(function (s) { s.link.classList.remove('is-current'); });
+        match.link.classList.add('is-current');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(function (s) { observer.observe(s.section); });
+})();

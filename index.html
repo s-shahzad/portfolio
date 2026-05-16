@@ -95,7 +95,7 @@
     <link rel="preload" as="image" href="assets/screenshots/assets/profile-hero.webp" type="image/webp" />
     <link rel="icon" href="assets/screenshots/assets/logo-alt-c-icon.png" type="image/png" />
     <link rel="shortcut icon" href="assets/screenshots/assets/logo-alt-c-icon.png" type="image/png" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="vendor/swiper-bundle.min.css" />
     <link rel="stylesheet" href="styles.min.css?v=20260307-03" />
   </head>
   <body>
@@ -168,7 +168,14 @@
           </div>
           <div class="hero-photo">
             <picture>
-              <source srcset="assets/screenshots/assets/profile-hero.webp" type="image/webp" />
+              <source
+                srcset="assets/screenshots/assets/profile-hero-mobile.webp 500w, assets/screenshots/assets/profile-hero.webp 1400w"
+                sizes="(max-width: 768px) 500px, 1400px"
+                type="image/webp" />
+              <source
+                srcset="assets/screenshots/assets/profile-hero-mobile.jpg 500w, assets/screenshots/assets/profile-hero.jpg 1400w"
+                sizes="(max-width: 768px) 500px, 1400px"
+                type="image/jpeg" />
               <img class="profile-photo" src="assets/screenshots/assets/profile-hero.jpg" alt="Azhad Shahzad Shaik" width="1200" height="1200" loading="eager" decoding="async" fetchpriority="high" />
             </picture>
           </div>

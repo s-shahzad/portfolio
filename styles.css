@@ -6,7 +6,7 @@
   --muted: #a8b3c4;
   --border: #2b374a;
   --border-strong: #3f5270;
-  --accent: #dbe8ff;
+  --accent: #5CD2FF;
   --accent-strong: #ffffff;
   --success: #8af3d0;
 
@@ -3111,4 +3111,122 @@ body::-webkit-scrollbar {
   #experience .auto-swiper .swiper-slide {
     width: min(92vw, 390px) !important;
   }
+}
+
+/* === Portfolio audit additions (2026-05-16) === */
+
+/* Sticky nav with glass effect */
+.hero .nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--nav-glass-bg);
+  border-bottom: 1px solid var(--nav-glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.75rem 0;
+}
+
+/* Active section highlight in nav */
+.nav-links a.is-current {
+  color: var(--accent);
+  position: relative;
+}
+.nav-links a.is-current::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Credentials strip under hero CTA */
+.credentials-strip {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.credentials-strip .credential strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+.credentials-strip .credential-sep {
+  color: var(--border-strong);
+  opacity: 0.6;
+}
+
+/* Section card accent borders — visual differentiation */
+#featured .project-card.featured-case { border-left: 3px solid var(--accent); }
+#publications .project-card { border-left: 3px solid #8af3d0; }
+#certifications .project-card { border-left: 3px solid #ffd166; }
+
+/* Contact form (Netlify Forms) */
+.contact-form-details {
+  margin-top: var(--space-6);
+  max-width: 640px;
+}
+.contact-form-details > summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  padding: var(--space-3) 0;
+  list-style: none;
+  user-select: none;
+}
+.contact-form-details > summary::-webkit-details-marker { display: none; }
+.contact-form-details > summary:hover { color: var(--accent-strong); }
+.contact-form-details[open] > summary { margin-bottom: var(--space-4); }
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.contact-form .form-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.contact-form .form-label > span {
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--panel-soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+.contact-form textarea { resize: vertical; min-height: 100px; }
+.contact-form button { align-self: flex-start; }
+
+@media (max-width: 768px) {
+  .credentials-strip { font-size: 0.85rem; gap: var(--space-2); }
+  .credentials-strip .credential-sep { display: none; }
+  .credentials-strip .credential { display: block; }
 }
