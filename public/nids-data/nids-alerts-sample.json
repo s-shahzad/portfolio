@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-03-25T14:15:00Z",
+  "run_name": "validated-local-replay-2026-03",
+  "count": 6,
+  "alerts": [
+    {
+      "timestamp": "2026-03-08T10:15:00Z",
+      "severity": "critical",
+      "engine": "fusion",
+      "rule_name": "Hybrid Fusion Decision",
+      "summary": "Fusion logic aligned signature, supervised, and unsupervised evidence on suspicious outbound traffic.",
+      "src_ip": "10.0.0.10",
+      "dst_ip": "192.0.2.10",
+      "proto": "TCP",
+      "fusion_score": 0.93,
+      "fusion_label": "malicious",
+      "evidence_reference": "unsupervised_baseline.pkl"
+    },
+    {
+      "timestamp": "2026-03-08T10:15:01Z",
+      "severity": "high",
+      "engine": "signature",
+      "rule_name": "Suspicious TLS Session",
+      "summary": "Rule-based detection flagged encrypted session behavior that matched a known suspicious pattern.",
+      "src_ip": "10.0.0.10",
+      "dst_ip": "192.0.2.10",
+      "proto": "TCP",
+      "fusion_score": 0.9,
+      "fusion_label": "malicious",
+      "evidence_reference": null
+    },
+    {
+      "timestamp": "2026-03-08T10:15:02Z",
+      "severity": "high",
+      "engine": "supervised",
+      "rule_name": "Supervised Ensemble Predicted Attack",
+      "summary": "The trained classifier labeled the flow as attack traffic with strong confidence.",
+      "src_ip": "10.0.0.12",
+      "dst_ip": "192.0.2.21",
+      "proto": "TCP",
+      "fusion_score": 0.88,
+      "fusion_label": "malicious",
+      "evidence_reference": "model-metrics.json"
+    },
+    {
+      "timestamp": "2026-03-08T10:15:03Z",
+      "severity": "medium",
+      "engine": "unsupervised",
+      "rule_name": "Anomaly Spike Detected",
+      "summary": "The anomaly path observed behavior outside the learned normal profile before fusion confirmation.",
+      "src_ip": "10.0.0.22",
+      "dst_ip": "192.0.2.44",
+      "proto": "UDP",
+      "fusion_score": 0.63,
+      "fusion_label": "review",
+      "evidence_reference": "baseline-snapshot.json"
+    },
+    {
+      "timestamp": "2026-03-08T10:15:04Z",
+      "severity": "medium",
+      "engine": "fusion",
+      "rule_name": "Campaign Correlation Burst",
+      "summary": "Cross-signal correlation elevated repeated suspicious connections into one higher-confidence event.",
+      "src_ip": "10.0.0.18",
+      "dst_ip": "192.0.2.99",
+      "proto": "TCP",
+      "fusion_score": 0.84,
+      "fusion_label": "malicious",
+      "evidence_reference": null
+    },
+    {
+      "timestamp": "2026-03-08T10:15:05Z",
+      "severity": "low",
+      "engine": "signature",
+      "rule_name": "HTTP Suspicious Keyword",
+      "summary": "A single content match was retained for analyst review but ranked below the fusion-confirmed findings.",
+      "src_ip": "10.0.0.33",
+      "dst_ip": "192.0.2.55",
+      "proto": "TCP",
+      "fusion_score": 0.41,
+      "fusion_label": "review",
+      "evidence_reference": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-03-25T14:15:00Z",
+  "run_name": "validated-local-replay-2026-03",
+  "engine_distribution": {
+    "fusion": 4,
+    "signature": 3,
+    "supervised": 2,
+    "unsupervised": 1
+  },
+  "severity_distribution": {
+    "high": 4,
+    "medium": 3,
+    "critical": 2,
+    "low": 1
+  },
+  "baseline_comparison": {
+    "validated_baseline": {
+      "flows": 509,
+      "alerts": 10,
+      "alert_ratio": 0.0196,
+      "ml_unsupervised_confirmation_hits": 2,
+      "fusion_min_agreement_count": 3
+    },
+    "current": {
+      "flows": 509,
+      "alerts": 10,
+      "alert_ratio": 0.0196
+    },
+    "delta": {
+      "flows": 0,
+      "alerts": 0,
+      "alert_ratio": 0.0
+    },
+    "matches_validated_result": true
+  }
+}

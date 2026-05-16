@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project | Universal NIDS Case Study</title>
+    <meta
+      name="description"
+      content="Static case study for a hybrid network intrusion detection system with recruiter-friendly metrics, alert samples, and explanation notes."
+    />
+    <link rel="stylesheet" href="nids-case-study.css" />
+  </head>
+  <body>
+    <main class="nids-page">
+      <div class="top-actions">
+        <a class="back-link" href="../../index.html#featured" aria-label="Back to portfolio"><- Back to portfolio</a>
+      </div>
+
+      <section class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Security Engineering / Hybrid Detection</p>
+          <h1>Universal NIDS</h1>
+          <p class="lede">
+            A recruiter-friendly case study showing how I packaged a hybrid network intrusion detection workflow into a safe, static presentation layer without exposing live infrastructure, raw captures, or internal paths.
+          </p>
+          <div class="hero-pills">
+            <span class="pill">Signature + Anomaly + ML + Fusion</span>
+            <span class="pill">Static exported bundle</span>
+            <span class="pill">No live API dependency</span>
+          </div>
+        </div>
+        <div class="hero-aside" id="heroSnapshot" aria-label="Run snapshot"></div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Architecture</p>
+            <h2>Hybrid NIDS Architecture</h2>
+          </div>
+          <p class="section-copy">
+            The system layers deterministic signatures, anomaly scoring, supervised classification, and fusion rules. The portfolio page only renders exported artifacts from a validated run.
+          </p>
+        </div>
+        <div class="architecture-grid">
+          <div class="diagram-card" aria-label="Architecture diagram placeholder">
+            <div class="diagram-flow">
+              <div class="diagram-node">Traffic Replay</div>
+              <div class="diagram-arrow"></div>
+              <div class="diagram-node">Feature + Rule Analysis</div>
+              <div class="diagram-arrow"></div>
+              <div class="diagram-node">Fusion Decision</div>
+              <div class="diagram-arrow"></div>
+              <div class="diagram-node">Safe Export Bundle</div>
+            </div>
+          </div>
+          <div class="architecture-notes">
+            <article class="mini-card">
+              <h3>Hybrid detection</h3>
+              <p>Known-bad signatures catch repeatable patterns while anomaly and model paths improve coverage on unfamiliar behavior.</p>
+            </article>
+            <article class="mini-card">
+              <h3>Noise reduction</h3>
+              <p>Fusion logic promotes stronger multi-signal evidence and keeps weaker events from overwhelming the analyst queue.</p>
+            </article>
+            <article class="mini-card">
+              <h3>Safe presentation layer</h3>
+              <p>This page uses static exported files only. No localhost, internal repo paths, or raw PCAP references are surfaced.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Metrics</p>
+            <h2>Run Metrics</h2>
+          </div>
+          <p class="section-copy">
+            These cards frame the outcome the way a hiring manager can understand it: traffic volume, alert volume, signal rate, and how much noise was filtered out before review.
+          </p>
+        </div>
+        <div class="metrics-grid" id="metricsGrid"></div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Fusion Mix</p>
+            <h2>Engine Distribution</h2>
+          </div>
+          <p class="section-copy">
+            The chart below shows how the hybrid system distributes detections across fusion, signature, supervised, and unsupervised paths.
+          </p>
+        </div>
+        <div class="chart-card">
+          <div class="bar-chart" id="engineChart" aria-label="Engine distribution chart"></div>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Alert Sample</p>
+            <h2>Presentation-Safe Alerts</h2>
+          </div>
+          <p class="section-copy">
+            This is a bounded sample from the exported bundle. It is enough to show reasoning quality without exposing raw packet data or sensitive host paths.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table class="alerts-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Severity</th>
+                <th>Engine</th>
+                <th>Rule</th>
+                <th>Summary</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="alertsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">AI Explanation</p>
+            <h2>How The Result Is Explained</h2>
+          </div>
+          <p class="section-copy">
+            The explanation layer turns structured outputs into plain-language analyst context. It is assistive only and does not alter detector behavior.
+          </p>
+        </div>
+        <div class="explanation-grid">
+          <article class="mini-card" id="explanationSummary"></article>
+          <article class="markdown-card">
+            <div id="markdownContent"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Bundle Metadata</p>
+            <h2>Export Metadata</h2>
+          </div>
+          <p class="section-copy">
+            These values come from the static bundle itself and document what was exported for presentation.
+          </p>
+        </div>
+        <div class="metadata-grid" id="metadataGrid"></div>
+      </section>
+
+      <section class="panel section-block legal-panel">
+        <p class="eyebrow">Legal / Safety Note</p>
+        <h2>Bounded Public Case Study</h2>
+        <p>
+          This page is intentionally static. It does not expose localhost services, internal repository locations, raw packet captures, or operational controls. The goal is to communicate engineering judgment, detection design, and measurable outcomes without publishing sensitive runtime details.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="nids-case-study.js"></script>
+  </body>
+</html>
