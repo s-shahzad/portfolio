@@ -5,7 +5,7 @@
   const MAX_HISTORY = 28;
   const REDUCED_MOTION = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const BOT_LABEL = "Portfolio Assistant";
-  const EMAIL = "shaikazhadshahzad@gmail.com";
+  const EMAIL = "azhadshahzads@gmail.com";
   const GITHUB_URL = "https://github.com/s-shahzad";
   const RESUME_URL = "reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf";
   const DEFAULT_PROMPTS = [
