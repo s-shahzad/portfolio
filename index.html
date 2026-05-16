@@ -11,6 +11,7 @@
     <meta property="og:title" content="Azhad Shahzad Shaik | Backend & Security Engineer" />
     <meta property="og:description" content="Production-ready backend and security engineering work across NIDS delivery, risk remediation, and healthcare integrations." />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://azhadshahzadshaik.netlify.app/" />
     <meta property="og:image" content="assets/screenshots/assets/profile-hero.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -154,8 +155,15 @@
             <p class="hero-lead">M.S. Computer Forensics. IEEE first-author. CompTIA Security+. Currently shipping HL7&rarr;FHIR pipelines at Solstice, and developing <strong>Vector</strong> &mdash; a local-first AI cyber control platform integrating telemetry, NIDS, and bounded agent orchestration.</p>
             <div class="cta-row">
               <a class="btn primary" href="#featured">View Case Studies</a>
-              <a class="btn ghost" href="reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" download>View Resume</a>
+              <a class="btn ghost" href="reports/assets/Azhad_Shahzad_Shaik_Cybersecurity_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
               <a class="btn ghost" href="#contact">Contact Me</a>
+            </div>
+            <div class="credentials-strip" aria-label="Verified credentials">
+              <span class="credential"><strong>IEEE</strong> first-author &middot; GCAIoT 2025</span>
+              <span class="credential-sep" aria-hidden="true">|</span>
+              <span class="credential"><strong>CompTIA</strong> Security+ &middot; valid Oct 2028</span>
+              <span class="credential-sep" aria-hidden="true">|</span>
+              <span class="credential"><strong>M.S.</strong> Cyber Forensics &middot; Sacred Heart Univ</span>
             </div>
           </div>
           <div class="hero-photo">
@@ -394,33 +402,18 @@
             </article>
             <article class="project-card" data-category="ml data">
               <div class="chip">HackerRank</div>
-              <h3>Python (Basic)</h3>
-              <p>Certification of skill in Python fundamentals and core programming concepts.</p>
+              <h3>Python &amp; Problem Solving</h3>
+              <p>Three HackerRank certifications: Python (Basic), Problem Solving (Basic), and Problem Solving (Intermediate).</p>
               <p class="meta-row">
-                <span class="meta-badge">Earned May 15, 2025</span>
-                <span class="meta-badge">ID E3EF8F866323</span>
+                <span class="meta-badge">Python Basic &middot; May 2025</span>
+                <span class="meta-badge">PS Basic &middot; Sep 2020</span>
+                <span class="meta-badge">PS Intermediate &middot; Sep 2020</span>
               </p>
-              <a class="text-link" href="https://www.hackerrank.com/certificates/ee3fef866323" target="_blank" rel="noopener noreferrer">Verify</a>
-            </article>
-            <article class="project-card" data-category="ml data">
-              <div class="chip">HackerRank</div>
-              <h3>Problem Solving (Basic)</h3>
-              <p>Certification of foundational problem-solving and algorithmic reasoning skills.</p>
-              <p class="meta-row">
-                <span class="meta-badge">Earned Sep 15, 2020</span>
-                <span class="meta-badge">ID A99E37EE6E6C</span>
-              </p>
-              <a class="text-link" href="https://www.hackerrank.com/certificates/a99e37eeee6c" target="_blank" rel="noopener noreferrer">Verify</a>
-            </article>
-            <article class="project-card" data-category="ml data">
-              <div class="chip">HackerRank</div>
-              <h3>Problem Solving (Intermediate)</h3>
-              <p>Certification validating intermediate-level problem solving and algorithmic skills.</p>
-              <p class="meta-row">
-                <span class="meta-badge">Earned Sep 12, 2020</span>
-                <span class="meta-badge">ID F137B6531CCC</span>
-              </p>
-              <a class="text-link" href="https://www.hackerrank.com/certificates/f137b6531ccc" target="_blank" rel="noopener noreferrer">Verify</a>
+              <div class="pub-actions">
+                <a class="btn ghost small" href="https://www.hackerrank.com/certificates/ee3fef866323" target="_blank" rel="noopener noreferrer">Verify Python</a>
+                <a class="btn ghost small" href="https://www.hackerrank.com/certificates/a99e37eeee6c" target="_blank" rel="noopener noreferrer">Verify PS Basic</a>
+                <a class="btn ghost small" href="https://www.hackerrank.com/certificates/f137b6531ccc" target="_blank" rel="noopener noreferrer">Verify PS Intermediate</a>
+              </div>
             </article>
             <article class="project-card" data-category="security">
               <div class="chip">Fortinet</div>
@@ -524,6 +517,26 @@
               <a class="btn ghost" href="https://cal.com/azhad-shahzad-shaik-vjekoo" target="_blank" rel="noopener noreferrer">Book 15-min Call</a>
             </div>
           </div>
+          <details class="contact-form-details">
+            <summary>Or send a message via form &rarr;</summary>
+            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form">
+              <input type="hidden" name="form-name" value="contact" />
+              <p hidden><label>Don&rsquo;t fill if you&rsquo;re human: <input name="bot-field" /></label></p>
+              <label class="form-label">
+                <span>Your name</span>
+                <input type="text" name="name" required autocomplete="name" />
+              </label>
+              <label class="form-label">
+                <span>Your email</span>
+                <input type="email" name="email" required autocomplete="email" />
+              </label>
+              <label class="form-label">
+                <span>Message</span>
+                <textarea name="message" rows="5" required></textarea>
+              </label>
+              <button type="submit" class="btn primary">Send Message</button>
+            </form>
+          </details>
         </div>
       </section>
     </main>
