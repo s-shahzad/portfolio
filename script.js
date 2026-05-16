@@ -597,23 +597,7 @@
     return true;
   };
 
-  const loadFeaturedProjectsFromApi = async () => {
-    if (!featuredProjectsWrapper) return false;
-    if (window.location.protocol === "file:") {
-      return false;
-    }
-    try {
-      const response = await fetch("/api/projects", { headers: { Accept: "application/json" } });
-      if (!response.ok) throw new Error(String(response.status));
-      const data = await response.json().catch(() => null);
-      const items = Array.isArray(data?.featured) ? data.featured : [];
-      if (!items.length) throw new Error("No featured projects in API response");
-      renderFeaturedProjectsFromApi(items);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  const loadFeaturedProjectsFromApi = async () => false;
 
   const setupFeaturedCarousel = () => {
     const featuredRoot = document.querySelector("#featured .featured-swiper");
