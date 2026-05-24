@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detection Library | Azhad Shahzad Shaik</title>
+    <meta
+      name="description"
+      content="Detection-as-code library: Sigma, SPL, Suricata, and Zeek rules authored alongside the Universal NIDS case study. Each rule maps to a hybrid-engine role and a MITRE ATT&CK technique."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://azhadshahzadshaik.netlify.app/detections/" />
+    <link rel="stylesheet" href="../case-studies/case-study.css" />
+    <style>
+      .rule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-top: 1.25rem;
+      }
+      .rule-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        padding: 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: linear-gradient(160deg, var(--panel), var(--panel-soft));
+      }
+      .rule-card h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.35;
+      }
+      .rule-card .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .rule-card .tag {
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        background: var(--accent-soft);
+      }
+      .rule-card .tag.engine-fusion { color: var(--success); }
+      .rule-card .tag.engine-signature { color: #ffd6a5; }
+      .rule-card .tag.engine-anomaly { color: #b5d8ff; }
+      .rule-card .tag.engine-supervised { color: #f5b5ff; }
+      .rule-card .tag.engine-unsupervised { color: #ffe2a5; }
+      .rule-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .rule-card a.rule-link {
+        margin-top: auto;
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .rule-card a.rule-link:hover,
+      .rule-card a.rule-link:focus-visible {
+        text-decoration: underline;
+      }
+      .engine-legend {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.7rem;
+        margin-top: 0.8rem;
+      }
+      .engine-legend dt {
+        font-weight: 600;
+        color: var(--text);
+      }
+      .engine-legend dd {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="top-actions">
+        <a class="back-link" href="../index.html#featured" aria-label="Back to portfolio">&larr; Back to portfolio</a>
+      </div>
+
+      <section class="panel">
+        <p class="eyebrow">Detection Engineering / Rule Authoring</p>
+        <h1>Detection Library</h1>
+        <p>
+          Production-style rules authored alongside the
+          <a href="../projects/nids/">Universal NIDS case study</a>. Each rule maps to one of the
+          four hybrid-detection engines used in that project &mdash; <strong>signature</strong>,
+          <strong>anomaly</strong>, <strong>supervised</strong>, <strong>unsupervised</strong>
+          &mdash; and to the <strong>fusion</strong> stage that consolidates agreeing signals
+          before an analyst is paged.
+        </p>
+        <dl class="engine-legend">
+          <div><dt>Signature</dt><dd>Deterministic IOC / pattern match. Sigma, Suricata.</dd></div>
+          <div><dt>Anomaly</dt><dd>Statistical drift from baseline. SPL stddev, KQL series.</dd></div>
+          <div><dt>Supervised</dt><dd>CatBoost classifier on labeled flows.</dd></div>
+          <div><dt>Unsupervised</dt><dd>IsolationForest scoring on encoded flow features.</dd></div>
+          <div><dt>Fusion</dt><dd>Agreement count &ge; 2 across engines. Paging-grade.</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel section-block">
+        <p class="eyebrow">Sigma</p>
+        <h2>Sigma Rules</h2>
+        <p>
+          Backend-agnostic detection content. Each Sigma rule below names the engine it feeds
+          and the per-environment tuning lever to adjust before deploying.
+        </p>
+        <div class="rule-grid">
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-supervised">supervised</span>
+              <span class="tag">T1059.001</span>
+            </div>
+            <h3>Suspicious PowerShell with Base64-Encoded Payload</h3>
+            <p>Catches the <code>-EncodedCommand</code> + offensive-tradecraft pattern; tuning lever is signed-installer allowlist.</p>
+            <a class="rule-link" href="sigma/proc_susp_pwsh_b64.yml">View rule &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-unsupervised">unsupervised</span>
+              <span class="tag">T1048.003</span>
+            </div>
+            <h3>DNS Tunneling via Long-Label Subdomain Encoding</h3>
+            <p>Surfaces long, high-entropy DNS labels. Per-domain baseline keeps CDN edge keys from paging.</p>
+            <a class="rule-link" href="sigma/net_dns_exfil_long_label.yml">View rule &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-fusion">fusion</span>
+              <span class="tag">T1071.001</span>
+            </div>
+            <h3>Periodic C2 Beacon with Low Jitter</h3>
+            <p>Standalone it&rsquo;s soft &mdash; combined with one other engine in the agreement window, it pages.</p>
+            <a class="rule-link" href="sigma/net_c2_beacon_jitter.yml">View rule &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-signature">signature</span>
+              <span class="tag">T1110.001</span>
+            </div>
+            <h3>Authentication Burst &mdash; Failed Logon Rate Spike</h3>
+            <p>10+ failures from one source in 60s. Red-team CIDR excluded; identity-aware filter downstream.</p>
+            <a class="rule-link" href="sigma/auth_burst_5xx_fail.yml">View rule &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-signature">signature</span>
+              <span class="tag">T1046</span>
+            </div>
+            <h3>TCP SYN Port Scan from External Source</h3>
+            <p>30+ distinct dest ports in 30s with 90%+ SYN-no-ACK. Internal vuln-scanner CIDR allowlist required.</p>
+            <a class="rule-link" href="sigma/net_port_scan_syn.yml">View rule &rarr;</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <p class="eyebrow">SIEM Queries</p>
+        <h2>Splunk SPL</h2>
+        <p>
+          Hunting queries that feed the anomaly and fusion engines. Tuning levers are pinned at
+          the top of each query so the reviewer can see what to adjust without reading the body.
+        </p>
+        <div class="rule-grid">
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-anomaly">anomaly</span>
+              <span class="tag">T1071</span>
+            </div>
+            <h3>Beacon Interval Stddev</h3>
+            <p>Coefficient of variation on per-pair inter-arrival times; emits <code>beacon_score</code> consumed by the Sigma fusion rule.</p>
+            <a class="rule-link" href="splunk/beacon_interval_stddev.spl">View query &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-fusion">fusion</span>
+              <span class="tag">T1021</span>
+            </div>
+            <h3>Lateral Movement Chain</h3>
+            <p>Single identity &ge;3 hosts across &ge;2 subnets in 20m, with a privileged-logon gate.</p>
+            <a class="rule-link" href="splunk/lateral_movement_chain.spl">View query &rarr;</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <p class="eyebrow">Network Sensor</p>
+        <h2>Suricata &amp; Zeek</h2>
+        <div class="rule-grid">
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag engine-signature">signature</span>
+              <span class="tag">T1071.001</span>
+            </div>
+            <h3>Anomalous HTTP User-Agent Patterns</h3>
+            <p>Five Suricata rules: empty UA, scripted-client UA from user subnets, and two offensive-tool defaults.</p>
+            <a class="rule-link" href="suricata/ua_anomaly.rules">View rules &rarr;</a>
+          </article>
+          <article class="rule-card">
+            <div class="tag-row">
+              <span class="tag">analyst tool</span>
+              <span class="tag">enrichment</span>
+            </div>
+            <h3>Connection Enrichment (Zeek)</h3>
+            <p>Tags <code>conn.log</code> with <code>asset_role</code>, <code>dst_reputation</code>, <code>flow_class</code> &mdash; the columns a Tier-1 analyst needs to triage in &lt;30s.</p>
+            <a class="rule-link" href="zeek/conn_enrich.zeek">View script &rarr;</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section-block">
+        <p class="eyebrow">Methodology</p>
+        <h2>How these connect to the NIDS run</h2>
+        <p>
+          The <a href="../projects/nids/">NIDS case study</a> reports an
+          <code>engine_distribution</code> across signature, supervised, unsupervised, and
+          fusion engines. Every detection here is shaped to feed exactly one of those engines.
+          A fusion event in the live dashboard means at least two of these rule families fired
+          on the same entity inside the agreement window &mdash; that&rsquo;s the bar at which
+          an analyst is paged. The fusion threshold is documented in the bundle metadata
+          (<code>fusion_min_agreement_count</code>).
+        </p>
+        <p>
+          The full library, including this README and tuning notes, is on
+          <a href="https://github.com/s-shahzad" rel="noopener">GitHub</a>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

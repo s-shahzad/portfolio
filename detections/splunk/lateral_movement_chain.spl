@@ -1,0 +1,57 @@
+``` Lateral Movement Chain — Splunk SPL
+   Author:  Azhad Shahzad Shaik
+   Date:    2026-05-24
+   Engine:  fusion (joins three sub-signals into a single paging-grade alert)
+   ATT&CK:  T1021.002 SMB/Admin Shares, T1021.006 WinRM, T1078 Valid Accounts
+
+   Hypothesis being tested:
+     A single identity (user) authenticates to ≥3 distinct internal hosts within a 20m
+     window AND those hosts are NOT in the same /24 subnet AND at least one of those
+     auths uses a privileged Windows logon type (3 = Network, 10 = RemoteInteractive).
+     Healthy admin behavior usually targets a narrower set of hosts and uses a
+     consistent jump-host pattern; a fan-out across subnets in a short window is the
+     shape of credential reuse during lateral movement.
+
+   Tuning levers:
+     - min_distinct_hosts : default 3 (raise to 5 in larger ops)
+     - window             : default 20m
+     - require_privileged : whether at least one logon must be type 3 or 10
+     - excluded_users     : service accounts that legitimately fan-out
+```
+
+| eval min_distinct_hosts=3
+| eval window="-20m@m"
+| eval require_privileged=1
+
+| search index=wineventlog (EventCode=4624 OR EventCode=4648) earliest=`window` latest=now
+| eval target_subnet = mvindex(split(TargetIp, "."), 0) . "."
+                     . mvindex(split(TargetIp, "."), 1) . "."
+                     . mvindex(split(TargetIp, "."), 2)
+| eval is_privileged = if(LogonType IN (3, 10), 1, 0)
+
+``` exclude well-known service identities ```
+| search NOT TargetUserName IN (
+    "SYSTEM", "ANONYMOUS LOGON", "*$",
+    "svc_backup", "svc_monitoring", "svc_deploy"
+  )
+
+| stats dc(TargetIp) AS distinct_hosts
+        dc(target_subnet) AS distinct_subnets
+        max(is_privileged) AS used_privileged_logon
+        values(TargetIp) AS hosts_touched
+        values(LogonType) AS logon_types_seen
+        min(_time) AS chain_start
+        max(_time) AS chain_end
+    by SourceIp, TargetUserName
+
+| where distinct_hosts >= min_distinct_hosts
+        AND distinct_subnets >= 2
+        AND (require_privileged=0 OR used_privileged_logon=1)
+
+| eval chain_duration_minutes = round((chain_end - chain_start) / 60, 1)
+| convert ctime(chain_start) ctime(chain_end)
+
+| table TargetUserName, SourceIp, distinct_hosts, distinct_subnets,
+        used_privileged_logon, logon_types_seen, hosts_touched,
+        chain_duration_minutes, chain_start, chain_end
+| sort - distinct_hosts, chain_duration_minutes
