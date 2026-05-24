@@ -1,0 +1,50 @@
+title: TCP SYN Port Scan from External Source
+id: 1f8e6e2c-9c5e-4f7b-9c25-3a8e8f2a1c05
+status: experimental
+description: |
+  Detects a single external source sending TCP SYN packets to ≥30 distinct destination
+  ports on the same internal host within a 30-second window, where ≥90% of those SYN
+  packets received no SYN-ACK response (the half-open scan signature). Feeds the
+  **signature** engine of the NIDS hybrid; the explicit allowlist for the internal
+  vulnerability scanner is the production tuning lever this rule depends on.
+references:
+  - https://attack.mitre.org/techniques/T1046/
+  - https://nmap.org/book/synscan.html
+author: Azhad Shahzad Shaik
+date: 2026/05/24
+tags:
+  - attack.discovery
+  - attack.t1046
+  - engine.signature
+logsource:
+  product: zeek
+  service: conn
+detection:
+  selection_syn_scan:
+    # Aggregated by (src, dst-host) over 30s window. Backend emits the annotated event;
+    # the rule tests the aggregated fields.
+    conn_state: 'S0'              # SYN sent, no SYN-ACK seen
+    distinct_dest_ports_30s|gte: 30
+    syn_no_synack_ratio|gte: 0.9
+  selection_external:
+    id.orig_h|cidr|not:
+      - '10.0.0.0/8'
+      - '172.16.0.0/12'
+      - '192.168.0.0/16'
+      - '100.64.0.0/10'           # CGNAT — exclude carrier-grade NAT noise
+  filter_vuln_scanner:
+    id.orig_h|cidr:
+      - '10.20.30.0/24'           # internal vuln scanner CIDR — adjust per environment
+  condition: selection_syn_scan and selection_external and not filter_vuln_scanner
+falsepositives:
+  - Internal vulnerability scanners (filtered above)
+  - Asset-discovery tools run by IT (allowlist by source IP)
+  - Misbehaving load balancers probing dead backends
+level: medium
+fields:
+  - id.orig_h
+  - id.resp_h
+  - distinct_dest_ports_30s
+  - syn_no_synack_ratio
+  - first_seen
+  - last_seen

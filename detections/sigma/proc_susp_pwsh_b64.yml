@@ -1,0 +1,52 @@
+title: Suspicious PowerShell with Base64-Encoded Payload
+id: 1f8e6e2c-9c5e-4f7b-9c25-3a8e8f2a1c01
+status: experimental
+description: |
+  Detects PowerShell processes invoked with `-EncodedCommand` (or short forms) where the
+  encoded blob decodes to common offensive tradecraft strings (IEX, DownloadString,
+  WebClient, FromBase64String, Invoke-Expression). Pairs with the supervised CatBoost
+  engine in the NIDS hybrid — the rule provides the labeled signal; the model handles
+  variants the static rule misses.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://attack.mitre.org/techniques/T1027/
+author: Azhad Shahzad Shaik
+date: 2026/05/24
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense_evasion
+  - attack.t1027
+  - engine.supervised
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_proc:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_encoded:
+    CommandLine|contains:
+      - ' -enc '
+      - ' -EncodedCommand '
+      - ' -ec '
+      - ' -EncodedC '
+  selection_decoded_intent:
+    CommandLine|base64offset|contains:
+      - 'IEX'
+      - 'Invoke-Expression'
+      - 'DownloadString'
+      - 'Net.WebClient'
+      - 'FromBase64String'
+      - 'IO.Compression.GzipStream'
+  condition: selection_proc and selection_encoded and selection_decoded_intent
+falsepositives:
+  - Signed installers that legitimately use encoded payloads (allowlist by file hash)
+  - Vendor agents shipping their own PowerShell wrappers (allowlist by parent image)
+level: high
+fields:
+  - CommandLine
+  - ParentImage
+  - User
+  - ProcessGuid

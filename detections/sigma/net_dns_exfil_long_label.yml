@@ -1,0 +1,47 @@
+title: DNS Tunneling via Long-Label Subdomain Encoding
+id: 1f8e6e2c-9c5e-4f7b-9c25-3a8e8f2a1c02
+status: experimental
+description: |
+  Surfaces DNS queries whose leftmost label is unusually long (>40 chars) AND has high
+  character-class entropy — the encoding signature of DNS-tunnelled exfil over TXT/AAAA/A
+  queries. Designed to feed the **unsupervised** engine in the NIDS hybrid: this rule
+  emits candidates, IsolationForest scores them against the per-domain baseline of label
+  lengths so a one-off long subdomain (CDN edge cache key) does not page anyone.
+references:
+  - https://attack.mitre.org/techniques/T1048/003/
+  - https://attack.mitre.org/techniques/T1071/004/
+author: Azhad Shahzad Shaik
+date: 2026/05/24
+tags:
+  - attack.exfiltration
+  - attack.t1048.003
+  - attack.command_and_control
+  - attack.t1071.004
+  - engine.unsupervised
+logsource:
+  product: zeek
+  service: dns
+detection:
+  selection_long_label:
+    query|re: '^[a-zA-Z0-9-]{40,}\.'
+  selection_high_entropy:
+    query|re: '^(?=.*[a-z])(?=.*[A-Z0-9]).{40,}\.'
+  filter_known_cdn:
+    query|endswith:
+      - '.cloudfront.net'
+      - '.akamaiedge.net'
+      - '.azureedge.net'
+      - '.fastly.net'
+      - '.cdn.cloudflare.net'
+  condition: selection_long_label and selection_high_entropy and not filter_known_cdn
+falsepositives:
+  - CDN edge cache keys (covered by filter_known_cdn — extend per environment)
+  - Anti-fraud / fingerprint vendors that hash device IDs into subdomains
+  - DKIM / SPF lookups for very long selectors
+level: medium
+fields:
+  - query
+  - qtype_name
+  - id.orig_h
+  - id.resp_h
+  - answers

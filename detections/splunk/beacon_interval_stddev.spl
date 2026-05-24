@@ -1,0 +1,58 @@
+``` Beacon Interval Stddev — Splunk SPL
+   Author:  Azhad Shahzad Shaik
+   Date:    2026-05-24
+   Engine:  anomaly (feeds the NIDS fusion stage as one agreeing signal)
+
+   Purpose:
+     Identify (src, dst) pairs whose outbound connections recur with low jitter — the
+     timing shape of a polling C2 beacon. Computes per-pair mean inter-arrival interval
+     and stddev, then ranks by the coefficient of variation (CV = stddev/mean). Low CV
+     with high event count = beacon-like.
+
+   Tuning levers (top of the query):
+     - min_conn_count : floor on number of connections required to call it a beacon.
+                        Default 8 over 1h; raise to 20 for noisier environments.
+     - cv_threshold   : max coefficient of variation. 0.2 is tight, 0.4 is loose.
+     - window         : the time window over which intervals are computed.
+
+   How it joins the rest of the pipeline:
+     Output `beacon_score` is fed into the Sigma rule `net_c2_beacon_jitter.yml` (which
+     thresholds at 0.85) and into the fusion stage. Two agreeing signals raise an alert.
+```
+
+| eval min_conn_count=8
+| eval cv_threshold=0.2
+| eval window="-1h@h"
+
+| tstats prestats=t count from datamodel=Network_Traffic.All_Traffic
+    where All_Traffic.action="allowed" earliest=`window` latest=now
+    by _time, All_Traffic.src_ip, All_Traffic.dest_ip, All_Traffic.dest_port
+| rename All_Traffic.* AS *
+| sort 0 src_ip, dest_ip, dest_port, _time
+
+| streamstats current=f last(_time) AS prev_time by src_ip, dest_ip, dest_port
+| eval interval = _time - prev_time
+| where isnotnull(interval) AND interval > 0
+
+| stats count AS conn_count
+        avg(interval) AS mean_interval
+        stdev(interval) AS stddev_interval
+        min(_time) AS first_seen
+        max(_time) AS last_seen
+    by src_ip, dest_ip, dest_port
+
+| where conn_count >= min_conn_count
+| eval cv = round(stddev_interval / mean_interval, 4)
+| where cv <= cv_threshold
+
+``` beacon_score is a normalized 0..1 inverse of CV, capped — feeds Sigma+fusion ```
+| eval beacon_score = round(1 - (cv / cv_threshold) * 0.5, 4)
+
+| eval mean_interval_seconds = round(mean_interval, 2)
+| eval stddev_interval_seconds = round(stddev_interval, 2)
+| convert ctime(first_seen) ctime(last_seen)
+
+| table src_ip, dest_ip, dest_port, conn_count,
+        mean_interval_seconds, stddev_interval_seconds, cv, beacon_score,
+        first_seen, last_seen
+| sort - beacon_score
