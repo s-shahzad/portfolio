@@ -34,3 +34,8 @@ archives/portfolio_related/portfolio-backup/
 archives/portfolio_related/portfolio-react/node_modules/
 archives/portfolio_related/portfolio-react/dist/
 archives/portfolio_related/portfolio-react/*.tsbuildinfo
+
+# Internal workspace reorg logs
+docs/portfolio_file_*.csv
+docs/portfolio_related_folder_moves.csv
+docs/portfolio_restructure_summary.txt

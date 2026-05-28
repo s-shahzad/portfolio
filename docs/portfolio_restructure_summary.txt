@@ -1,6 +1,0 @@
-﻿ROOT=C:\Users\shaik\portfolio
-FILES_MOVED=25
-ERRORS=0
-RELATED_FOLDERS_MOVED=3
-MOVE_LOG=C:\Users\shaik\portfolio\docs\portfolio_file_moves.csv
-RELATED_FOLDER_LOG=C:\Users\shaik\portfolio\docs\portfolio_related_folder_moves.csv
