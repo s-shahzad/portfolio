@@ -1,13 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Bricolage+Grotesque:opsz,wght@10..48,200..800&family=JetBrains+Mono:wght@400;500&display=swap");
+
 :root {
-  --bg: #090c12;
-  --panel: #111827;
-  --panel-soft: #151f31;
-  --text: #f3f6fb;
-  --muted: #a8b3c4;
-  --border: rgba(255, 255, 255, 0.12);
-  --accent: #dbe8ff;
-  --accent-soft: rgba(143, 180, 245, 0.08);
-  --success: #8af3d0;
+  /* Engineering Journal — matches main site (styles.css) */
+  --bg: #0a0c10;
+  --panel: #12161d;
+  --panel-soft: #161b23;
+  --text: #ede7d5;
+  --muted: #b8af99;
+  --border: rgba(237, 231, 213, 0.12);
+  --accent: #ff6b3d;
+  --accent-soft: rgba(255, 107, 61, 0.1);
+  --success: #a8c479;
 }
 
 *,
@@ -20,12 +23,15 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    radial-gradient(1100px 520px at -5% -10%, rgba(122, 165, 255, 0.15), transparent 60%),
-    radial-gradient(900px 520px at 110% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(1100px 520px at -5% -10%, rgba(255, 107, 61, 0.10), transparent 60%),
+    radial-gradient(900px 520px at 110% -10%, rgba(92, 210, 255, 0.06), transparent 60%),
     var(--bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
+
+h1, h2, h3 { font-family: "Fraunces", Georgia, serif; }
 
 .page {
   width: min(980px, calc(100% - 2rem));
@@ -81,7 +87,7 @@ h2 {
 
 .eyebrow {
   margin: 0 0 0.45rem;
-  color: #c6d8f5;
+  color: #b8af99;
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -89,7 +95,7 @@ h2 {
 
 .lede {
   margin: 0.5rem 0 0;
-  color: #eef4ff;
+  color: #ede7d5;
   font-size: 1.02rem;
 }
 
@@ -123,7 +129,7 @@ li + li {
 .summary-card strong {
   display: block;
   font-size: 1rem;
-  color: #eef5ff;
+  color: #ede7d5;
   margin-bottom: 0.15rem;
 }
 
@@ -178,7 +184,7 @@ li + li {
 
 .button-link:hover,
 .button-link:focus-visible {
-  border-color: rgba(166, 205, 255, 0.4);
+  border-color: rgba(255, 107, 61, 0.4);
 }
 
 @media (max-width: 760px) {
@@ -250,15 +256,15 @@ input[readonly] {
 }
 
 .button-link--solid {
-  background: #214a83;
-  color: #ecf4ff;
-  border-color: rgba(166, 205, 255, 0.48);
+  background: rgba(255, 107, 61, 0.16);
+  color: #ede7d5;
+  border-color: rgba(255, 107, 61, 0.48);
   cursor: pointer;
 }
 
 .button-link--solid:hover,
 .button-link--solid:focus-visible {
-  background: #2d5e9f;
+  background: rgba(255, 107, 61, 0.26);
 }
 
 .status-line {
@@ -267,15 +273,15 @@ input[readonly] {
 }
 
 .status-line[data-state="ok"] {
-  color: #8af3d0;
+  color: #a8c479;
 }
 
 .status-line[data-state="error"] {
-  color: #ffb4b4;
+  color: #f0a8a0;
 }
 
 .status-line[data-state="warn"] {
-  color: #ffe3a2;
+  color: #e8b53a;
 }
 
 .results-block {
@@ -308,12 +314,12 @@ input[readonly] {
 }
 
 .results-table th {
-  color: #d4e4ff;
-  background: rgba(35, 53, 79, 0.45);
+  color: #ede7d5;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .results-table code {
-  color: #d7e9ff;
+  color: #ede7d5;
 }
 
 @media (max-width: 900px) {
