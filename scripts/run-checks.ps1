@@ -48,7 +48,6 @@ Write-Host "Python: $pythonExe"
 
 Invoke-CheckedCommand -Label 'Python compile check' -FilePath $pythonExe -Arguments @('-m', 'py_compile', 'src/server.py')
 Invoke-CheckedCommand -Label 'JS syntax check (script.js)' -FilePath 'node' -Arguments @('--check', 'script.js')
-Invoke-CheckedCommand -Label 'JS syntax check (chatbot-upgrade.js)' -FilePath 'node' -Arguments @('--check', 'chatbot-upgrade.js')
 Invoke-CheckedCommand -Label 'Static HTML sanity' -FilePath $pythonExe -Arguments @('src/scripts/static_sanity.py')
 Invoke-CheckedCommand -Label 'Accessibility/performance sanity' -FilePath $pythonExe -Arguments @('src/scripts/accessibility_perf_sanity.py')
 Invoke-CheckedCommand -Label 'API smoke tests' -FilePath $pythonExe -Arguments @('src/scripts/api_smoke_test.py', '--port', [string]$SmokePort)

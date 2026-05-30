@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build:css": "npx --yes esbuild styles.css --bundle --minify --outfile=styles.min.css",
-    "build:js": "npx --yes esbuild script.js --minify --outfile=script.min.js && npx --yes esbuild chatbot-upgrade.js --minify --outfile=chatbot-upgrade.min.js",
+    "build:js": "npx --yes esbuild script.js --minify --outfile=script.min.js",
     "build": "npm run build:css && npm run build:js",
     "image:webp": "python -c \"from PIL import Image; img = Image.open('assets/screenshots/assets/profile-hero.jpg'); img.convert('RGB').save('assets/screenshots/assets/profile-hero.webp', 'WebP', quality=80, method=6)\"",
     "image:mobile": "python -c \"from PIL import Image; img = Image.open('assets/screenshots/assets/profile-hero.jpg'); img.thumbnail((500,500)); img.convert('RGB').save('assets/screenshots/assets/profile-hero-mobile.webp', 'WebP', quality=80, method=6)\"",

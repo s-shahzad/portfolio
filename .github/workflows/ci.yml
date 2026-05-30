@@ -48,8 +48,6 @@ jobs:
           {
             echo '--- script.js ---'
             node --check script.js
-            echo '--- chatbot-upgrade.js ---'
-            node --check chatbot-upgrade.js
           } 2>&1 | tee artifacts/js-syntax.log
 
       - name: Static HTML sanity
